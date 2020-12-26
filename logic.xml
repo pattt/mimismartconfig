@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smart-house srv-ver="2">
+	<area name="Прихожая">
+		<area name="Коридор">
+			<item addr="583:48" cfgid="6" name="Движение" type="motion-sensor"/>
+			<item addr="583:28" cfgid="5" name="Входная\10дверь" type="door-sensor"/>
+			<item addr="538:49" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
+				<linked addr="583:27"/>
+			</item>
+			<item addr="770:1" auto-period="600" cfgid="17" name="БП" system="yes" type="lamp"/>
+		</area>
+	</area>
+	<area name="Гардероб">
+		<item addr="770:4" auto-period="600" cfgid="17" name="Точки" type="lamp">
+			<linked addr="583:36"/>
+		</item>
+		<item addr="584:56" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="583:34" cfgid="5" name="Дверь" type="door-sensor"/>
+	</area>
+	<area name="Ванная">
+		<item addr="584:35" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="584:40" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="776:7" auto-period="600" cfgid="17" name="Зеркало" type="lamp"/>
+		<item addr="770:3" auto-period="60" cfgid="17" name="Точки" type="lamp">
+			<automation door-sensors="584:35" enabled="yes" illumination-level="10" time-interval="3" type="on-by-door"/>
+			<automation delay="3" door-sensors="584:35" enabled="yes" motion-level="15" motion-sensors="584:40" time-interval="7" type="off-by-door"/>
+			<automation enabled="yes" illumination-level="10" motion-level="45" motion-sensors="584:40" time-interval="3" type="on-by-moving"/>
+			<automation enabled="yes" motion-level="15" motion-sensors="584:40" time-interval="420" type="off-by-moving"/>
+		</item>
+		<item addr="770:8" auto-period="600" cfgid="17" image="air-fan" name="Вытяжка" type="lamp">
+			<linked addr="583:35"/>
+		</item>
+		<item addr="538:9" cfgid="9" name="Ванная" type="leak-sensor"/>
+	</area>
+	<area name="Спальня">
+		<item addr="584:36" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="584:48" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="584:64" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
+		<item addr="770:5" auto-period="600" cfgid="17" name="Люстра" type="lamp">
+			<linked addr="584:32"/>
+			<linked addr="583:25"/>
+		</item>
+		<item addr="770:2" auto-period="600" cfgid="17" name="Точки&#10;Спальня" type="lamp">
+			<linked addr="583:24"/>
+			<linked addr="584:34"/>
+			<linked addr="583:20"/>
+		</item>
+		<item addr="776:8" auto-period="600" cfgid="17" name="Точки&#10;Балкон" type="lamp">
+			<linked addr="584:18"/>
+			<linked addr="584:33"/>
+		</item>
+	</area>
+	<area name="Зал">
+		<item addr="584:27" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="584:8" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
+		<item addr="776:2" auto-period="600" cfgid="17" name="БП" system="yes" type="lamp"/>
+		<item addr="538:50" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
+			<linked addr="583:17"/>
+			<linked addr="584:25"/>
+		</item>
+		<item addr="776:3" auto-period="600" cfgid="17" name="LED" type="lamp">
+			<linked addr="583:33"/>
+			<linked addr="583:32"/>
+		</item>
+		<item addr="776:6" auto-period="600" cfgid="17" name="Люстра" type="lamp">
+			<linked addr="583:18"/>
+			<linked addr="584:24"/>
+		</item>
+	</area>
+	<area name="Кухня">
+		<item addr="584:28" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="776:4" auto-period="600" cfgid="17" name="БП" system="yes" type="lamp"/>
+		<item addr="538:48" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
+			<linked addr="584:26"/>
+		</item>
+		<item addr="583:64" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
+		<item addr="583:8" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="538:17" cfgid="9" name="Кухня" type="leak-sensor"/>
+	</area>
+	<area name="Балкон">
+		<item addr="770:6" auto-period="600" cfgid="17" name="Точки" type="lamp">
+			<linked addr="584:17"/>
+		</item>
+		<item addr="538:40" cfgid="6" name="Освещенность" type="illumination-sensor"/>
+	</area>
+	<area name="Кладовая">
+		<item addr="584:20" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="770:7" auto-period="0" cfgid="17" name="Точки" type="lamp">
+			<automation door-sensors="584:20" enabled="yes" illumination-level="10" time-interval="3" type="on-by-door"/>
+			<automation delay="3" door-sensors="584:20" enabled="yes" motion-level="15" motion-sensors="583:56" time-interval="7" type="off-by-door"/>
+			<automation enabled="yes" illumination-level="10" motion-level="45" motion-sensors="583:56" time-interval="3" type="on-by-moving"/>
+			<automation enabled="yes" motion-level="15" motion-sensors="583:56" time-interval="180" type="off-by-moving"/>
+		</item>
+		<item addr="583:56" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="538:16" cfgid="9" name="Постирочная" type="leak-sensor"/>
+	</area>
+	<area name="WC">
+		<item addr="776:1" auto-period="600" cfgid="17" image="air-fan" name="Вытяжка" type="lamp">
+			<linked addr="584:19"/>
+		</item>
+		<item addr="776:5" auto-period="60" cfgid="17" name="Точки" type="lamp">
+			<automation door-sensors="583:19" enabled="yes" illumination-level="10" time-interval="3" type="on-by-door"/>
+			<automation delay="3" door-sensors="583:19" enabled="yes" motion-level="15" motion-sensors="583:40" time-interval="7" type="off-by-door"/>
+			<automation enabled="yes" illumination-level="10" motion-level="45" motion-sensors="583:40" time-interval="3" type="on-by-moving"/>
+			<automation enabled="yes" motion-level="15" motion-sensors="583:40" time-interval="180" type="off-by-moving"/>
+		</item>
+		<item addr="583:40" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item addr="583:19" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item addr="538:25" cfgid="9" name="WC" type="leak-sensor"/>
+	</area>
+	<area name="Отопление">
+		<item addr="867:100" name="Экономный\10режим" path="scripts/climate/ekonom.txt" type="script"/>
+		<item addr="867:101" name="Комфортный\10режим" path="scripts/climate/komfort.txt" type="script"/>
+		<item addr="867:102" name="Жаркий\10режим" path="scripts/climate/hot.txt" type="script"/>
+		<import-script id="867" path="scripts/climate/import_off.txt"/>
+		<import-script id="770" path="scripts/prot_1test.txt"/>
+		<item addr="867:1" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Сан узел" temperature-lag="0.2" temperature-sensors="867:14" type="valve-heating">
+			<automation name="Эконом" temperature-level="0"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="13"/>
+		</item>
+		<item addr="867:2" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Кухня" temperature-lag="0.2" temperature-sensors="867:12" type="valve-heating">
+			<automation name="Эконом" temperature-level="28">
+				<time-interval end-time="11:00" start-time="06:00" temperature-level="21" week-days="mo;tu;we;th;fr;sa;su"/>
+			</automation>
+			<automation name="Комфорт" temperature-level="0">
+				<time-interval end-time="10:00" start-time="07:00" temperature-level="28" week-days="mo;tu;we;th;fr;sa;su"/>
+				<time-interval end-time="23:00" start-time="18:00" temperature-level="0" week-days="mo;tu;we;th;fr;sa;su"/>
+			</automation>
+			<automation name="Жарко" temperature-level="10">
+				<time-interval end-time="22:00" start-time="07:00" temperature-level="26" week-days="mo;tu;we;th;fr;sa;su"/>
+			</automation>
+		</item>
+		<item addr="867:3" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Кухня-Балкон" temperature-lag="0.2" temperature-sensors="867:13" type="valve-heating">
+			<automation name="Эконом" temperature-level="0"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="10"/>
+		</item>
+		<item addr="867:4" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Ванная" temperature-lag="0.2" temperature-sensors="867:11" type="valve-heating">
+			<automation name="Эконом" temperature-level="28">
+				<time-interval end-time="10:00" start-time="07:00" temperature-level="0" week-days="mo;tu;we;th;fr;sa;su"/>
+			</automation>
+			<automation name="Комфорт" temperature-level="28"/>
+			<automation name="Жарко" temperature-level="28">
+				<time-interval end-time="10:00" start-time="06:00" temperature-level="18" week-days="mo;tu;we;th;fr;sa;su"/>
+			</automation>
+		</item>
+		<item addr="867:5" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Кухня" temperature-lag="0.2" temperature-sensors="867:15" type="valve-heating">
+			<automation name="Эконом" temperature-level="21"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="22"/>
+		</item>
+		<item addr="867:6" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Зал" temperature-lag="0.2" temperature-sensors="867:16" type="valve-heating">
+			<automation name="Эконом" temperature-level="21"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="22"/>
+		</item>
+		<item addr="867:7" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Спальня" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
+			<automation name="Эконом" temperature-level="22"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="23"/>
+		</item>
+		<item addr="867:8" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Radiator 8" system="yes" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
+			<automation name="Эконом" temperature-level="16"/>
+			<automation name="Комфорт" temperature-level="0"/>
+			<automation name="Жарко" temperature-level="25"/>
+		</item>
+		<item addr="867:11" cfgid="17" name="ТП\10Ванная" type="temperature-sensor"/>
+		<item addr="867:12" cfgid="17" name="ТП\10Кухня" type="temperature-sensor"/>
+		<item addr="867:13" cfgid="17" name="ТП\10Кухня-Балкон" type="temperature-sensor"/>
+		<item addr="867:14" cfgid="17" name="ТП\10Сан узел" type="temperature-sensor"/>
+		<item addr="867:15" cfgid="17" name="Темпер.\10Кухня" type="temperature-sensor"/>
+		<item addr="867:16" cfgid="17" name="Темпер.\10Зал" type="temperature-sensor"/>
+		<item addr="867:17" cfgid="17" name="Темпер.&#10;Улица" type="temperature-sensor"/>
+		<item addr="867:18" cfgid="17" name="Темпер.&#10;Спальня" type="temperature-sensor"/>
+		<item addr="867:97" cfgid="17" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="867:98" cfgid="17" hw="heat ++++IIII" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+	</area>
+	<area name="Сценарии">
+		<item addr="583:100" name="Я ушел" path="scripts/all_off.txt" type="script">
+			<linked addr="583:36" click="0" dbl-click="1"/>
+			<linked addr="583:26"/>
+		</item>
+		<import-script PERIOD="1" PW="776:2" RGB1="538:50" id="538" name="on_off_bp" path="scripts/illumination/rgb_pw.txt"/>
+		<import-script PERIOD="1" PW="770:1" RGB1="538:49" id="538" name="on_off_bp" path="scripts/illumination/rgb_pw.txt"/>
+		<import-script PERIOD="1" PW="776:4" RGB1="538:48" id="538" name="on_off_bp" path="scripts/illumination/rgb_pw.txt"/>
+		<item addr="538:102" id="538" name="Сброс\10протечки" path="scripts/protech_pr.txt" type="script"/>
+		<import-script id="538" name="prot_gsm" path="scripts/prot_gsm_pr.txt"/>
+		<import-script id="538" name="prot_1" path="scripts/prot_1.txt"/>
+		<import-script id="538" name="prot_close" path="scripts/prot_close.txt"/>
+		<item addr="538:105" name="test" path="scripts/test.txt" type="script"/>
+		<item addr="538:247" name="Баланс" path="scripts/gsm/gsm_balance.txt" type="script"/>
+		<item addr="538:250" length="0" name="Баланс" sub-type="long-text" type="virtual"/>
+		<item addr="178:21" cfgid="15" name="IR receiver" type="ir-receiver"/>
+		<item addr="178:98" cfgid="15" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="584:16" cfgid="5" name="Switch 6" type="switch"/>
+		<item addr="584:17" cfgid="5" name="Switch 7" type="switch"/>
+		<item addr="584:18" cfgid="5" name="Switch 8" type="switch"/>
+		<item addr="584:19" cfgid="5" name="Switch 4" type="switch"/>
+		<item addr="584:21" cfgid="5" name="Switch 9" type="switch"/>
+		<item addr="584:23" cfgid="5" hw="BBBBHB" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="584:24" cfgid="5" name="Switch 10" type="switch"/>
+		<item addr="584:25" cfgid="5" name="Switch 11" type="switch"/>
+		<item addr="584:26" cfgid="5" name="Switch 12" type="switch"/>
+		<item addr="584:29" cfgid="5" name="Switch 13" type="switch"/>
+		<item addr="584:31" cfgid="5" hw="BBBHHB" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="584:32" cfgid="5" name="Switch 9" type="switch"/>
+		<item addr="584:33" cfgid="5" name="Switch 10" type="switch"/>
+		<item addr="584:34" cfgid="5" name="Switch 11" type="switch"/>
+		<item addr="584:37" cfgid="5" name="Switch 13" type="switch"/>
+		<item addr="584:39" cfgid="5" hw="BBBHHB" name="Voltage 3" system="yes" type="voltage-sensor"/>
+		<item addr="584:47" cfgid="6" name="Voltage 4" system="yes" type="voltage-sensor"/>
+		<item addr="584:55" cfgid="6" name="Voltage 5" system="yes" type="voltage-sensor"/>
+		<item addr="584:63" cfgid="6" name="Voltage 6" system="yes" type="voltage-sensor"/>
+		<item addr="584:98" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="583:15" cfgid="6" name="Voltage 1" system="yes" type="voltage-sensor"/>
+		<item addr="583:16" cfgid="5" name="Switch 1" type="switch"/>
+		<item addr="583:17" cfgid="5" name="Switch 2" type="switch"/>
+		<item addr="583:18" cfgid="5" name="Switch 3" type="switch"/>
+		<item addr="583:20" cfgid="5" name="Switch 4" type="switch"/>
+		<item addr="583:21" cfgid="5" name="Switch 5" type="switch"/>
+		<item addr="583:23" cfgid="5" hw="BBBHBB" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="583:24" cfgid="5" name="Switch 6" type="switch"/>
+		<item addr="583:25" cfgid="5" name="Switch 7" type="switch"/>
+		<item addr="583:26" cfgid="5" name="Switch 8" type="switch"/>
+		<item addr="583:27" cfgid="5" name="Switch 9" type="switch"/>
+		<item addr="583:29" cfgid="5" name="Switch 10" type="switch"/>
+		<item addr="583:31" cfgid="5" hw="BBBBHB" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="583:32" cfgid="5" name="Switch 11" type="switch"/>
+		<item addr="583:33" cfgid="5" name="Switch 12" type="switch"/>
+		<item addr="583:35" cfgid="5" name="Switch 13" type="switch"/>
+		<item addr="583:36" cfgid="5" name="Switch 14" type="switch"/>
+		<item addr="583:37" cfgid="5" name="Switch 15" type="switch"/>
+		<item addr="583:39" cfgid="5" hw="BBHBBB" name="Voltage 4" system="yes" type="voltage-sensor"/>
+		<item addr="583:47" cfgid="6" name="Voltage 5" system="yes" type="voltage-sensor"/>
+		<item addr="583:55" cfgid="6" name="Voltage 6" system="yes" type="voltage-sensor"/>
+		<item addr="583:63" cfgid="6" name="Voltage 7" system="yes" type="voltage-sensor"/>
+		<item addr="583:98" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="776:97" cfgid="17" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="776:98" cfgid="17" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="770:97" cfgid="17" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="770:98" cfgid="17" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:8" cfgid="9" name="Leak 1" system="yes" type="leak-sensor"/>
+		<item addr="538:14" cfgid="9" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:22" cfgid="9" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:24" cfgid="9" name="Leak 5" system="yes" type="leak-sensor"/>
+		<item addr="538:30" cfgid="9" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:47" cfgid="6" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="538:51" auto-period="600" cfgid="7" name="Dimmer 4" system="yes" type="dimer-lamp"/>
+		<item addr="538:54" cfgid="7" hw="DM" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:55" cfgid="7" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="538:56" auto-period="600" cfgid="10" image="valve" name="Вода" type="lamp"/>
+		<item addr="538:57" auto-period="600" cfgid="10" name="не трогать" system="yes" type="lamp"/>
+		<item addr="538:58" cfgid="10" name="Door" system="yes" type="door-sensor"/>
+		<item addr="538:59" cfgid="10" name="Door" system="yes" type="door-sensor"/>
+		<item addr="538:62" cfgid="10" hw="A" name="Temperature" system="yes" type="temperature-sensor"/>
+		<item addr="538:63" cfgid="10" name="Voltage" system="yes" type="voltage-sensor"/>
+		<item addr="538:98" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
+	</area>
+	<area name="Протечка воды">
+		<item-ref addr="538:102"/>
+		<item-ref addr="538:56"/>
+		<item-ref addr="538:9"/>
+		<item-ref addr="538:16"/>
+		<item-ref addr="538:17"/>
+		<item-ref addr="538:25"/>
+	</area>
+</smart-house>
