@@ -1,0 +1,211 @@
+/*
+{
+  desc:"Самодиагностика",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+    {name:"INT_PROV",type:"number",required:true,defaultValue:1,min:1,max:3600,descWidth:270,width:70,desc:"Интервал проверки связи, в минутах"},
+	{name:"FAIL_COUNT",type:"number",required:true,defaultValue:5,min:1,max:20,descWidth:270,width:70,desc:"Количество неудачных проверок подряд"},
+	{name:"FAIL_ITEMCOUNT",type:"number",required:true,defaultValue:1,min:1,max:10,descWidth:270,width:70,desc:"Количество элементов для срабатывания"},
+	{name:"ITEM_FAIL",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:200,desc:"Сценарий по срабатыванию"},
+    {name:"ITEM1",type:"devices-list",required:true,descWidth:100,desc:"Элемент 1"},
+    {name:"ITEM2",type:"devices-list",required:false,descWidth:100,desc:"Элемент 2"},
+	{name:"ITEM3",type:"devices-list",required:false,descWidth:100,desc:"Элемент 3"},
+	{name:"ITEM4",type:"devices-list",required:false,descWidth:100,desc:"Элемент 4"},
+	{name:"ITEM5",type:"devices-list",required:false,descWidth:100,desc:"Элемент 5"},
+	{name:"ITEM6",type:"devices-list",required:false,descWidth:100,desc:"Элемент 6"},
+	{name:"ITEM7",type:"devices-list",required:false,descWidth:100,desc:"Элемент 7"},
+	{name:"ITEM8",type:"devices-list",required:false,descWidth:100,desc:"Элемент 8"},
+	{name:"ITEM9",type:"devices-list",required:false,descWidth:100,desc:"Элемент 9"},
+	{name:"ITEM_10",type:"devices-list",required:false,descWidth:100,desc:"Элемент 10"},
+  ]
+}
+*/
+
+u8 fail_cnt_it1=0;
+#ifdef ITEM2
+u8 fail_cnt_it2=0;
+#endif
+#ifdef ITEM3
+u8 fail_cnt_it3=0;
+#endif
+#ifdef ITEM4
+u8 fail_cnt_it4=0;
+#endif
+#ifdef ITEM5
+u8 fail_cnt_it5=0;
+#endif
+#ifdef ITEM6
+u8 fail_cnt_it6=0;
+#endif
+#ifdef ITEM7
+u8 fail_cnt_it7=0;
+#endif
+#ifdef ITEM8
+u8 fail_cnt_it8=0;
+#endif
+#ifdef ITEM9
+u8 fail_cnt_it9=0;
+#endif
+#ifdef ITEM_10
+u8 fail_cnt_it10=0;
+#endif
+
+u8 fail_items_cnt=0;
+u8 state=0;
+u8 avaria=0;
+#ifdef ITEM9
+u8 state1=0;
+#endif
+
+V-ID/m:INT_PROV
+{
+  if (isDefined(ITEM1)==0){
+    ++fail_cnt_it1;
+	if (((state & 0x01)==0) && (fail_cnt_it1>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x01;
+	}
+  } else {
+    fail_cnt_it1=0;
+	if (state & 0x01) --fail_items_cnt;
+	state &= 0xFE;
+  }
+  
+  #ifdef ITEM2
+  if (isDefined(ITEM2)==0){
+    ++fail_cnt_it2;
+	if (((state & 0x01)==0) && (fail_cnt_it2>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x02;
+	}
+  } else {
+    fail_cnt_it2=0;
+	if (state & 0x02) --fail_items_cnt;
+	state &= 0xFD;
+  } 
+  #endif
+  
+  #ifdef ITEM3
+  if (isDefined(ITEM3)==0){
+    ++fail_cnt_it3;
+	if (((state & 0x04)==0) && (fail_cnt_it3>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x04;
+	}
+  } else {
+    fail_cnt_it3=0;
+	if (state & 0x04) --fail_items_cnt;
+	state &= 0xFB;
+  } 
+  #endif
+  
+  #ifdef ITEM4
+  if (isDefined(ITEM4)==0){
+    ++fail_cnt_it4;
+	if (((state & 0x08)==0) && (fail_cnt_it4>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x08;
+	}
+  } else {
+    fail_cnt_it4=0;
+	if (state & 0x08) --fail_items_cnt;
+	state &= 0xF7;
+  } 
+  #endif
+  
+  #ifdef ITEM5
+  if (isDefined(ITEM5)==0){
+    ++fail_cnt_it5;
+	if (((state & 0x10)==0) && (fail_cnt_it5>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x10;
+	}
+  } else {
+    fail_cnt_it5=0;
+	if (state & 0x10) --fail_items_cnt;
+	state &= 0xEF;
+  } 
+  #endif
+  
+  #ifdef ITEM6
+  if (isDefined(ITEM6)==0){
+    ++fail_cnt_it6;
+	if (((state & 0x20)==0) && (fail_cnt_it6>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x20;
+	}
+  } else {
+    fail_cnt_it6=0;
+	if (state & 0x20) --fail_items_cnt;
+	state &= 0xDF;
+  } 
+  #endif
+  
+  #ifdef ITEM7
+  if (isDefined(ITEM7)==0){
+    ++fail_cnt_it7;
+	if (((state & 0x40)==0) && (fail_cnt_it7>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x40;
+	}
+  } else {
+    fail_cnt_it7=0;
+	if (state & 0x40) --fail_items_cnt;
+	state &= 0xBF;
+  } 
+  #endif
+  
+  #ifdef ITEM8
+  if (isDefined(ITEM8)==0){
+    ++fail_cnt_it8;
+	if (((state & 0x80)==0) && (fail_cnt_it8>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state |= 0x80;
+	}
+  } else {
+    fail_cnt_it8=0;
+	if (state & 0x80) --fail_items_cnt;
+	state &= 0x7F;
+  } 
+  #endif
+  
+  #ifdef ITEM9
+  if (isDefined(ITEM9)==0){
+    ++fail_cnt_it9;
+	if (((state1 & 0x01)==0) && (fail_cnt_it9>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state1 |= 0x01;
+	}
+  } else {
+    fail_cnt_it9=0;
+	if (state1 & 0x01) --fail_items_cnt;
+	state1 &= 0xFE;
+  } 
+  #endif
+  
+  #ifdef ITEM_10
+  if (isDefined(ITEM_10)==0){
+    ++fail_cnt_it10;
+	if (((state1 & 0x02)==0) && (fail_cnt_it10>=FAIL_COUNT)) {
+	  ++fail_items_cnt;	
+	  state1 |= 0x02;
+	}
+  } else {
+    fail_cnt_it10=0;
+	if (state1 & 0x02) --fail_items_cnt;
+	state1 &= 0xFE;
+  } 
+  #endif
+  
+  if (fail_items_cnt>=FAIL_ITEMCOUNT){
+    if (avaria==0) {
+      avaria=1;
+	  setStatus(ITEM_FAIL,1);
+    }	
+  } else {
+    avaria=0;
+	setStatus(ITEM_FAIL,0);
+  }
+}

@@ -1,0 +1,28 @@
+/*
+{
+  desc:"Выполнение действия с задержкой",
+  tag:"item",
+  target:"ITEM1",
+  selectArea:true,
+  vars:[
+    {name:"ACT",type:"list",required:true,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояния"},desc:"Выберите действие",descWidth:170},
+	{name:"PERIOD",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие, в секундах",descWidth:170,width:100},
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},	
+  ]
+}
+*/
+
+void action() {
+	setStatus(ITEM1, ACT);
+	#ifdef ITEM2
+	  setStatus(ITEM2, ACT);
+	#endif
+	setStatus(V-ADDR, 0);
+}
+
+V-ID/V-ADDR {
+	if (opt(0)) delayedCall(action, PERIOD);
+	else cancelDelayedCall(action);	
+	
+}

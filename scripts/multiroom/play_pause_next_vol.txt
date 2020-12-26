@@ -1,0 +1,142 @@
+/*
+{
+	desc:"Кнопки (с подсветкой) play/pause,volume+(удержание) и next,volume-(удержание) для медиаточки",
+	tag:"import-script",
+	target:"MR",
+	selectArea:true,
+	vars:[
+	{name:"MR",type:"devices-list",required:false,filter:["speaker"],desc:"ID медиаточка"},
+	{name:"BUT_PP1",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 1 play/pause,volume+(удержание)"},
+	{name:"BUT_NEXT1",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 1 next,volume-(удержание)"},
+	{name:"BUT_PP2",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 2 play/pause,volume+(удержание)"},
+	{name:"BUT_NEXT2",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 2 next,volume-(удержание)"},
+	{name:"BUT_PP3",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 3 play/pause,volume+(удержание)"},	
+	{name:"BUT_NEXT3",type:"devices-list",required:false,filter:["switch"],desc:"Кнопка 3 next,volume-(удержание)"},
+	]
+}
+*/
+
+u8 s[] = {"MR"};
+u16 n = (s[0]-48)*100 + (s[1]-48)*10 + (s[2]-48);
+u8 SubID = (s[4]-48)*10 + (s[5]-48);
+u8 IDhi = n/256;
+u8 IDlo = n%256;
+u8 fe_but_pp = 0;
+u8 fe_but_next = 0;
+
+void onInit()
+{
+	if ([MR.0]==1) {
+		#ifdef BUT_PP1	setStatus(BUT_PP1,1); #endif
+		#ifdef BUT_PP2	setStatus(BUT_PP2,1); #endif
+		#ifdef BUT_PP3	setStatus(BUT_PP3,1); #endif
+	}	
+	else {
+		#ifdef BUT_PP1 setStatus(BUT_PP1,0); #endif
+		#ifdef BUT_PP2 setStatus(BUT_PP2,0); #endif
+		#ifdef BUT_PP3 setStatus(BUT_PP3,0); #endif
+	}	
+}
+
+V-ID/MR
+{
+	if ([MR.0]==1) {
+		#ifdef BUT_PP1	setStatus(BUT_PP1,1); #endif
+		#ifdef BUT_PP2	setStatus(BUT_PP2,1); #endif
+		#ifdef BUT_PP3	setStatus(BUT_PP3,1); #endif
+	}	
+	else {
+		#ifdef BUT_PP1 setStatus(BUT_PP1,0); #endif
+		#ifdef BUT_PP2 setStatus(BUT_PP2,0); #endif
+		#ifdef BUT_PP3 setStatus(BUT_PP3,0); #endif
+	}	
+}
+
+u8 stop = 0;
+
+void stop()
+{
+	stop = 1;
+}
+
+#ifdef BUT_PP1
+void but_pp_press()
+{
+	if (opt(0)==0xff) {
+		if (fe_but_pp == 1) fe_but_pp = 0;
+		else {
+			if ([MR.0] == 1) {
+				setStatus(MR,2);	
+				cancelDelayedCall(stop);
+				delayedCall(stop,300);
+			}
+			else {
+				cancelDelayedCall(stop);
+				if (stop == 0) setStatus(MR,1); 
+				else setStatus(2043:254, {IDlo, IDhi, SubID, "cmdply"});
+				stop = 0;
+			}
+		}		
+	}	
+	else if (opt(0)==0xfd) {
+		fe_but_pp = 1;
+		setStatus(MR,{5,3});
+	}
+}
+#endif
+
+#ifdef BUT_PP1
+V-ID/BUT_PP1
+{
+	but_pp_press();
+}
+#endif
+
+#ifdef BUT_PP2
+V-ID/BUT_PP2
+{
+	but_pp_press();
+}
+#endif
+
+#ifdef BUT_PP3
+V-ID/BUT_PP3
+{
+	but_pp_press();
+}
+#endif
+
+#ifdef BUT_NEXT1
+void button_next_press()
+{
+	if (opt(0)==0xff) {
+		if (fe_but_next == 1) fe_but_next = 0;
+		else setStatus(2043:254, {IDlo, IDhi, SubID, "cmdpln"});
+	}	
+	else  if (opt(0)==0xfd) {
+		fe_but_next = 1;
+		setStatus(MR,{5,-3});
+	}	
+}
+#endif
+
+#ifdef BUT_NEXT1
+V-ID/BUT_NEXT1
+{
+	button_next_press();
+}
+#endif
+
+#ifdef BUT_NEXT2
+V-ID/BUT_NEXT2
+{
+	button_next_press();
+}
+#endif
+
+#ifdef BUT_NEXT3
+V-ID/BUT_NEXT3
+{
+	button_next_press();
+}
+#endif

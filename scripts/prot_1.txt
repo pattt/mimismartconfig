@@ -1,0 +1,22 @@
+void wait()
+{
+	setStatus(538:57, 1); 
+}
+void wait2()
+{
+	setStatus(538:57, 0); 
+}
+V-ID/538:56
+{
+		if (opt(0) == 1) 
+		{
+			
+			delayedCall(wait, 1);
+		}
+		if (opt(0) == 0) 
+		{
+			
+			delayedCall(wait2, 1);
+		}
+		
+}

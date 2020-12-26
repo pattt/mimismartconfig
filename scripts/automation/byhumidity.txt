@@ -1,0 +1,101 @@
+/*
+{
+	desc:"Управление вытяжкой по влажности",
+	tag:"import-script",
+	selectArea:true,
+	target:"VENT",
+	system:"yes",
+	vars:[
+		{name:"HUM",type:"devices-list",required:true,width:600,filter:["humidity-sensor"],descAlign:"top",desc:"Датчик влажности",descWidth:100},
+		{name:"VENT",type:"devices-list",required:true,width:600,filter:["lamp","air-fan"],descAlign:"top",desc:"Вытяжка 1",descWidth:100},
+		{name:"CNT",type:"number",required:true,defaultValue:"8",width:100,min:4,max:64,desc:"Количество получасовых замеров влажности",descWidth:200},
+		{name:"DH",type:"number",required:true,defaultValue:"5",width:100,min:1,max:50,desc:"Дельта для включения вытяжки",descWidth:200},
+		{name:"DL",type:"number",required:true,defaultValue:"3",width:100,min:0,max:30,desc:"Дельта для выключения вытяжки",descWidth:200}
+	]
+}
+*/
+
+#ifdef HUM
+#ifdef CNT
+#ifdef DH
+#ifdef DL
+#ifdef VENT
+u8 v[CNT];
+u8 c = 0;
+/*
+u8 f = 0;
+
+void unreset()
+{
+	f = 0;
+	setStatus(V-ADDR, 0);
+}
+*/
+
+void reset()
+{
+	u8 h = [HUM.1];
+	for (u8 i=0;i<CNT;++i)
+	v[i] = h;
+	c = 0;
+	setStatus(@exciterId():32, {1, "Сброс показаний влажности выполнен!"});
+	setStatus(VENT, 0);
+}
+
+void onInit()
+{
+	delayedCall(reset, 3);
+}
+
+/*
+V-ID/V-ADDR
+{
+	if (opt(0))
+	{
+		setStatus(@exciterId():32, {1, "Для сброса показаний влажности нажмите скрипт еще раз!"});
+		f = 1;
+		delayedCall(unreset, 3);
+	}
+	else
+	{
+		if (f)
+		{
+			cancelDelayedCall(unreset);
+			reset();
+		}
+	}
+}
+*/
+V-ID/s:1800
+{
+	++c;
+	if (c >= CNT) c = 0;
+	if (isDefined(HUM))
+	v[c] = [HUM.1];
+}
+
+V-ID/HUM
+{
+	u16 s = 0;
+	for (u8 i=0;i<CNT;++i)
+	s += v[i];
+	s /= CNT;
+	u8 h = s;
+	if (opt(1) >= h+DH)
+	{
+		if (isAutoOn(VENT))
+		setStatus(VENT, 1);
+	}
+	else
+	if (opt(1) < h+DL)
+	{
+		if (isAutoOn(VENT))
+		setStatus(VENT, 0);
+	}
+}
+#endif
+#endif
+#endif
+#endif
+#endif
+

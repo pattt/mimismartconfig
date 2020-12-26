@@ -1,0 +1,13 @@
+V-ID/V-ADDR  
+{
+	if ([V-ADDR ]==1)
+	{
+		setStatus(1055:17, {1, 0, 0, '+380977648918#',toUcs2(65001,"Kak to tak")}); // Protocol 1 SMS
+		srvError("message sent");	
+	}
+	else
+	{
+		
+		
+	}
+}

@@ -1,0 +1,103 @@
+/*
+{
+  desc:"Действия по нажатию кнопки домофона (звонок и мультирум)",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+	{name:"ITEM1",type:"devices-list",required:true, filter:["switch"],descWidth:150,desc:"Выберите кнопку домофона"},	
+	{name:"LAMP",type:"devices-list",required:false, filter:["lamp"],descWidth:150,desc:"Выберите звонок"},
+	{name:"PERIOD",type:"number",required:false,defaultValue:30,min:0,max:600,desc:"Период включения звонка, секунд",descWidth:200,width:100},
+	{name:"FILE_MR",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения (дожен быть на медиасервере)"},
+	[
+	  {type:"comment",text:"Элемент Multi-room 1",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID1",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME1",type:"number",required:false,min:0,max:250,width:90},
+	],  
+	[
+	  {type:"comment",text:"Элемент Multi-room 2",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID2",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME2",type:"number",required:false,min:0,max:250,width:90},
+	],  
+	[
+	  {type:"comment",text:"Элемент Multi-room 3",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID3",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME3",type:"number",required:false,min:0,max:250,width:90},
+	], 
+	[
+	  {type:"comment",text:"Элемент Multi-room 4",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID4",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME4",type:"number",required:false,min:0,max:250,width:90},
+	], 
+	[
+	  {type:"comment",text:"Элемент Multi-room 5",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID5",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME5",type:"number",required:false,min:0,max:250,width:90},
+	], 
+  ]
+}
+*/
+
+#ifdef LAMP
+void lamp_off()
+{
+  setStatus(LAMP,0);
+}
+#endif 
+#ifdef FILE_MR
+void mr_play()
+{
+ #ifdef MR_ID1
+ #ifdef VOLUME1
+   setStatus(MR_ID1:30, {1, VOLUME1, 1, "FILE_MR"});
+ #endif
+ #endif
+ #ifdef MR_ID2
+ #ifdef VOLUME2
+   setStatus(MR_ID2:30, {1, VOLUME2, 1, "FILE_MR"});
+ #endif
+ #endif
+ #ifdef MR_ID3
+ #ifdef VOLUME3
+   setStatus(MR_ID3:30, {1, VOLUME3, 1, "FILE_MR"});
+ #endif
+ #endif
+ #ifdef MR_ID4
+ #ifdef VOLUME4
+   setStatus(MR_ID4:30, {1, VOLUME4, 1, "FILE_MR"});
+ #endif
+ #endif
+ #ifdef MR_ID5
+ #ifdef VOLUME5
+   setStatus(MR_ID5:30, {1, VOLUME5, 1, "FILE_MR"});
+ #endif
+ #endif
+}
+#endif
+ 
+V-ID/ITEM1
+{
+ #ifdef LAMP
+    setStatus(LAMP,1);
+	cancelDelayedCall(lamp_off);
+	delayedCall(lamp_off,PERIOD);
+  #endif  
+  #ifdef FILE_MR
+    mr_play();
+  #endif 	
+}

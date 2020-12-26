@@ -1,0 +1,86 @@
+/*
+{
+  "desc":"Счетчик электроэнергии СО-ЭА15-В",
+  "tag":"import-script",
+  "target":"RS485",
+  "selectArea":"true",
+  "name":"Счетчик электроэнергии СО-ЭА15-В",
+  "addItems":[
+    {"tag":"item", "id":"%TARGET%", "name":"NAME01", "sub-id":"%SUBID01%", "type":"virtual", "sub-type":"long-text", "length":"0"},  
+		],
+  "vars":[
+   	{"name":"RS485","type":"devices-list","required":"true","filter":["com-port"],"desc":"RS485"},
+	{"name":"SN01","type":"string","required":"true","min":"1","max":"12","filter":"0123456789",desc:"Серийный номер счетчика 1","defaultValue":"12120873"},
+	{"name":"NAME01","type":"string",required:true,min:1,max:"30","desc":"Имя счетчика","defaultValue":"Счетчик электроэнергии"},
+	{"name":"SID01","type":"hidden","value":"%SUBID01%"},
+  ]                       
+}
+*/
+
+u8 cntr = 0;
+u8 rd[10]={SN01&0xff,(SN01>>8)&0xff,(SN01>>16)&0xff,(SN01>>24)&0xff,5,10,0,0,32,0};
+u32 res[6];
+
+void ks_calc()
+{
+	u8 i;
+	u16 ks = 0;
+	
+	for (i=0;i<9;++i) {
+		ks= ks+rd[i];
+		if (ks>0xff) ks = (ks & 0xff) + 1;
+	}
+	rd[9] = ks & 0xff;
+}
+/*
+V-ID/142:203
+{
+	//setStatus(512:20,{115,0,0,0,9,11,15,5,21,5,11,30,30,252});
+	setStatus(RS485,{115,0,0,0,5,10,0,0,32,162});
+	if (opt(0)==0) rd[6] = 0;
+	else if (opt(0) == 1) rd[6] = 0x56;
+	
+	++cntr;
+	if (cntr>1) cntr = 0;
+	ks_calc();
+	setStatus(RS485,&rd);
+}
+*/
+V-ID/s:2
+{
+	if (cntr==0) rd[6] = 0;
+	else if (cntr == 1) rd[6] = 0x56;
+	
+	++cntr;
+	if (cntr>1) cntr = 0;
+	ks_calc();
+	setStatus(RS485,&rd);
+}
+
+V-ID/RS485
+{
+	u8 state[200];
+	u8 i;
+	for (i=0;i<200;++i) 
+			state[i] = 0;
+	/*setStatus(2002:32,{1,"receive"});
+	for (i=0;i<35;++i) 
+			sprintf(state+strlen(state),"%d ",opt[i]);
+	setStatus(142:212,&state);*/
+	
+	if (cntr==0) {
+		res[1] = opt(2) + (opt(3)<<8) + (opt(4)<<16) + (opt(5)<<24);
+		res[2] = opt(6) + (opt(7)<<8) + (opt(8)<<16) + (opt(9)<<24);
+		res[3] = opt(10) + (opt(11)<<8) + (opt(12)<<16) + (opt(13)<<24);
+		res[4] = opt(14) + (opt(15)<<8) + (opt(16)<<16) + (opt(17)<<24);
+		res[5] = opt(22) + (opt(23)<<8) + (opt(24)<<16) + (opt(25)<<24);
+		sprintf(state, "Показания: %d.%03d кВт/ч\10", res[0]/1000, res[0]%1000);
+		sprintf(state+strlen(state), "Мощность: %d.%02d Вт\10", res[1]/1000, res[1]/10%100);
+		sprintf(state+strlen(state), "Напряжение: %d.%02d В\10", res[2]/100, res[2]%100);
+		sprintf(state+strlen(state), "Ток фазы: %d.%02d A\10", res[3]/1000, res[3]/10%100);
+		sprintf(state+strlen(state), "Ток нейтр.: %d.%02d A\10", res[4]/1000, res[4]/10%100);
+		sprintf(state+strlen(state), "Частота: %d.%02d Гц", res[5]/100, res[5]%100);
+		setStatus(:SID01,&state);
+	}
+	if (cntr == 1) 	res[0] = opt(2) + (opt(3)<<8) + (opt(4)<<16) + (opt(5)<<24);
+}

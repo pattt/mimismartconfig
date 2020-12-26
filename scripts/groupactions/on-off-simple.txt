@@ -1,0 +1,581 @@
+/*
+{
+	desc:"Включить все, выключить все",
+	tag:"item",
+	selectArea:true,
+	target:"ITEM00",
+	vars:[
+		{name:"ITEM00",type:"devices-list",required:true,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 0",descWidth:100},
+		{name:"ITEM01",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 1",descWidth:100},
+		{name:"ITEM02",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 2",descWidth:100},
+		{name:"ITEM03",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 3",descWidth:100},
+		{name:"ITEM04",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 4",descWidth:100},
+		{name:"ITEM05",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 5",descWidth:100},
+		{name:"ITEM06",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 6",descWidth:100},
+		{name:"ITEM07",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 7",descWidth:100},
+		{name:"ITEM08",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 8",descWidth:100},
+		{name:"ITEM09",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 9",descWidth:100},
+		{name:"ITEM10",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 10",descWidth:100},
+		{name:"ITEM11",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 11",descWidth:100},
+		{name:"ITEM12",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 12",descWidth:100},
+		{name:"ITEM13",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 13",descWidth:100},
+		{name:"ITEM14",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 14",descWidth:100},
+		{name:"ITEM15",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 15",descWidth:100},
+		{name:"ITEM16",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 16",descWidth:100},
+		{name:"ITEM17",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 17",descWidth:100},
+		{name:"ITEM18",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 18",descWidth:100},
+		{name:"ITEM19",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 19",descWidth:100},
+		{name:"ITEM20",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 20",descWidth:100},
+		{name:"ITEM21",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 21",descWidth:100},
+		{name:"ITEM22",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 22",descWidth:100},
+		{name:"ITEM23",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","light-scheme","jalousie","gate","script","virtual"],desc:"Устройство 23",descWidth:100},
+		{type:"comment",text:"Задать воспроизведение 1 звукового файла (поле 1) на мультирум (поле 2) с указанной громкостью (поле 3) при включении:"},
+		{name:"ONMIDFILE1",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+		{name:"ONMIDNUM1",type:"number",required:false,width:70,min:200,max:300},
+		{name:"ONMIDVOL1",type:"number",required:false,width:70,min:0,max:250},
+		{type:"comment",text:"Задать воспроизведение 2 звукового файла (поле 1) на мультирум (поле 2) с указанной громкостью (поле 3) при включении:"},
+		{name:"ONMIDFILE2",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+		{name:"ONMIDNUM2",type:"number",required:false,width:70,min:200,max:300},
+		{name:"ONMIDVOL2",type:"number",required:false,width:70,min:0,max:250},
+		{name:"OFFMIDNUM1",type:"number",required:false,width:70,min:200,max:300,desc:"Выключить мультирум 1 при выключении",descWidth:250},
+		{name:"OFFMIDNUM2",type:"number",required:false,width:70,min:200,max:300,desc:"Выключить мультирум 2 при выключении",descWidth:250},
+		{name:["IRTVON1","IRVON1"],type:"irt",itemType:"remote-control",required:false,desc:"Команда ИК при включении 1",descWidth:200,width:800},
+		{name:["IRTVON2","IRVON2"],type:"irt",itemType:"remote-control",required:false,desc:"Команда ИК при включении 2",descWidth:200,width:800},
+		{name:["IRTVOFF1","IRVOFF1"],type:"irt",itemType:"remote-control",required:false,desc:"Команда ИК при выключении 1",descWidth:200,width:800},
+		{name:["IRTVOFF2","IRVOFF2"],type:"irt",itemType:"remote-control",required:false,desc:"Команда ИК при выключении 2",descWidth:200,width:800},
+		{name:"IRT1",type:"devices-list",required:false,width:400,filter:["ir-transmitter"],desc:"ИК передатчик",descWidth:100},
+		{name:"IRTCON1",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при включении 1",width:800},
+		{name:"IRTCON2",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при включении 2",width:800},
+		{name:"IRTCON3",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при включении 3",width:800},
+		{name:"IRTCOFF1",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при выключении 1",width:800},
+		{name:"IRTCOFF2",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при выключении 2",width:800},
+		{name:"IRTCOFF3",type:"string",required:false,filter:"A-Fa-f0-9",descWidth:250,desc:"Своя команда ИК при выключении 3",width:800},
+		[
+			{name:"HERCON1",type:"devices-list",required:false,width:400,filter:["door-sensor"],deskAlign:"top",desc:"Проверить геркон 1 (поле 1) и если открыто, воспроизвести звуковой файл (поле 2) на мультирум (поле 3) с указанной громкостью (поле 4) при выключении:"},
+			{name:"HERMIDFILE1",type:"string",required:false,width:300,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{name:"HERMIDNUM1",type:"number",required:false,width:40,min:200,max:300,width:100},
+			{name:"HERMIDVOL1",type:"number",required:false,width:40,min:0,max:250,width:100}
+		],
+		[
+			{name:"HERCON2",type:"devices-list",required:false,width:400,filter:["door-sensor"],deskAlign:"top",desc:"Проверить геркон 2 (поле 1) и если открыто, воспроизвести звуковой файл (поле 2) на мультирум (поле 3) с указанной громкостью (поле 4) при выключении:"},
+			{name:"HERMIDFILE2",type:"string",required:false,width:300,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{name:"HERMIDNUM2",type:"number",required:false,width:40,min:200,max:300,width:100},
+			{name:"HERMIDVOL2",type:"number",required:false,width:40,min:0,max:250,width:100}
+		],
+		{name:"MODE",type:"number",required:true,defaultValue:1,width:70,min:1,max:2,desc:"Режим: 1 - только выключение, 2 - Только включение",descWidth:250},
+		{name:"TMS",type:"number",required:true,defaultValue:500,width:70,min:0,max:65535,desc:"Время паузы, мсек",descWidth:250}
+	]
+}
+*/
+
+#ifdef ITEM00
+#ifdef MODE
+/*
+u8 m[] = {0xFF
+#ifdef ITEM06
+,0xFF
+#endif
+#ifdef ITEM12
+,0xFF
+#endif
+#ifdef ITEM18
+,0xFF
+#endif
+};
+*/
+u8 getst(u8 n)
+{
+	return 1; // ((m[n>>3]>>(n&7))&1);
+}
+/*
+void setst(u8 n, u8 newst)
+{
+	if (newst)
+	m[n>>3] |= 1<<(n&7);
+	else
+	m[n>>3] &= ~(1<<(n&7));
+}
+*/
+#if MODE == 2
+
+#ifdef IRT1
+
+#ifdef IRTCON1
+#ifdef IRTCON2
+#ifdef IRTCON3
+void on_step_irtcon3()
+{
+	setStatus(IRT1, 0xIRTCON3);
+}
+#endif
+
+void on_step_irtcon2()
+{
+	setStatus(IRT1, 0xIRTCON2);
+	#ifdef IRTCON3
+	delayedCallMs(on_step_irtcon3, TMS);
+	#endif
+}
+#endif
+
+void on_step_irtcon1()
+{
+	setStatus(IRT1, 0xIRTCON1);
+	#ifdef IRTCON2
+	delayedCallMs(on_step_irtcon2, TMS);
+	#endif
+}
+#endif
+
+#endif
+
+#ifdef IRTVON1
+#ifdef IRTVON2
+void on_step_irtvon2()
+{
+	setStatus(IRVON2, 0xIRTVON2);
+	#ifdef IRT1
+		#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+		#endif
+	#endif
+}
+#endif
+
+void on_step_irtvon1()
+{
+	setStatus(IRVON1, 0xIRTVON1);
+	#ifdef IRTVON2
+	delayedCallMs(on_step_irtvon2, TMS);
+	#else
+		#ifdef IRT1
+			#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+#ifdef ITEM06
+#ifdef ITEM12
+#ifdef ITEM18
+void on_step_3()
+{
+	setStatus(ITEM18, getst(18));
+	#ifdef ITEM19
+	setStatus(ITEM19, getst(19));
+	#endif
+	#ifdef ITEM20
+	setStatus(ITEM20, getst(20));
+	#endif
+	#ifdef ITEM21
+	setStatus(ITEM21, getst(21));
+	#endif
+	#ifdef ITEM22
+	setStatus(ITEM22, getst(22));
+	#endif
+	#ifdef ITEM23
+	setStatus(ITEM23, getst(23));
+	#endif
+	#ifdef IRTVON1
+	delayedCallMs(on_step_irtvon1, TMS);
+	#else
+		#ifdef IRT1
+			#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+void on_step_2()
+{
+	setStatus(ITEM12, getst(12));
+	#ifdef ITEM13
+	setStatus(ITEM13, getst(13));
+	#endif
+	#ifdef ITEM14
+	setStatus(ITEM14, getst(14));
+	#endif
+	#ifdef ITEM15
+	setStatus(ITEM15, getst(15));
+	#endif
+	#ifdef ITEM16
+	setStatus(ITEM16, getst(16));
+	#endif
+	#ifdef ITEM17
+	setStatus(ITEM17, getst(17));
+	#endif
+	#ifdef ITEM18
+	delayedCallMs(on_step_3, TMS);
+	#else
+		#ifdef IRTVON1
+	delayedCallMs(on_step_irtvon1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+void on_step_1()
+{
+	setStatus(ITEM06, getst(6));
+	#ifdef ITEM07
+	setStatus(ITEM07, getst(7));
+	#endif
+	#ifdef ITEM08
+	setStatus(ITEM08, getst(8));
+	#endif
+	#ifdef ITEM09
+	setStatus(ITEM09, getst(9));
+	#endif
+	#ifdef ITEM10
+	setStatus(ITEM10, getst(10));
+	#endif
+	#ifdef ITEM11
+	setStatus(ITEM11, getst(11));
+	#endif
+	#ifdef ONMIDNUM2
+		#ifdef ONMIDFILE2
+			#ifdef ONMIDVOL2
+	//setStatus(2044:1, {1, ONMIDNUM2, "ONMIDFILE2", ONMIDVOL2});
+	setStatus(ONMIDNUM2:30, {1, ONMIDVOL2, 0, "ONMIDFILE2"});
+			#endif
+		#else
+			#ifdef ONMIDVOL2
+	{
+		//setStatus(2044:48, {ONMIDNUM2, ONMIDVOL2});
+		setStatus(ONMIDNUM2:30, {4,ONMIDVOL2});
+		//setStatus(2044:16, ONMIDNUM2);
+		setStatus(ONMIDNUM2:30, 3);
+	}
+			#else
+	//setStatus(2044:16, ONMIDNUM2);
+	setStatus(ONMIDNUM2:30, 3);
+			#endif
+		#endif
+	#endif
+	#ifdef ITEM12
+	delayedCallMs(on_step_2, TMS);
+	#else
+		#ifdef IRTVON1
+	delayedCallMs(on_step_irtvon1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+void on_step_0()
+{
+	setStatus(ITEM00, getst(0));
+	#ifdef ITEM01
+	setStatus(ITEM01, getst(1));
+	#endif
+	#ifdef ITEM02
+	setStatus(ITEM02, getst(2));
+	#endif
+	#ifdef ITEM03
+	setStatus(ITEM03, getst(3));
+	#endif
+	#ifdef ITEM04
+	setStatus(ITEM04, getst(4));
+	#endif
+	#ifdef ITEM05
+	setStatus(ITEM05, getst(5));
+	#endif
+	#ifdef ONMIDNUM1
+		#ifdef ONMIDFILE1
+			#ifdef ONMIDVOL1
+	//setStatus(2044:1, {1, ONMIDNUM1, "ONMIDFILE1", ONMIDVOL1});
+	setStatus(ONMIDNUM1:30, {1, ONMIDVOL1, 0, "ONMIDFILE1"});
+			#endif
+		#else
+			#ifdef ONMIDVOL1
+	{
+		//setStatus(2044:48, {ONMIDNUM1, ONMIDVOL1});
+		setStatus(ONMIDNUM1:30, {4,ONMIDVOL1});
+		//setStatus(2044:16, ONMIDNUM1);
+		setStatus(ONMIDNUM1:30,3);
+	}
+			#else
+	//setStatus(2044:16, ONMIDNUM1);
+	setStatus(ONMIDNUM1:30,3);
+			#endif
+		#endif
+	#endif
+	#ifdef ITEM06
+	delayedCallMs(on_step_1, TMS);
+	#else
+		#ifdef IRTVON1
+	delayedCallMs(on_step_irtvon1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCON1
+	delayedCallMs(on_step_irtcon1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+
+#else
+	#if MODE == 1
+
+#ifdef IRT1
+
+#ifdef IRTCOFF1
+#ifdef IRTCOFF2
+#ifdef IRTCOFF3
+void off_step_irtcoff3()
+{
+	setStatus(IRT1, 0xIRTCOFF3);
+}
+#endif
+
+void off_step_irtcoff2()
+{
+	setStatus(IRT1, 0xIRTCOFF2);
+	#ifdef IRTCOFF3
+	delayedCallMs(off_step_irtcoff3, TMS);
+	#endif
+}
+#endif
+
+void off_step_irtcoff1()
+{
+	setStatus(IRT1, 0xIRTCOFF1);
+	#ifdef IRTCOFF2
+	delayedCallMs(off_step_irtcoff2, TMS);
+	#endif
+}
+#endif
+
+#ifdef IRTVOFF1
+#ifdef IRTVOFF2
+void off_step_irtvoff2()
+{
+	setStatus(IRVOFF2, 0xIRTVOFF2);
+	#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+	#endif
+}
+#endif
+
+void off_step_irtvoff1()
+{
+	setStatus(IRVOFF1, 0xIRTVOFF1);
+	#ifdef IRTVOFF2
+	delayedCallMs(off_step_irtvoff2, TMS);
+	#else
+		#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+		#endif
+	#endif
+}
+#endif
+
+#endif
+
+#ifdef ITEM06
+#ifdef ITEM12
+#ifdef ITEM18
+void off_step_3()
+{
+	setStatus(ITEM18, 0);
+	#ifdef ITEM19
+	setStatus(ITEM19, 0);
+	#endif
+	#ifdef ITEM20
+	setStatus(ITEM20, 0);
+	#endif
+	#ifdef ITEM21
+	setStatus(ITEM21, 0);
+	#endif
+	#ifdef ITEM22
+	setStatus(ITEM22, 0);
+	#endif
+	#ifdef ITEM23
+	setStatus(ITEM23, 0);
+	#endif
+	#ifdef HERCON2
+		#ifdef HERMIDNUM2
+			#ifdef HERMIDFILE2
+				#ifdef HERMIDVOL2
+	if ([HERCON2])
+	//setStatus(2044:1, {1, HERMIDNUM2, "HERMIDFILE2", HERMIDVOL2});
+	setStatus(HERMIDNUM2:30, {1, HERMIDVOL2, 0, "HERMIDFILE2"});
+				#endif
+			#endif
+		#endif
+	#endif
+	#ifdef IRTVOFF1
+	delayedCallMs(off_step_irtvoff1, TMS);
+	#else
+		#ifdef IRT1
+			#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+void off_step_2()
+{
+	setStatus(ITEM12, 0);
+	#ifdef ITEM13
+	setStatus(ITEM13, 0);
+	#endif
+	#ifdef ITEM14
+	setStatus(ITEM14, 0);
+	#endif
+	#ifdef ITEM15
+	setStatus(ITEM15, 0);
+	#endif
+	#ifdef ITEM16
+	setStatus(ITEM16, 0);
+	#endif
+	#ifdef ITEM17
+	setStatus(ITEM17, 0);
+	#endif
+	#ifdef HERCON1
+		#ifdef HERMIDNUM1
+			#ifdef HERMIDFILE1
+				#ifdef HERMIDVOL1
+	if ([HERCON1])
+	//setStatus(2044:1, {1, HERMIDNUM1, "HERMIDFILE1", HERMIDVOL1});
+	setStatus(HERMIDNUM1:30, {1, HERMIDVOL1, 0, "HERMIDFILE1"});
+				#endif
+			#endif
+		#endif
+	#endif
+	#ifdef ITEM18
+	delayedCallMs(off_step_3, TMS);
+	#else
+		#ifdef IRTVOFF1
+	delayedCallMs(off_step_irtvoff1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+#endif
+
+void off_step_1()
+{
+	setStatus(ITEM06, 0);
+	#ifdef ITEM07
+	setStatus(ITEM07, 0);
+	#endif
+	#ifdef ITEM08
+	setStatus(ITEM08, 0);
+	#endif
+	#ifdef ITEM09
+	setStatus(ITEM09, 0);
+	#endif
+	#ifdef ITEM10
+	setStatus(ITEM10, 0);
+	#endif
+	#ifdef ITEM11
+	setStatus(ITEM11, 0);
+	#endif
+	#ifdef OFFMIDNUM2
+	//setStatus(2044:17, OFFMIDNUM2);
+	setStatus(OFFMIDNUM2:30,2);
+	#endif
+	#ifdef ITEM12
+	delayedCallMs(off_step_2, TMS);
+	#else
+		#ifdef IRTVOFF1
+	delayedCallMs(off_step_irtvoff1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+#endif
+	
+void off_step_0()
+{
+	setStatus(ITEM00, 0);
+	#ifdef ITEM01
+	setStatus(ITEM01, 0);
+	#endif
+	#ifdef ITEM02
+	setStatus(ITEM02, 0);
+	#endif
+	#ifdef ITEM03
+	setStatus(ITEM03, 0);
+	#endif
+	#ifdef ITEM04
+	setStatus(ITEM04, 0);
+	#endif
+	#ifdef ITEM05
+	setStatus(ITEM05, 0);
+	#endif
+	#ifdef OFFMIDNUM1
+	//setStatus(2044:17, OFFMIDNUM1);
+	setStatus(OFFMIDNUM1:30,2);
+	#endif
+	#ifdef ITEM06
+	delayedCallMs(off_step_1, TMS);
+	#else
+		#ifdef IRTVOFF1
+	delayedCallMs(off_step_irtvoff1, TMS);
+		#else
+			#ifdef IRT1
+				#ifdef IRTCOFF1
+	delayedCallMs(off_step_irtcoff1, TMS);
+				#endif
+			#endif
+		#endif
+	#endif
+}
+
+void ofx()
+{
+	setStatus(V-ADDR, 0);
+}
+	#endif
+#endif
+
+V-ID/V-ADDR
+{
+	if (opt(0) == 1)
+	{
+		#if MODE == 2
+		if (opt(1) != 2)
+		{
+			on_step_0();
+		}
+		#else
+		off_step_0();
+		delayedCall(ofx,1);
+		#endif
+	}
+	
+}
+#endif
+#endif
+

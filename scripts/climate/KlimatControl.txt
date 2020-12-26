@@ -1,0 +1,124 @@
+/*
+{
+  desc:"Скрипт для кондиционирования",
+  tag:"item",
+  target:"COND",
+  selectArea:true,
+  vars:[
+	{name:"COND", type:"devices-list", required:true, filter:["conditioner"], descWidth:370, desc:"Кондиционер"},
+	{name:"VALVEHEATING", type:"devices-list", required:true, filter:["valve-heating"], desc:"Отопление", descWidth:370},
+	{name:"TEMPERATURESENSOR", type:"devices-list", required:true, filter:["temperature-sensor"], desc:"Датчик температуры в помещении", descWidth:370},
+	{name:"STREETTEMPERATURESENSOR", type:"devices-list", required:true, filter:["temperature-sensor"], desc:"Датчик температуры на улице", descWidth:370},
+	{name:"CHOOSETEMP", type:"number", required:false, defaultValue:-10, min:-30, max:20, desc:"Порог температуры на улице для работы климат-контроля", descWidth:370},	
+	{name:"CHECKSTREETTEMP", type:"checkbox", checked:false, required:true, desc:"Включить климат-контроль, не смотря на температуру на улице", checkValue:"1", uncheckValue:"0", descWidth:370}
+  ]
+}
+*/
+
+u8 n = 0;
+u8 b[5] = {0x01, 0x0A, 0x00, 0x00, 0x01};
+i32 choose = CHOOSETEMP;
+i32 tempStreet = 0;
+i32 tempRoom = 0;
+i32 tempValve = 0;
+
+i32 i8datchik_to_i32(i8 chislo)
+{
+	return (chislo&0x80) ? 0xFFFFFF00 | (chislo+1) : chislo;
+}
+
+void func()
+{
+	tempRoom = i8datchik_to_i32([TEMPERATURESENSOR.1]);
+	tempValve = i8datchik_to_i32([VALVEHEATING.2]);
+	if(tempValve-tempRoom>=3)
+	{
+		b[0]=0x31;
+		b[1]=0x0E;
+		b[4]=0x03;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom>=2)
+	{
+		b[0]=0x31;
+		b[1]=0x0E;
+		b[4]=0x02;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom>=1)
+	{
+		b[0]=0x31;
+		b[1]=0x0E;
+		b[4]=0x01;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom==0)
+	{
+		b[0]=0x30;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom<=-3)
+	{
+		b[0]=0x11;
+		b[1]=0x02;
+		b[4]=0x03;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom<=-2)
+	{
+		b[0]=0x11;
+		b[1]=0x02;
+		b[4]=0x02;
+		setStatus(COND, &b);
+	}
+	else if(tempValve-tempRoom<=-1)
+	{
+		b[0]=0x11;
+		b[1]=0x02;
+		b[4]=0x01;
+		setStatus(COND, &b);
+	}
+}
+
+void text()
+{
+	if(!n)
+	{
+		setStatus(2047:32, {1, "Низкая температура на улице! Невозможно включить кондиционер!"});
+		n = 1;
+	}
+}
+
+void checkCold()
+{
+	if(CHECKSTREETTEMP==0)
+	{
+		func();
+	}
+	else
+	{
+		tempStreet = i8datchik_to_i32([STREETTEMPERATURESENSOR.1]);
+		if(tempStreet>choose)
+			func();
+		else 
+			text();
+	}
+}
+
+V-ID/V-ADDR
+{
+	if(opt(0))
+	{
+		//setStatus(1000:102, "VALVEHEATING\0Комфорт");
+		n = 0;
+		checkCold();
+	}
+}
+
+V-ID/m:1
+{
+	if([V-ADDR])
+	{
+		checkCold();
+	}
+}

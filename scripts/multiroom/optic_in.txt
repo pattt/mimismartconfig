@@ -1,0 +1,37 @@
+/*
+{
+  desc:"Скрипт для включения проигрывания с оптического входа медиаточки",
+  tag:"item",
+  target:"id",
+  selectArea:true,
+  vars:[
+	{name:"id",type:"number",required:true,defaultValue:300,min:1,max:1000,desc:"Укажите ID устройства на котором будет располагаться скрипт",descWidth:380,width:90},
+	[
+	  {type:"comment",text:"Элемент Multi-room",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID",type:"number",required:true,descWidth:150,min:200,max:300,width:130},
+	  {name:"VOLUME",type:"number",required:true,min:0,max:250,width:90},
+	],  
+	{name:"PAUSE_EN",type:"checkbox",checked:true,descWidth:200,desc:"Включение оптического входа при нажатии на паузу"},  
+	{name:"system",type:"hidden",value:"yes"},
+  ]
+}
+*/
+
+
+V-ID/V-ADDR 
+{
+	if(opt(0)==1) 
+		setStatus(MR_ID:30, {1, VOLUME, 0, 'mr://MR_ID:33'}); 
+	else setStatus(MR_ID:30, 0);
+}
+
+#ifdef PAUSE_EN
+V-ID/s:1 
+{
+	if([MR_ID:30.0]==0x04)  setStatus(MR_ID:30, {1, VOLUME, 0, 'mr://MR_ID:33'}); 
+	//else setStatus(MR_ID:30, 3);
+}
+#endif

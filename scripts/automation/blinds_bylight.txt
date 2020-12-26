@@ -1,0 +1,146 @@
+/*
+{
+	desc:"Управление шторами по освещенности, и/или освещению, и/или времени",
+	tag:"item",
+	selectArea:true,
+	target:"LIGHT1",
+	vars:[
+	    {type:"comment",text:"Закрывать/открывать шторы по",width:200},
+		{name:"ILUM1",type:"devices-list",required:false, filter:["illumination-sensor"],desc:"датчику освещенности",descWidth:150},
+		{name:"PERIOD",type:"number",required:false,defaultValue:"60",width:100,min:0,max:3600,desc:"если за период, секунд",descWidth:150},
+		{name:"LIGHT_LEVEL_OPEN",type:"number",required:false,defaultValue:"0",width:100,min:0,max:100,desc:"был превышен уровень освещенности, для открытия штор, %",descWidth:150},
+		{name:"LIGHT_LEVEL_CLOSE",type:"number",required:false,defaultValue:"0",width:100,min:0,max:100,desc:"уровень освещенности не превышал, для закрытия штор, %",descWidth:150},		
+		{type:"comment",text:"открываются только в период, когда должны быть открыты, закрываются в период, когда должны быть закрыты (если периоды заданы)",width:600},
+		{type:"comment",text:"Период 1, когда шторы должны быть закрыты",width:200},
+		{name:"DAYS1",type:"weekday",required:false,desc:"Дни недели"},	
+		{name:["TIME_FROM1"],type:"time",required:false,desc:"с"},
+		{name:["TIME_TO1"],type:"time",required:false,desc:"по"},
+		{type:"comment",text:"Период 2, когда шторы должны быть закрыты",width:200},
+		{name:"DAYS2",type:"weekday",required:false,desc:"Дни недели"},	
+		{name:["TIME_FROM2"],type:"time",required:false,desc:"с"},
+		{name:["TIME_TO2"],type:"time",required:false,desc:"по"},
+		{name:"LIGHT1",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"закрывать шторы при включении:"},
+		{name:"LIGHT2",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"закрывать шторы при включении:"},
+				
+		{name:"ITEM1",type:"devices-list",required:true, filter:["jalousie"],desc:"Штора1"},
+		{name:"ITEM2",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора2"},
+		{name:"ITEM3",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора3"},
+		{name:"ITEM4",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора4"},
+		{name:"ITEM5",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора5"},		
+	]
+}
+*/
+
+#ifdef DAYS1
+#ifdef TIME_FROM1
+#ifdef TIME_TO1
+#ifdef PERIOD
+V-ID/s:PERIOD//automation by time
+#else
+V-ID/m:1//automation by time
+#endif
+{
+  if ([V-ADDR]==1){
+  #ifdef LIGHT1
+  if (([LIGHT1.0]==1)#ifdef LIGHT2 || ([LIGHT2.0]==1) #endif)  {//close
+    if (([ITEM1]==1) || ([ITEM1]>3)) setStatus(ITEM1,0); 
+	#ifdef ITEM2 if (([ITEM2]==1) || ([ITEM2]>3)) setStatus(ITEM2,0); #endif
+	#ifdef ITEM3 if (([ITEM3]==1) || ([ITEM3]>3)) setStatus(ITEM3,0); #endif
+	#ifdef ITEM4 if (([ITEM4]==1) || ([ITEM4]>3)) setStatus(ITEM4,0); #endif
+	#ifdef ITEM5 if (([ITEM5]==1) || ([ITEM5]>3)) setStatus(ITEM5,0); #endif
+  }	else
+  #endif
+  if ((timeInRange(TIME_FROM1-TIME_TO1|DAYS1)) #ifdef TIME_FROM2 #ifdef TIME_TO2 #ifdef DAYS2 || (timeInRange(TIME_FROM2-TIME_TO2|DAYS2)) #endif #endif #endif){
+   //close if open and bad illumination
+   if ((([ITEM1]==1) || ([ITEM1]>3)) #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_CLOSE && (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8))#endif #endif #endif) setStatus(ITEM1,0); 
+   #ifdef ITEM2 if ((([ITEM2]==1) || ([ITEM2]>3)) #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_CLOSE && (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8))#endif #endif #endif) setStatus(ITEM2,0); #endif
+   #ifdef ITEM3 if ((([ITEM3]==1) || ([ITEM3]>3)) #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_CLOSE && (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8))#endif #endif #endif) setStatus(ITEM3,0); #endif
+   #ifdef ITEM4 if ((([ITEM4]==1) || ([ITEM4]>3)) #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_CLOSE && (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8))#endif #endif #endif) setStatus(ITEM4,0); #endif
+   #ifdef ITEM5 if ((([ITEM5]==1) || ([ITEM5]>3)) #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_CLOSE && (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8))#endif #endif #endif) setStatus(ITEM5,0); #endif
+  }
+  else if ((!timeInRange(TIME_FROM1-TIME_TO1|DAYS1)) #ifdef TIME_FROM2 #ifdef TIME_TO2 #ifdef DAYS2 || (!timeInRange(TIME_FROM2-TIME_TO2|DAYS2)) #endif #endif #endif)
+  {
+   //open if close and good illumination
+   if ((([ITEM1]==0) || ([ITEM1]>3))  #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_OPEN && (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8))#endif #endif #endif) setStatus(ITEM1,1);  
+   #ifdef ITEM2 if ((([ITEM2]==0) || ([ITEM2]>3))  #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_OPEN && (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8))#endif #endif #endif) setStatus(ITEM2,1);  #endif
+   #ifdef ITEM3 if ((([ITEM3]==0) || ([ITEM3]>3))  #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_OPEN && (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8))#endif #endif #endif) setStatus(ITEM3,1);  #endif
+   #ifdef ITEM4 if ((([ITEM4]==0) || ([ITEM4]>3))  #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_OPEN && (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8))#endif #endif #endif) setStatus(ITEM4,1);  #endif
+   #ifdef ITEM5 if ((([ITEM5]==0) || ([ITEM5]>3))  #ifdef ILUM1 #ifdef PERIOD  #ifdef LIGHT_LEVEL_OPEN && (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8))#endif #endif #endif) setStatus(ITEM5,1);  #endif
+  }
+  }//if ([V-ADDR]==1){
+}
+#endif
+#endif
+#endif
+
+#ifndef DAYS1
+#ifndef TIME_FROM1
+#ifndef TIME_TO1
+#ifdef ILUM1 
+#ifdef PERIOD  
+#ifdef LIGHT_LEVEL_CLOSE
+#ifdef LIGHT_LEVEL_OPEN 
+V-ID/s:PERIOD//automation by ilum
+{
+  if ([V-ADDR]==1){
+  #ifdef LIGHT1
+  if (([LIGHT1.0]==1)#ifdef LIGHT2 || ([LIGHT2.0]==1) #endif)  {//close
+    if (([ITEM1]==1) || ([ITEM1]>3)) setStatus(ITEM1,0); 
+	#ifdef ITEM2 if (([ITEM2]==1) || ([ITEM2]>3)) setStatus(ITEM2,0); #endif
+	#ifdef ITEM3 if (([ITEM3]==1) || ([ITEM3]>3)) setStatus(ITEM3,0); #endif
+	#ifdef ITEM4 if (([ITEM4]==1) || ([ITEM4]>3)) setStatus(ITEM4,0); #endif
+	#ifdef ITEM5 if (([ITEM5]==1) || ([ITEM5]>3)) setStatus(ITEM5,0); #endif
+  }	else
+  #endif
+  if (([ILUM1:avgs:PERIOD])<(LIGHT_LEVEL_CLOSE<<8)){
+   //close if open and bad illumination
+   if (([ITEM1]==1) || ([ITEM1]>3)) setStatus(ITEM1,0); 
+   #ifdef ITEM2 if (([ITEM2]==1) || ([ITEM2]>3)) setStatus(ITEM2,0); #endif
+   #ifdef ITEM3 if (([ITEM3]==1) || ([ITEM3]>3)) setStatus(ITEM3,0); #endif
+   #ifdef ITEM4 if (([ITEM4]==1) || ([ITEM4]>3)) setStatus(ITEM4,0); #endif
+   #ifdef ITEM5 if (([ITEM5]==1) || ([ITEM5]>3)) setStatus(ITEM5,0); #endif
+  }
+  else if (([ILUM1:avgs:PERIOD])>(LIGHT_LEVEL_OPEN<<8)) 
+  {
+   //open if close and good illumination
+   if (([ITEM1]==0) || ([ITEM1]>3)) setStatus(ITEM1,1);  
+   #ifdef ITEM2 if (([ITEM2]==0) || ([ITEM2]>3)) setStatus(ITEM2,1);  #endif
+   #ifdef ITEM3 if (([ITEM3]==0) || ([ITEM3]>3)) setStatus(ITEM3,1);  #endif
+   #ifdef ITEM4 if (([ITEM4]==0) || ([ITEM4]>3)) setStatus(ITEM4,1);  #endif
+   #ifdef ITEM5 if (([ITEM5]==0) || ([ITEM5]>3)) setStatus(ITEM5,1);  #endif
+  }
+  }//if ([V-ADDR]==1)
+}
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+
+#ifdef LIGHT1
+V-ID/LIGHT1
+{
+  if ((opt(0)) && ([V-ADDR]==1) #ifdef LIGHT2 && ([LIGHT2.0]==0) #endif)  {//close
+    if (([ITEM1]==1) || ([ITEM1]>3)) setStatus(ITEM1,0); 
+	#ifdef ITEM2 if (([ITEM2]==1) || ([ITEM2]>3)) setStatus(ITEM2,0); #endif
+	#ifdef ITEM3 if (([ITEM3]==1) || ([ITEM3]>3)) setStatus(ITEM3,0); #endif
+	#ifdef ITEM4 if (([ITEM4]==1) || ([ITEM4]>3)) setStatus(ITEM4,0); #endif
+	#ifdef ITEM5 if (([ITEM5]==1) || ([ITEM5]>3)) setStatus(ITEM5,0); #endif
+  }	
+}
+#endif
+
+#ifdef LIGHT2
+V-ID/LIGHT2
+{
+  if ((opt(0)) && ([V-ADDR]==1) #ifdef LIGHT1 && ([LIGHT1.0]==0) #endif) {//close
+    if (([ITEM1]==1) || ([ITEM1]>3)) setStatus(ITEM1,0);
+	#ifdef ITEM2 if (([ITEM2]==1) || ([ITEM2]>3)) setStatus(ITEM2,0); #endif
+	#ifdef ITEM3 if (([ITEM3]==1) || ([ITEM3]>3)) setStatus(ITEM3,0); #endif
+	#ifdef ITEM4 if (([ITEM4]==1) || ([ITEM4]>3)) setStatus(ITEM4,0); #endif
+	#ifdef ITEM5 if (([ITEM5]==1) || ([ITEM5]>3)) setStatus(ITEM5,0); #endif
+  }	
+}
+#endif

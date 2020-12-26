@@ -1,0 +1,460 @@
+/*
+{
+  desc:"Уведомление по SMS, MR, CALL, Interface",
+  tag:"item",  
+  selectArea:true,  
+  vars:[    
+    {name:"PERIOD_WAIT",type:"number",required:true,defaultValue:0,min:0,max:3600,descWidth:270,width:70,desc:"Время задержки срабатывания, в секундах"},
+	[
+	  {type:"comment",text:"Номер телефона 1",width:140},
+	  {type:"comment",text:"SMS",width:25},
+	  {type:"comment",text:"CALL",width:50},
+	], 
+	[	  
+	  {name:"NUMBER1",type:"string",required:false, filter:"+1234567890",min:10,max:13,width:150}, 
+	  {name:"SMS1_ON",type:"checkbox",checked:true,width:50},
+	  {name:"CALL1_ON",type:"checkbox",checked:true,width:50}, 
+	], 
+	[
+	  {type:"comment",text:"Номер телефона 2",width:140},
+	  {type:"comment",text:"SMS",width:25},
+	  {type:"comment",text:"CALL",width:50},
+	], 
+	[	  
+	  {name:"NUMBER2",type:"string",required:false, filter:"+1234567890",min:10,max:13,width:150}, 
+	  {name:"SMS2_ON",type:"checkbox",checked:true,width:50},
+	  {name:"CALL2_ON",type:"checkbox",checked:true,width:50}, 
+	], 
+	[
+	  {type:"comment",text:"Номер телефона 3",width:140},
+	  {type:"comment",text:"SMS",width:25},
+	  {type:"comment",text:"CALL",width:50},
+	], 
+	[	  
+	  {name:"NUMBER3",type:"string",required:false, filter:"+1234567890",min:10,max:13,width:150}, 
+	  {name:"SMS3_ON",type:"checkbox",checked:true,width:50},
+	  {name:"CALL3_ON",type:"checkbox",checked:true,width:50}, 
+	], 
+	[
+	  {type:"comment",text:"Элемент Multi-room 1",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID1",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME1",type:"number",required:false,min:0,max:250,width:90},
+	],  
+	[
+	  {type:"comment",text:"Элемент Multi-room 2",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID2",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME2",type:"number",required:false,min:0,max:250,width:90},
+	],  
+	[
+	  {type:"comment",text:"Элемент Multi-room 3",width:130},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID3",type:"number",required:false,descWidth:150,width:130},
+	  {name:"VOLUME3",type:"number",required:false,min:0,max:250,width:90},
+	],  
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+    {type:"comment",text:"Уведомления по включению скрипта",width:200},    
+    {name:"SMS_FIRST",type:"checkbox",checked:false,descWidth:50,desc:"SMS"},  	
+	{name:"INTERFACE_FIRST",type:"checkbox",checked:false,descWidth:50,desc:"Interface"},
+    {name:"TEXT_SMS1",type:"string",required:false, max:70,width:600, descWidth:150, desc:"Текст сообщения"},
+	{name:"CALL_FIRST",type:"checkbox",checked:false,descWidth:50,desc:"CALL"}, 
+	{name:"FILE_CALL1",type:"string",required:false, max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR_FIRST",type:"checkbox",checked:false,descWidth:70,desc:"Multi-room"},    
+	{name:"FILE_MR1",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения (дожен быть на медиасервере)"},
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{type:"comment",text:"Повторные уведомления",width:200},
+	{name:"PERIOD_REP",type:"number",required:true,defaultValue:60,min:0,max:360,descWidth:400,width:70,desc:"Время через которое необходимо повторить уведомление, минут"},    
+    {name:"SMS_REP",type:"checkbox",checked:false,descWidth:70,desc:"SMS"},  	
+	{name:"INTERFACE_REP",type:"checkbox",checked:false,descWidth:70,desc:"Interface"},    
+    {name:"CALL_REP",type:"checkbox",checked:false,descWidth:70,desc:"CALL"}, 	
+	{name:"MR_REP",type:"checkbox",checked:false,descWidth:70,desc:"Multi-room"}, 	
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{type:"comment",text:"Уведомления по отключению скрипта",width:200},
+    {name:"SMS_LAST",type:"checkbox",checked:false,descWidth:50,desc:"SMS"},  	
+	{name:"INTERFACE_LAST",type:"checkbox",checked:false,descWidth:50,desc:"Interface"},
+    {name:"TEXT_SMSLAST",type:"string",required:false, max:70, descWidth:150,width:600, desc:"Текст сообщения"},
+    {name:"CALL_LAST",type:"checkbox",checked:false,descWidth:50,desc:"CALL"}, 
+	{name:"FILE_CALLLAST",type:"string",required:false, max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR_LAST",type:"checkbox",checked:false,descWidth:70,desc:"Multi-room"}, 
+	{name:"FILE_MRLAST",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения (дожен быть на медиасервере)"},
+	{name:"system",type:"hidden",value:"yes"}
+  ]
+}
+*/
+//ignoreEncoding
+u8 is_send=0;
+#if PERIOD_REP==0 
+#else
+u8 is_rep_send=0;
+#endif
+
+#if PERIOD_WAIT==0 
+#else
+u8 delay_first_activated = 0; 
+u8 delay_last_activated = 0;
+#endif
+
+/*
+#ifdef TEXT_SMS1 
+ u8 sms_int1[] = "\01 TEXT_SMS1";
+ u8 sms1[] = toUcs2(65001, "TEXT_SMS1");
+#endif
+#ifdef TEXT_SMSLAST 
+ u8 sms_int_last[] = "\01 TEXT_SMSLAST";
+ u8 sms_last[] = toUcs2(65001, "TEXT_SMSLAST");
+#endif
+#ifdef NUMBER1
+ u8 number1[] = "NUMBER1";
+#endif
+#ifdef NUMBER2
+ u8 number2[] = "NUMBER2";
+#endif
+#ifdef NUMBER3
+ u8 number3[] = "NUMBER3";
+#endif
+#ifdef FILE_CALL1
+ u8 file_call1[] = "FILE_CALL1";
+#endif
+#ifdef FILE_CALLLAST
+ u8 file_call_last[] = "FILE_CALLLAST";
+#endif
+
+#ifdef FILE_MR1
+ u8 file_mr1[] = "FILE_MR1";
+#endif
+#ifdef FILE_MRLAST
+ u8 file_mr_last[] = "FILE_MRLAST";
+#endif
+
+void send_sms(u8 *nom,u8 *text)
+{
+  gsmSendSms(nom, text);
+}
+
+void call(u8 *nom,u8 *file)
+{
+  gsmSendFile(nom, file);
+}
+*/
+/*void send_interface(u8* text)
+{
+  setStatus(2047:32, text);
+}
+
+void send_mr(u8 id,u8 *file,u8 vol)
+{
+  setStatus(2044:1, {1,id, file, vol});
+}*/
+
+#if PERIOD_REP==0 
+#else
+void send_repeat_notices()
+{
+  #ifdef TEXT_SMS1
+  #ifdef SMS_REP
+   #ifdef SMS1_ON
+    #ifdef NUMBER1
+     // send_sms(&number1, &sms1);
+	 setStatus(1055:17, {1, 0, 10, 'NUMBER1#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+   #ifdef SMS2_ON
+    #ifdef NUMBER2
+      //send_sms(&number2, &sms1);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER2#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+   #ifdef SMS3_ON
+    #ifdef NUMBER3
+      //send_sms(&number3, &sms1);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER3#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+  #endif
+ #endif
+ 
+ #ifdef INTERFACE_REP
+ #ifdef TEXT_SMS1
+   //setStatus(2047:32, &sms_int1);
+   setStatus(2047:32, {1,"TEXT_SMS1"});
+ #endif
+ #endif 
+ 
+ #ifdef FILE_CALL1
+ #ifdef CALL_REP 
+ #ifdef CALL1_ON
+ #ifdef NUMBER1
+   //call(&number1, &file_call1);
+   setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #ifdef CALL2_ON
+ #ifdef NUMBER2
+    //call(&number2, &file_call1);
+	setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #ifdef CALL3_ON
+ #ifdef NUMBER3
+    //call(&number3, &file_call1);
+	setStatus(1055:16, {0, 0, 0, 0, "NUMBER3#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #endif
+ #endif
+ 
+ #ifdef MR_REP
+ #ifdef FILE_MR1
+ #ifdef MR_ID1
+ #ifdef VOLUME1
+   //send_mr(MR_ID1,&file_mr1,VOLUME1);
+   //setStatus(2044:1, {1,MR_ID1, "FILE_MR1", VOLUME1});
+   setStatus(MR_ID1:30, {1, VOLUME1, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #ifdef MR_ID2
+ #ifdef VOLUME2
+   //send_mr(MR_ID2,&file_mr1,VOLUME2);
+   //setStatus(2044:1, {1,MR_ID2, "FILE_MR1", VOLUME2});
+   setStatus(MR_ID2:30, {1, VOLUME2, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #ifdef MR_ID3
+ #ifdef VOLUME3
+   //send_mr(MR_ID3,&file_mr1,VOLUME3);
+   //setStatus(2044:1, {1,MR_ID3, "FILE_MR1", VOLUME3});
+   setStatus(MR_ID3:30, {1, VOLUME3, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #endif
+ #endif
+
+ delayedCallM(send_repeat_notices,PERIOD_REP);
+
+}
+#endif
+
+void send_notices()
+{
+ #if PERIOD_REP==0 
+ #else
+  cancelDelayedCall(send_repeat_notices);
+ #endif
+ #ifdef TEXT_SMS1
+  #ifdef SMS_FIRST
+   #ifdef SMS1_ON
+    #ifdef NUMBER1
+      //send_sms(&number1, &sms1);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER1#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+   #ifdef SMS2_ON
+    #ifdef NUMBER2
+      //send_sms(&number2, &sms1);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER2#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+   #ifdef SMS3_ON
+    #ifdef NUMBER3
+      //send_sms(&number3, &sms1);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER3#'A, toUcs2(65001, "TEXT_SMS1")});
+    #endif
+   #endif
+  #endif
+ #endif
+ 
+ #ifdef INTERFACE_FIRST
+ #ifdef TEXT_SMS1
+   //setStatus(2047:32, &sms_int1);
+   setStatus(2047:32, {1,"TEXT_SMS1"});
+ #endif
+ #endif
+ 
+ #ifdef FILE_CALL1
+ #ifdef CALL_FIRST 
+ #ifdef CALL1_ON
+ #ifdef NUMBER1
+    //call(&number1, &file_call1);
+	setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #ifdef CALL2_ON
+ #ifdef NUMBER2
+   //call(&number2, &file_call1);
+   setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #ifdef CALL3_ON
+ #ifdef NUMBER3
+    //call(&number3, &file_call1);
+	setStatus(1055:16, {0, 0, 0, 0, "NUMBER3#"A,"FILE_CALL1"});
+ #endif
+ #endif
+ #endif
+ #endif
+ 
+ #ifdef MR_FIRST
+ #ifdef FILE_MR1
+ #ifdef MR_ID1
+ #ifdef VOLUME1
+   //send_mr(MR_ID1,&file_mr1,VOLUME1);
+   //setStatus(2044:1, {1,MR_ID1, "FILE_MR1", VOLUME1});
+   setStatus(MR_ID1:30, {1, VOLUME1, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #ifdef MR_ID2
+ #ifdef VOLUME2
+   //send_mr(MR_ID2,&file_mr1,VOLUME2);
+   //setStatus(2044:1, {1,MR_ID2, "FILE_MR1", VOLUME2});
+   setStatus(MR_ID2:30, {1, VOLUME2, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #ifdef MR_ID3
+ #ifdef VOLUME3
+   //send_mr(MR_ID3,&file_mr1,VOLUME3);
+   //setStatus(2044:1, {1,MR_ID3, "FILE_MR1", VOLUME3});
+   setStatus(MR_ID3:30, {1, VOLUME3, 0, "FILE_MR1"});
+ #endif
+ #endif
+ #endif
+ #endif
+ 
+ #if PERIOD_REP==0 
+ #else
+  delayedCallM(send_repeat_notices,PERIOD_REP);
+  is_rep_send=1;
+ #endif
+ 
+ is_send=1;
+ #if PERIOD_WAIT==0
+ #else
+   delay_first_activated = 0;
+ #endif  
+} 
+
+void send_last_notices()
+{ 
+ #if PERIOD_REP==0 
+ #else
+  is_rep_send=0;
+  cancelDelayedCall(send_repeat_notices);
+ #endif
+ 
+ #ifdef TEXT_SMSLAST
+  #ifdef SMS_LAST
+   #ifdef SMS1_ON
+    #ifdef NUMBER1
+      //send_sms(&number1, &sms_last);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER1#'A, toUcs2(65001, "TEXT_SMSLAST")});
+    #endif
+   #endif
+   #ifdef SMS2_ON
+    #ifdef NUMBER2
+      //send_sms(&number2, &sms_last);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER2#'A, toUcs2(65001, "TEXT_SMSLAST")});
+    #endif
+   #endif
+   #ifdef SMS3_ON
+    #ifdef NUMBER3
+      //send_sms(&number3, &sms_last);
+	  setStatus(1055:17, {1, 0, 10, 'NUMBER3#'A, toUcs2(65001, "TEXT_SMSLAST")});
+    #endif
+   #endif
+  #endif
+ #endif
+ 
+ #ifdef INTERFACE_LAST
+ #ifdef TEXT_SMSLAST
+   //setStatus(2047:32, &sms_int_last);
+   setStatus(2047:32, {1,"TEXT_SMSLAST"});
+ #endif
+ #endif
+ 
+ #ifdef FILE_CALLLAST
+ #ifdef CALL_LAST
+ #ifdef CALL1_ON
+ #ifdef NUMBER1
+    //call(&number1, &file_call_last);
+	setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#"A,"FILE_CALLLAST"});
+ #endif
+ #endif
+ #ifdef CALL2_ON
+ #ifdef NUMBER2
+   //call(&number2, &file_call_last);
+   setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#"A,"FILE_CALLLAST"});
+ #endif
+ #endif
+ #ifdef CALL3_ON
+ #ifdef NUMBER3
+   //call(&number3, &file_call_last);
+   setStatus(1055:16, {0, 0, 0, 0, "NUMBER3#"A,"FILE_CALLLAST"});
+ #endif
+ #endif
+ #endif
+ #endif
+ 
+ #ifdef MR_LAST
+ #ifdef FILE_MRLAST
+ #ifdef MR_ID1
+ #ifdef VOLUME1
+   //send_mr(MR_ID1,&file_mr_last,VOLUME1);
+   //setStatus(2044:1, {1,MR_ID1, "FILE_MRLAST", VOLUME1});
+   setStatus(MR_ID1:30, {1, VOLUME1, 0, "FILE_MRLAST"});
+ #endif
+ #endif
+ #ifdef MR_ID2
+ #ifdef VOLUME2
+   //send_mr(MR_ID2,&file_mr_last,VOLUME2);
+   //setStatus(2044:1, {1,MR_ID2, "FILE_MRLAST", VOLUME2});
+   setStatus(MR_ID2:30, {1, VOLUME2, 0, "FILE_MRLAST"});
+ #endif
+ #endif
+ #ifdef MR_ID3
+ #ifdef VOLUME3
+  // send_mr(MR_ID3,&file_mr_last,VOLUME3);
+  //setStatus(2044:1, {1,MR_ID3, "FILE_MRLAST", VOLUME3});
+  setStatus(MR_ID3:30, {1, VOLUME3, 0, "FILE_MRLAST"});
+ #endif
+ #endif
+ #endif
+ #endif
+ 
+ is_send=0;
+  #if PERIOD_WAIT==0
+ #else
+   delay_last_activated = 0;
+ #endif  
+}
+
+V-ID/V-ADDR
+{
+ if (opt(0)){
+  #if PERIOD_WAIT==0 
+    send_notices();
+  #else	     
+     if ((is_send==0) && (delay_first_activated==0)
+	 #if PERIOD_REP==0 
+     #else && (is_rep_send==0) #endif)
+	  delayedCall(send_notices,PERIOD_WAIT);
+	  delay_first_activated = 1;
+	  delay_last_activated = 0;      
+      cancelDelayedCall(send_last_notices); 		
+  #endif
+ } else { 
+   #if PERIOD_WAIT==0
+       if (is_send==1) send_last_notices();
+   #else    
+    if ((is_send==1) && (delay_last_activated==0)) delayedCall(send_last_notices,PERIOD_WAIT);
+	delay_last_activated = 1;
+	delay_first_activated = 0;
+	cancelDelayedCall(send_notices); 
+   #endif
+ }
+}

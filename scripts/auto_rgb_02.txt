@@ -1,0 +1,115 @@
+/*
+{
+	desc:"Одна кнопка две лампочки",
+	tag:"item",
+	selectArea:true,
+	target:"SWITCH",
+	vars:[
+
+		{name:"SWITCH",type:"devices-list",required:true,width:200,filter:["switch"],desc:"Кнопка"},		
+		{name:"LAMP01",type:"devices-list",required:true,width:200,filter:["lamp"],desc:"Лампа-1"},		
+		{name:"LAMP02",type:"devices-list",required:true,width:200,filter:["lamp"],desc:"Лампа-2"},
+		{name:"DIMER",type:"devices-list",required:true,width:200,filter:["dimer-lamp"],desc:"Димер-лампа"},		
+		
+
+	]
+}
+*/
+u8 i=0;
+u8 x=0;
+u8 j=0;
+u8 k=0;
+
+void dimergo1(){
+	i=0;
+	if([DIMER.0]==1){
+		if(j==0)++x;		
+		if(j==1)--x;
+	}
+	if(x>250)j=1;
+	if(x<1)j=0;
+
+	setStatus(DIMER, {0xFE,x,0});
+	//if(!([SWITCH.0]==0xFF)){
+		delayedCallMs(dimergo1, 5);
+	//}
+	
+}
+
+void dimergo(){
+	setStatus(DIMER, {![DIMER.0],0,0});
+	i=-1
+	delayedCallMs(dimergo1, 5);
+}
+
+void lampgo(){
+	
+	
+	if(i==1){
+		i=0;	
+		setStatus(LAMP01, ![LAMP01.0]);
+	}
+	if(i==2){
+		i=0;
+		setStatus(LAMP02, ![LAMP02.0]);
+	}
+	i=0;
+}
+
+V-ID/SWITCH
+{	
+	/*if([SWITCH.0]==0xFC){
+		setStatus(DIMER, {![DIMER.0],0,0});
+		x=0;
+		i=0;
+		
+	}*/
+	if([SWITCH.0]==0xFD){
+		//setStatus(DIMER, {![DIMER.0],100,0});
+		//setStatus(DIMER, {1,0,0});
+		//cancelDelayedCall(lampgo);
+		//delayedCallMs(lampgo, 500);		
+		i=-1;
+		if(k==0){
+			k=1;
+			delayedCallMs(dimergo, 500);
+		}
+		//dimergo1();
+	}
+	
+	if([SWITCH.0]==0xFF){
+		++i;		
+		k=0;
+		cancelDelayedCall(dimergo1);		
+		cancelDelayedCall(lampgo);
+		delayedCallMs(lampgo, 500);
+	}
+	
+	
+	//cancelDelayedCall(lampgo);
+	//delayedCallMs(lampgo, 500);
+
+
+
+}
+
+
+/*V-ID/SWITCH
+{	
+
+	if([SWITCH.0]==0xFC){
+		if([LAMP01.0]==0){
+			setStatus(LAMP01, 1);
+		}
+		else{
+			if([LAMP02.0]==0){
+				setStatus(LAMP02, 1);	
+			} 
+			else {
+				setStatus(LAMP01, 0);
+				setStatus(LAMP02, 0);
+			}
+		}
+	}		
+}*/
+

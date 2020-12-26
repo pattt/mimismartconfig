@@ -1,0 +1,60 @@
+/*
+{
+  desc:"Мультирум: Приветствие!",
+  tag:"import-script",
+  name:"salutation",
+  target:"GERCON",
+  selectArea:false,
+  vars:[
+	{type:"comment",text:"Укажите датчики, для реализации скрипта Приветствие! :"},
+	{type:"comment",text:"(*) - обязательный параметр."},
+		{name:"GERCON",type:"devices-list",required:true,filter:["door-sensor"],desc:"Выберите геркон (*)",descWidth:350},
+		{name:"SENS1", type:"devices-list",required:true,filter:["motion-sensor"],desc:"Выберите датчик движения 1 (внутри помещения) (*)",descWidth:350},
+		{name:"VALUE1",type:"number",required:true,defaultValue:10,min:0,max:100,desc:"Для выбранного датчика задайте пороговое значение, % ",descWidth:450,width:80},
+		{name:"PERIOD1",type:"number",required:true,defaultValue:5,min:0,max:65535,desc:"Укажите период среднего значения датчика 1, секунд ",descWidth:350},
+		{name:"SENS2",type:"devices-list",filter:["motion-sensor"],desc:"Выберите датчик движения 2 (снаружи помещения)",descWidth:350},
+		{name:"VALUE2",type:"number",required:true,defaultValue:20,min:0,max:100,desc:"Для выбранного датчика задайте пороговое значение, % ",descWidth:450,width:80},
+		{name:"PERIOD2",type:"number",required:true,defaultValue:5,min:0,max:65535,desc:"Укажите период среднего значения датчика 2, секунд ",descWidth:350},
+		{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+		{name:"MR_ID",type:"number",required:false,descWidth:150,width:130,desc:"ID медиаточки"},
+		{name:"VOLUME",type:"number",required:true,defaultValue:55,min:0,max:100,desc:"Задайте громкость",descWidth:450,width:80},
+		{name:"FILE_MR1",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения <Приветствие>"},
+		{name:"FILE_MR2",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения <Прощание>"},
+	]
+}
+*/
+void salut()
+{	//		"Здравствуйте!";
+#ifdef SENS2
+	if (([SENS2:avgs:PERIOD2] >> 8) > VALUE2)
+#endif
+	{		
+		setStatus(MR_ID:30, {1, VOLUME, 0, 'FILE_MR1'});
+	}
+}
+void bay()
+{	//		"До свидания!"
+         setStatus(MR_ID:30, {1, VOLUME, 0, 'FILE_MR2'});
+}
+
+V-ID/GERCON
+{
+    if (opt(0))
+	{
+		if (([SENS1:avgs:PERIOD1] >> 8) < VALUE1)
+		{
+			salut();
+		}
+		else 
+		{
+#ifdef SENS2
+			if (([SENS2:avgs:PERIOD2] >>8) < VALUE2)
+			{
+#endif
+			bay();
+#ifdef SENS2
+			}
+#endif
+		}
+	}
+}

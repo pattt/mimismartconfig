@@ -1,0 +1,26 @@
+void reset()
+{
+setStatus(538:56, 1);
+
+}
+void offScript()
+{
+ setStatus(V-ADDR, 0);
+}
+
+V-ID/V-ADDR
+{
+ if(opt(0))
+ {
+	setStatus(538:8, 0);
+	setStatus(538:9, 0);
+	setStatus(538:16, 0);
+	setStatus(538:17, 0);
+	setStatus(538:24, 0);
+	setStatus(538:25, 0);
+	
+	
+   delayedCall(reset, 1); 
+   delayedCall(offScript, 2);
+ }
+}

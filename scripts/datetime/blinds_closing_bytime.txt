@@ -1,0 +1,137 @@
+/*
+{
+  desc:"Закрытие штор по времени суток и дню недели ",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp"],desc:"Штора"},
+	{name:"DOOR",type:"devices-list",required:false, filter:["door-sensor"],desc:"Дверь на балкон или окно"},
+	
+	{name:"DAY1",type:"weekday",required:true,desc:"День недели"},
+	{name:"TIME11",type:"time",required:false,desc:"Время c"},
+	{name:"TIME12",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY2",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME21",type:"time",required:false,desc:"Время с"},
+	{name:"TIME22",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY3",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME31",type:"time",required:false,desc:"Время с"},
+	{name:"TIME32",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY4",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME41",type:"time",required:false,desc:"Время с"},
+	{name:"TIME42",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY5",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME51",type:"time",required:false,desc:"Время с"},
+	{name:"TIME52",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY6",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME61",type:"time",required:false,desc:"Время с"},
+	{name:"TIME62",type:"time",required:false,desc:"Время по"},
+	
+	{name:"DAY7",type:"weekday",required:false,desc:"День недели"},
+	{name:"TIME71",type:"time",required:false,desc:"Время с"},
+	{name:"TIME72",type:"time",required:false,desc:"Время по"},
+  ]
+}
+*/
+
+u8 ind = 0;
+u8 ind_priv = 0;
+
+
+V-ID/s:5
+{
+	if(isAutoOn(ITEM1) && [ITEM1]) { 
+		if(timeInRange(TIME11-TIME12 | DAY1)) {
+			ind = 1;
+		}
+		else {
+			if(ind == 1) { 
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#ifdef DAY2
+		if(timeInRange(TIME21-TIME22 | DAY2)) {
+			ind = 2;
+		}
+		else {
+			if(ind == 2) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		#ifdef DAY3
+		if(timeInRange(TIME31-TIME32 | DAY3)) {
+			ind = 3;
+		}
+		else {
+			if(ind == 3) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		#ifdef DAY4
+		if(timeInRange(TIME41-TIME42 | DAY4)) {
+			ind = 4;
+		}
+		else {
+			if(ind == 4) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		#ifdef DAY5
+		if(timeInRange(TIME51-TIME52 | DAY5)) {
+			ind = 5;
+		}
+		else {
+			if(ind == 5) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		#ifdef DAY6
+		if(timeInRange(TIME61-TIME62 | DAY6)) {
+			ind = 6;
+		}
+		else {
+			if(ind == 6) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		#ifdef DAY7
+		if(timeInRange(TIME71-TIME72 | DAY7)) {
+			ind = 7;
+		}
+		else {
+			if(ind == 7) {
+				ind = 0;
+				ind_priv = 0;
+			}
+		} 
+		#endif
+		
+		#ifdef DOOR
+		if(ind != ind_priv && ![DOOR]) {
+			ind_priv = ind;
+			setStatus(ITEM1, 0);
+		}
+		#else
+			if(ind != ind_priv) {
+			ind_priv = ind;
+			setStatus(ITEM1, 0);
+		}
+		#endif	
+	}
+}

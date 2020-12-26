@@ -1,0 +1,564 @@
+/*
+{
+  desc:"Контроль выхода за диапазон значения датчиков",
+  tag:"import-script",
+  target:"SENSOR1",
+  selectArea:false,
+  vars:[
+    {name:"ITEM_LAV1",type:"devices-list",required:true, filter:["lamp","script"],descWidth:400, desc:"Сценарий 1 для аварии нижний порог"},
+	{name:"ITEM_LAV2",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 2 для аварии нижний порог (опционально)"},
+	{name:"ITEM_LWARN1",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 1 для предупреждения нижний порог (опционально)"},
+	{name:"ITEM_LWARN2",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 2 для предупреждения нижний порог (опционально)"},
+	{name:"ITEM_HWARN1",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 1 для предупреждения верхний порог (опционально)"},	
+	{name:"ITEM_HWARN2",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 2 для предупреждения верхний порог (опционально)"},	
+	{name:"ITEM_HAV1",type:"devices-list",required:true, filter:["lamp","script"],descWidth:400, desc:"Сценарий 1 для аварии верхний порог"},	
+	{name:"ITEM_HAV2",type:"devices-list",required:false, filter:["lamp","script"],descWidth:400, desc:"Сценарий 2 для аварии верхний порог (опционально)"},
+	{name:"DELTA",type:"number",required:false,defaultValue:5,min:0,max:30,desc:"Дельта",descWidth:100,width:150},
+	{name:"PERIOD",type:"number",required:true,defaultValue:1,min:0,max:300,desc:"Период проверки состояния датчиков, секунд",descWidth:300,width:150},
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+   	{name:"SENSOR1",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 1",width:280},
+    {name:"LOW_AV1",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN1",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN1",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV1",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR2",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 2 (опционально)",width:280},
+    {name:"LOW_AV2",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN2",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN2",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV2",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR3",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 3 (опционально)",width:280},
+    {name:"LOW_AV3",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN3",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN3",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV3",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR4",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 4 (опционально)",width:280},
+    {name:"LOW_AV4",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN4",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN4",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV4",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR5",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 5 (опционально)",width:280},
+    {name:"LOW_AV5",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN5",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN5",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV5",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR6",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 6 (опционально)",width:280},
+    {name:"LOW_AV6",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN6",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN6",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV6",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR7",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 7 (опционально)",width:280},
+    {name:"LOW_AV7",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN7",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN7",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV7",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR8",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 8 (опционально)",width:280},
+    {name:"LOW_AV8",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN8",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN8",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV8",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR9",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 9 (опционально)",width:280},
+    {name:"LOW_AV9",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN9",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN9",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV9",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+   	{name:"SENSOR_10",type:"devices-list",required:false, filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor"],descWidth:200,desc:"Выберите датчик 10 (опционально)",width:280},
+    {name:"LOW_AV_10",type:"number",required:false,min:1,max:100,desc:"Нижний порог-авария",descWidth:200,width:150},
+	{name:"LOW_WARN_10",type:"number",required:false,min:1,max:100,desc:"Нижний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_WARN_10",type:"number",required:false,min:1,max:100,desc:"Верхний порог-предупреждение",descWidth:200,width:150},
+	{name:"HI_AV_10",type:"number",required:false,min:1,max:100,desc:"Верхний порог-авария",descWidth:200,width:150}, 
+ ]
+}
+*/
+#ifdef ITEM_LAV1
+u8 is_lav_old=0;
+#endif
+#ifdef ITEM_LWARN1
+u8 is_lwarn_old=0;
+#endif
+#ifdef ITEM_HWARN1
+u8 is_hwarn_old=0;
+#endif
+#ifdef ITEM_HAV1
+u8 is_hav_old=0;
+#endif
+
+
+V-ID/s:PERIOD
+{
+  u8 is_out_range=0;
+  
+  
+  #ifdef ITEM_LAV1
+    if (0
+    #ifdef SENSOR1
+	#ifdef LOW_AV1
+	   || ([SENSOR1.1]<=LOW_AV1)
+	#endif
+	#endif   
+	#ifdef SENSOR2
+	#ifdef LOW_AV2
+	 || ([SENSOR2.1]<=LOW_AV2)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef LOW_AV3
+	 || ([SENSOR3.1]<=LOW_AV3)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef LOW_AV4
+	 || ([SENSOR4.1]<=LOW_AV4)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef LOW_AV5
+	 || ([SENSOR5.1]<=LOW_AV5)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef LOW_AV6
+	 || ([SENSOR6.1]<=LOW_AV6)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef LOW_AV7
+	 || ([SENSOR2.1]<=LOW_AV7)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef LOW_AV8
+	 || ([SENSOR8.1]<=LOW_AV8)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef LOW_AV9
+	 || ([SENSOR9.1]<=LOW_AV9)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef LOW_AV_10
+	 || ([SENSOR_10.1]<=LOW_AV_10)
+	#endif
+	#endif
+	) is_out_range=1;	
+	else if (1
+    #ifdef SENSOR1
+	#ifdef LOW_AV1
+	  && ([SENSOR1.1]>LOW_AV1+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR2
+	#ifdef LOW_AV2
+	 && ([SENSOR2.1]>LOW_AV2+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef LOW_AV3
+	 && ([SENSOR3.1]>LOW_AV3+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef LOW_AV4
+	 && ([SENSOR4.1]>LOW_AV4+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef LOW_AV5
+	 && ([SENSOR5.1]>LOW_AV5+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef LOW_AV6
+	 && ([SENSOR6.1]>LOW_AV6+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef LOW_AV7
+	 && ([SENSOR2.1]>LOW_AV7+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef LOW_AV8
+	 && ([SENSOR8.1]>LOW_AV8+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef LOW_AV9
+	 && ([SENSOR9.1]>LOW_AV9+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef LOW_AV_10
+	 && ([SENSOR_10.1]>LOW_AV_10+DELTA)
+	#endif
+	#endif
+	) is_out_range=0;
+	else is_out_range = is_lav_old;
+	
+	if (is_out_range != is_lav_old){
+	   is_lav_old = is_out_range;
+	   setStatus(ITEM_LAV1,is_out_range);
+	   #ifdef ITEM_LAV2
+	     setStatus(ITEM_LAV2,is_out_range);
+	   #endif
+	}
+  #endif	
+  
+  #ifdef ITEM_LWARN1
+    if (0
+    #ifdef SENSOR1
+	#ifdef LOW_WARN1
+	 || ([SENSOR1.1]<=LOW_WARN1)
+    #endif
+	#endif
+	#ifdef SENSOR2
+	#ifdef LOW_WARN2
+	 || ([SENSOR2.1]<=LOW_WARN2)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef LOW_WARN3
+	 || ([SENSOR3.1]<=LOW_WARN3)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef LOW_WARN4
+	 || ([SENSOR4.1]<=LOW_WARN4)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef LOW_WARN5
+	 || ([SENSOR5.1]<=LOW_WARN5)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef LOW_WARN6
+	 || ([SENSOR6.1]<=LOW_WARN6)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef LOW_WARN7
+	 || ([SENSOR2.1]<=LOW_WARN7)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef LOW_WARN8
+	 || ([SENSOR8.1]<=LOW_WARN8)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef LOW_WARN9
+	 || ([SENSOR9.1]<=LOW_WARN9)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef LOW_WARN_10
+	 || ([SENSOR_10.1]<=LOW_WARN_10)
+	#endif
+	#endif
+	) is_out_range=1;	
+	else if (1
+    #ifdef SENSOR1
+	#ifdef LOW_WARN1
+	  && ([SENSOR1.1]>LOW_WARN1+DELTA)
+	#endif
+	#endif  
+	#ifdef SENSOR2
+	#ifdef LOW_WARN2
+	 && ([SENSOR2.1]>LOW_WARN2+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef LOW_WARN3
+	 && ([SENSOR3.1]>LOW_WARN3+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef LOW_WARN4
+	 && ([SENSOR4.1]>LOW_WARN4+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef LOW_WARN5
+	 && ([SENSOR5.1]>LOW_WARN5+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef LOW_WARN6
+	 && ([SENSOR6.1]>LOW_WARN6+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef LOW_WARN7
+	 && ([SENSOR2.1]>LOW_WARN7+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef LOW_WARN8
+	 && ([SENSOR8.1]>LOW_WARN8+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef LOW_WARN9
+	 && ([SENSOR9.1]>LOW_WARN9+DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef LOW_WARN_10
+	 && ([SENSOR_10.1]>LOW_WARN_10+DELTA)
+	#endif
+	#endif
+	) is_out_range=0;	
+	else is_out_range = is_lwarn_old;
+	
+	if (is_out_range != is_lwarn_old){
+	   is_lwarn_old = is_out_range;
+	   setStatus(ITEM_LWARN1,is_out_range);
+	   #ifdef ITEM_LWARN2
+	     setStatus(ITEM_LWARN2,is_out_range);
+	   #endif
+	}
+  #endif		
+  
+  #ifdef ITEM_HWARN1
+    if (0
+    #ifdef SENSOR1
+	#ifdef HI_WARN1
+      || ([SENSOR1.1]>=HI_WARN1)
+	#endif
+	#endif  
+	#ifdef SENSOR2
+	#ifdef HI_WARN2
+	 || ([SENSOR2.1]>=HI_WARN2)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef HI_WARN3
+	 || ([SENSOR3.1]>=HI_WARN3)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef HI_WARN4
+	 || ([SENSOR4.1]>=HI_WARN4)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef HI_WARN5
+	 || ([SENSOR5.1]>=HI_WARN5)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef HI_WARN6
+	 || ([SENSOR6.1]>=HI_WARN6)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef HI_WARN7
+	 || ([SENSOR2.1]>=HI_WARN7)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef HI_WARN8
+	 || ([SENSOR8.1]>=HI_WARN8)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef HI_WARN9
+	 || ([SENSOR9.1]>=HI_WARN9)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef HI_WARN_10
+	 || ([SENSOR_10.1]>=HI_WARN_10)
+	#endif
+	#endif
+	) is_out_range=1;
+	else if (1
+    #ifdef SENSOR1
+	#ifdef HI_WARN1
+	 && ([SENSOR1.1]<HI_WARN1-DELTA)
+	#endif
+	#endif 
+	#ifdef SENSOR2
+	#ifdef HI_WARN2
+	 && ([SENSOR2.1]<HI_WARN2-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef HI_WARN3
+	 && ([SENSOR3.1]<HI_WARN3-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef HI_WARN4
+	 && ([SENSOR4.1]<HI_WARN4-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef HI_WARN5
+	 && ([SENSOR5.1]<HI_WARN5-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef HI_WARN6
+	 && ([SENSOR6.1]<HI_WARN6-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef HI_WARN7
+	 && ([SENSOR2.1]<HI_WARN7-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef HI_WARN8
+	 && ([SENSOR8.1]<HI_WARN8-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef HI_WARN9
+	 && ([SENSOR9.1]<HI_WARN9-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef HI_WARN_10
+	 && ([SENSOR_10.1]<HI_WARN_10-DELTA)
+	#endif
+	#endif
+	) is_out_range=0;
+	else is_out_range = is_hwarn_old;
+
+    if (is_out_range != is_hwarn_old){
+	   is_hwarn_old = is_out_range;
+	   setStatus(ITEM_HWARN1,is_out_range);
+	   #ifdef ITEM_HWARN2
+	     setStatus(ITEM_HWARN2,is_out_range);
+	   #endif
+	}	
+  #endif
+  
+  #ifdef ITEM_HAV1
+    if (0
+    #ifdef SENSOR1
+	#ifdef HI_AV1
+      || ([SENSOR1.1]>=HI_AV1)
+	#endif
+	#endif  
+	#ifdef SENSOR2
+	#ifdef HI_AV2
+	 || ([SENSOR2.1]>=HI_AV2)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef HI_AV3
+	 || ([SENSOR3.1]>=HI_AV3)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef HI_AV4
+	 || ([SENSOR4.1]>=HI_AV4)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef HI_AV5
+	 || ([SENSOR5.1]>=HI_AV5)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef HI_AV6
+	 || ([SENSOR6.1]>=HI_AV6)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef HI_AV7
+	 || ([SENSOR2.1]>=HI_AV7)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef HI_AV8
+	 || ([SENSOR8.1]>=HI_AV8)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef HI_AV9
+	 || ([SENSOR9.1]>=HI_AV9)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef HI_AV_10
+	 || ([SENSOR_10.1]>=HI_AV_10)
+	#endif
+	#endif
+	) is_out_range=1;
+	else if (1
+    #ifdef SENSOR1
+	#ifdef HI_AV1
+	  && ([SENSOR1.1]<HI_AV1-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR2
+	#ifdef HI_AV2
+	 && ([SENSOR2.1]<HI_AV2-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR3
+	#ifdef HI_AV3
+	 && ([SENSOR3.1]<HI_AV3-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR4
+	#ifdef HI_AV4
+	 && ([SENSOR4.1]<HI_AV4-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR5
+	#ifdef HI_AV5
+	 && ([SENSOR5.1]<HI_AV5-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR6
+	#ifdef HI_AV6
+	 && ([SENSOR6.1]<HI_AV6-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR7
+	#ifdef HI_AV7
+	 && ([SENSOR2.1]<HI_AV7-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR8
+	#ifdef HI_AV8
+	 && ([SENSOR8.1]<HI_AV8-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR9
+	#ifdef HI_AV9
+	 && ([SENSOR9.1]<HI_AV9-DELTA)
+	#endif
+	#endif
+	#ifdef SENSOR_10
+	#ifdef HI_AV_10
+	 && ([SENSOR_10.1]<HI_AV_10-DELTA)
+	#endif
+	#endif
+	) is_out_range=0;
+	else is_out_range = is_hav_old;
+
+    if (is_out_range != is_hav_old){
+	   is_hav_old = is_out_range;
+	   setStatus(ITEM_HAV1,is_out_range);
+	   #ifdef ITEM_HAV2
+	     setStatus(ITEM_HAV2,is_out_range);
+	   #endif	
+	}   
+  #endif
+}

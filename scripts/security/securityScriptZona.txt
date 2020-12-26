@@ -1,0 +1,620 @@
+/*
+{
+	desc:"Зона для охранной системы",
+	tag:"import-script",
+	target:"SENS1",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", sub-id:"%SUBID01%", name:"STATE %TARGET%", type:"virtual", "length":"0", system:"yes"},
+		{tag:"item", id:"%TARGET%", sub-id:"%SUBID02%", name:"COMAND %TARGET%", type:"virtual", "length":"0", system:"yes"}
+	],
+	vars:[
+		{type:"comment", text:"Укажите время задержки при включении сигнализации", width:200},
+		{name:"DELAYFORON", type:"number",required:true,min:0,max:60,width:60},
+		{type:"comment", text:"Укажите время задержки до срабатывании сигнализации", width:200},
+		{name:"DELAYFORALERT", type:"number",required:true,min:0,max:60,width:60},
+		{type:"comment", text:"Укажите время востановления для необязательных датчиков", width:200},
+		{name:"RECOVERED", type:"number",required:true,min:1,max:60,width:60},
+		[
+			{type:"comment", text:"Датчик движения", width:400, "style":"text-align:center; color: red;"},
+			{type:"comment", text:"Порог 1", width:60, "style":"text-align:center; color: red;"},
+			{type:"comment", text:"Порог 2", width:60, "style":"text-align:center; color: red;"},
+			{type:"comment", text:"Обязательный","style":"color: red;"},
+		],
+		[
+			{name:"SENS1", type:"devices-list",required:true,filter:["motion-sensor"], desc:"Датчик движения 1", descWidth:150, width:250},
+			{name:"DNBORDER1", type:"number",required:false,min:0,max:100,width:60},
+			{name:"UPBORDER1", type:"number",required:false,min:0,max:100,width:60},
+			{name:"NECESSARILY01", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"SENS2", type:"devices-list",required:false,filter:["motion-sensor"], desc:"Датчик движения 2", descWidth:150, width:250},
+			{name:"DNBORDER2", type:"number",required:false,min:0,max:100,width:60},
+			{name:"UPBORDER2", type:"number",required:false,min:0,max:100,width:60},
+			{name:"NECESSARILY02", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"SENS3", type:"devices-list",required:false,filter:["motion-sensor"], desc:"Датчик движения 3", descWidth:150, width:250},
+			{name:"DNBORDER3", type:"number",required:false,min:0,max:100,width:60},
+			{name:"UPBORDER3", type:"number",required:false,min:0,max:100,width:60},
+			{name:"NECESSARILY03", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"SENS4", type:"devices-list",required:false,filter:["motion-sensor"], desc:"Датчик движения 4", descWidth:150, width:250},
+			{name:"DNBORDER4", type:"number",required:false,min:0,max:100,width:60},
+			{name:"UPBORDER4", type:"number",required:false,min:0,max:100,width:60},
+			{name:"NECESSARILY04", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"SENS5", type:"devices-list",required:false,filter:["motion-sensor"], desc:"Датчик движения 5", descWidth:150, width:250},
+			{name:"DNBORDER5", type:"number",required:false,min:0,max:100,width:60},
+			{name:"UPBORDER5", type:"number",required:false,min:0,max:100,width:60},
+			{name:"NECESSARILY05", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{type:"comment", text:"Геркон", width:400, "style":"text-align:center; color: red;"},
+			{type:"comment", text:"Обязательный","style":"color: red;"},
+		],
+		[
+			{name:"DSENS1", type:"devices-list",required:false,width:250, filter:["door-sensor"], desc:"Геркон 1",descWidth:150},
+			{name:"NECESSARILY06", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"DSENS2", type:"devices-list",required:false,width:250, filter:["door-sensor"], desc:"Геркон 2",descWidth:150},
+			{name:"NECESSARILY07", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"DSENS3", type:"devices-list",required:false,width:250, filter:["door-sensor"], desc:"Геркон 3",descWidth:150},
+			{name:"NECESSARILY08", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"DSENS4", type:"devices-list",required:false,width:250, filter:["door-sensor"], desc:"Геркон 4",descWidth:150},
+			{name:"NECESSARILY09", type:"checkbox",checked:false,required:false,width:20}
+		],
+		[
+			{name:"DSENS5", type:"devices-list",required:false,width:250, filter:["door-sensor"], desc:"Геркон 5",descWidth:150},
+			{name:"NECESSARILY10", type:"checkbox",checked:false,required:false,width:20}
+		],
+		{name:"VIRTUALFORSST",type:"hidden",value:"%TARGET%:%SUBID01%"},
+		{name:"VIRTUALFORCMD",type:"hidden",value:"%TARGET%:%SUBID02%"},
+	]
+}
+*/
+
+
+//массив для установки статуса зоны (1й бит статус, 2й-... сработавшие датчики)
+u8 tempText[50]; 		
+// маски
+u8 maskAlert 			= 0x01; //сработала
+u8 maskDelay 			= 0x02; //задержка(при включении и срабатывании)
+u8 maskRest 			= 0x04; //в покое
+u8 maskWhithWorning		= 0x08; //в покое с предупреждением(если сработал хоть один необязательный датчик)
+u8 maskCharged			= 0x10; //работает
+u8 maskChargedPartially = 0x20; //работает с предупреждением(если есть хоть один необязательный датчик)
+u8 maskRecovered 		= 0x40; //востановление после сработки необязательного датчика
+u8 maskBeforStart		= 0x80; //проверка всех датчиков перед постановкой на охрану
+
+// ф-я очистки строки при переполнении
+// т.к. максимальная длинна строки 50Б
+void checkStr() {
+	u8 len = strlen(tempText);
+	if(len > 44) {
+		tempText[1] = 0;
+	}
+}
+
+// проверка всех датчиков перед стартом
+void checkBeforStart() {
+	// проверка датчиков движения 
+	#ifdef SENS1
+		if([SENS1.1] > DNBORDER1) {
+		#ifdef NECESSARILY01
+		#if NECESSARILY01 == true
+			tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS1 "); 
+		#else
+		#endif
+			if([SENS1.1] > UPBORDER1) {
+				tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS1 "); 
+			}
+		#endif
+		}
+	#endif
+	#ifdef SENS2
+		if([SENS2.1] > DNBORDER2) {
+		#ifdef NECESSARILY02
+		#if NECESSARILY02 == true
+			tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS2 "); 
+		#else
+		#endif
+			if([SENS2.1] > UPBORDER2) {
+				tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS2 "); 
+			}
+		#endif
+		}
+	#endif
+	#ifdef SENS3
+		if([SENS3.1] > DNBORDER3) {
+		#ifdef NECESSARILY03
+		#if NECESSARILY03 == true
+			tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS3 "); 
+		#else
+		#endif
+			if([SENS3.1] > UPBORDER3) {
+				tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS3 "); 
+			}
+		#endif
+		}
+	#endif	
+	#ifdef SENS4
+		if([SENS4.1] > DNBORDER4) {
+		#ifdef NECESSARILY04
+		#if NECESSARILY04 == true
+			tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS4 "); 
+		#else
+		#endif
+			if([SENS4.1] > UPBORDER4) {
+				tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS4 "); 
+			}
+		#endif
+		}
+	#endif
+	#ifdef SENS5
+		if([SENS5.1] > DNBORDER5) {
+		#ifdef NECESSARILY05
+		#if NECESSARILY05 == true
+			tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS5 "); 
+		#else
+		#endif
+			if([SENS5.1] > UPBORDER5) {
+				tempText[0] = maskBeforStart;
+			strcat(tempText, "SENS5 "); 
+			}
+		#endif
+		}
+	#endif
+	
+	// проверка герконов
+	#ifdef DSENS1
+	if([DSENS1.0] == 1) {
+		#ifdef NECESSARILY06
+		tempText[0] = maskBeforStart;
+		strcat(tempText, "DS1 "); 
+		#endif
+	}
+	#endif
+	#ifdef DSENS2
+	if([DSENS2.0] == 1) {
+		#ifdef NECESSARILY07
+		tempText[0] = maskBeforStart;
+		strcat(tempText, "DS2 ");
+		#endif
+	}
+	#endif
+	#ifdef DSENS3
+	if([DSENS3.0] == 1) {
+		#ifdef NECESSARILY08
+		tempText[0] = maskBeforStart;
+		strcat(tempText, "DS3 ");
+		#endif
+	}
+	#endif
+	#ifdef DSENS4
+	if([DSENS4.0] == 1) {
+		#ifdef NECESSARILY09
+		tempText[0] = maskBeforStart;
+		strcat(tempText, "DS4 ");
+		#endif
+	}
+	#endif
+	#ifdef DSENS5
+	if([DSENS5.0] == 1) {
+		#ifdef NECESSARILY010
+		tempText[0] = maskBeforStart;
+		strcat(tempText, "DS5 ");
+		#endif
+	}
+	#endif
+}
+
+//ф-я для задержки при начальном включении сигнализации
+void setDelay () {
+	// проверка начального уровня обязательных датчикова
+	checkBeforStart();
+	// если проверка не пройдена
+	if(tempText[0] == maskBeforStart) {
+		setStatus(VIRTUALFORSST, &tempText);
+		return;
+	} else {
+		if (DELAYFORON != 0){
+			tempText[0] = [VIRTUALFORSST.0] ^ maskDelay | maskRest;	
+		} else {
+			tempText[0] = [VIRTUALFORSST.0] | maskRest;
+		}
+		setStatus(VIRTUALFORSST, &tempText);
+	}
+}
+
+//ф-я для задержки при срабатывании сигнализации
+void setAlert () {
+	if (DELAYFORALERT != 0){
+	tempText[0] = [VIRTUALFORSST.0] ^ maskDelay ^ maskRest ^ maskAlert;
+	} else {
+	tempText[0] = [VIRTUALFORSST.0] ^ maskRest ^ maskAlert;
+	}
+	setStatus(VIRTUALFORSST, &tempText);
+}
+
+//ф-я востановления после сработки необязательного датчика
+void setRecovered () {
+	tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered | maskWhithWorning;
+	setStatus(VIRTUALFORSST, &tempText);
+}
+
+//---------------------------------------------------------
+// обработка сообщений от основного скрипта системы охраны
+V-ID/VIRTUALFORCMD {
+	
+	// если зону включили
+	if([VIRTUALFORCMD.0] == 1) {	
+			// установка флагов
+			tempText[0] = tempText[0] | maskCharged
+			#ifdef SENS1 #ifndef NECESSARILY01  | maskChargedPartially #endif #endif
+			#ifdef SENS2 #ifndef NECESSARILY02  | maskChargedPartially #endif #endif
+			#ifdef SENS3 #ifndef NECESSARILY03  | maskChargedPartially #endif #endif
+			#ifdef SENS4 #ifndef NECESSARILY04  | maskChargedPartially #endif #endif
+			#ifdef SENS5 #ifndef NECESSARILY05  | maskChargedPartially #endif #endif
+			#ifdef DSENS1 #ifndef NECESSARILY06 | maskChargedPartially #endif #endif
+			#ifdef DSENS2 #ifndef NECESSARILY07 | maskChargedPartially #endif #endif
+			#ifdef DSENS3 #ifndef NECESSARILY08 | maskChargedPartially #endif #endif
+			#ifdef DSENS4 #ifndef NECESSARILY09 | maskChargedPartially #endif #endif
+			#ifdef DSENS5 #ifndef NECESSARILY10 | maskChargedPartially #endif #endif
+			;
+			if(DELAYFORON != 0) {
+				tempText[0] = tempText[0] | maskDelay;
+			}
+			// установка начального статуса 
+			tempText[49] = 0; 
+			setStatus(VIRTUALFORSST, &tempText);
+			// выключение задержки
+			delayedCall(setDelay, DELAYFORON);
+
+	}
+	
+	//если сигнализацию выключили
+	if([VIRTUALFORCMD.0] == 0) {
+		cancelDelayedCall(setDelay);
+		cancelDelayedCall(setAlert);
+		cancelDelayedCall(setRecovered);
+		setStatus(VIRTUALFORSST, 0);
+		strcpy(tempText, " ");
+		tempText[0] = 0;	
+	}
+}
+
+//--------------------------------------
+//обработка сообщений от датчиков в зоне
+//датчик движения 1
+#ifdef SENS1
+V-ID/SENS1 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {
+	#ifdef NECESSARILY01
+		if([SENS1.1] > DNBORDER1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S1>DNBORDER1 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([SENS1.1] > UPBORDER1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S1>UPBORDER1 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+		if([SENS1.1] > DNBORDER1 && ([VIRTUALFORSST.0] & maskRecovered) == 0 && ([VIRTUALFORSST.0] & maskDelay) == 0 ) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "S1>DNBORDER1 ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//датчик движения 2
+#ifdef SENS2
+V-ID/SENS2 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {
+	#ifdef NECESSARILY02
+		if([SENS2.1] > DNBORDER2 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S2>DNBORDER2 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([SENS2.1] > UPBORDER2 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S2>UPBORDER2 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+		if([SENS2.1] > DNBORDER2 && ([VIRTUALFORSST.0] & maskRecovered) == 0 && ([VIRTUALFORSST.0] & maskDelay) == 0 ) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "S2>DNBORDER2 ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//датчик движения 3
+#ifdef SENS3
+V-ID/SENS3 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {
+	#ifdef NECESSARILY03
+		if([SENS3.1] > DNBORDER3 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S3>DNBORDER3 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([SENS3.1] > UPBORDER3 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S3>UPBORDER3 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+		if([SENS3.1] > DNBORDER3 && ([VIRTUALFORSST.0] & maskRecovered) == 0 && ([VIRTUALFORSST.0] & maskDelay) == 0 ) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "S3>DNBORDER3 ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//датчик движения 4
+#ifdef SENS4
+V-ID/SENS4 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {
+	#ifdef NECESSARILY04
+		if([SENS4.1] > DNBORDER4 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S4>DNBORDER4 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([SENS4.1] > UPBORDER4 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S4>UPBORDER4 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+		if([SENS4.1] > DNBORDER4 && ([VIRTUALFORSST.0] & maskRecovered) == 0 && ([VIRTUALFORSST.0] & maskDelay) == 0 ) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "S4>DNBORDER4 ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//датчик движения 5
+#ifdef SENS5
+V-ID/SENS5 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {
+	#ifdef NECESSARILY05
+		if([SENS5.1] > DNBORDER5 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S5>DNBORDER5 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([SENS5.1] > UPBORDER5 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "S5>UPBORDER5 "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+		if([SENS5.1] > DNBORDER5 && ([VIRTUALFORSST.0] & maskRecovered) == 0 && ([VIRTUALFORSST.0] & maskDelay) == 0 ) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "S5>DNBORDER5 ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+
+//геркон 1	
+#ifdef DSENS1
+V-ID/DSENS1 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {	
+	#ifdef NECESSARILY06
+		if([DSENS1.0] == 1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "D1OPN "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([DSENS1.0] == 1 && ([VIRTUALFORSST.0] & maskRecovered) == 0) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "D1OPN ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//геркон 2
+#ifdef DSENS2
+V-ID/DSENS2 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {	
+	#ifdef NECESSARILY07
+		if([DSENS2.0] == 1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "D2OPN "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([DSENS2.0] == 1 && ([VIRTUALFORSST.0] & maskRecovered) == 0) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "D2OPN ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//геркон 3	
+#ifdef DSENS3
+V-ID/DSENS3 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {	
+	#ifdef NECESSARILY08
+		if([DSENS3.0] == 1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "D3OPN "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([DSENS3.0] == 1 && ([VIRTUALFORSST.0] & maskRecovered) == 0) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "D3OPN ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//геркон 4	
+#ifdef DSENS4
+V-ID/DSENS4 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {	
+	#ifdef NECESSARILY09
+		if([DSENS4.0] == 1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "D4OPN "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([DSENS4.0] == 1 && ([VIRTUALFORSST.0] & maskRecovered) == 0) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "D4OPN ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif
+//геркон 5	
+#ifdef DSENS5
+V-ID/DSENS5 {
+	//если сигнализация включена
+	if([VIRTUALFORCMD.0] == 1) {	
+	#ifdef NECESSARILY10
+		if([DSENS5.0] == 1 && ([VIRTUALFORSST.0] & maskDelay) == 0 && ([VIRTUALFORSST.0] & maskAlert) == 0) {
+			if(DELAYFORALERT != 0) {
+				tempText[0] = [VIRTUALFORSST.0] ^ maskDelay; 
+			}
+			checkStr();
+			strcat(tempText, "D5OPN "); 
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setAlert, DELAYFORALERT);
+		}
+	#else
+		if([DSENS5.0] == 1 && ([VIRTUALFORSST.0] & maskRecovered) == 0) {
+			tempText[0] = [VIRTUALFORSST.0] ^ maskRecovered; 
+			checkStr();
+			strcat(tempText, "D5OPN ");
+			setStatus(VIRTUALFORSST, &tempText);
+			delayedCall(setRecovered, RECOVERED);
+		}
+	#endif
+	}
+}
+#endif

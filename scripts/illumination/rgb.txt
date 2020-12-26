@@ -1,0 +1,78 @@
+/*
+{
+  desc:"Плавное перетекание RGB подсветки",
+  tag:"item",
+  target:"RGB1",
+  selectArea:true,
+  vars:[
+	{name:"PERIOD",type:"number",required:true,defaultValue:10,min:1,max:300,desc:"Время перетекания от цвета к цвету"},
+   	{name:"RGB1",type:"devices-list",required:true, filter:["rgb-lamp"],desc:"RGB"},
+   	{name:"RGB2",type:"devices-list",required:false, filter:["rgb-lamp"],desc:"RGB"},
+   	{name:"RGB3",type:"devices-list",required:false, filter:["rgb-lamp"],desc:"RGB"}
+  ]
+}
+*/
+
+
+u8 colorState[] = {1, 250, 250, 0, PERIOD};
+u8 filter = 0xFF;
+
+void onColorMusic()
+{
+	if (filter & 1) setStatus(RGB1, &colorState);
+#ifdef RGB2
+	if (filter & 2) setStatus(RGB2, &colorState);
+#endif
+#ifdef RGB3	
+	if (filter & 4) setStatus(RGB3, &colorState);
+#endif
+	colorState[3] = (colorState[3] > 84 ? 0 : colorState[3] + 84);
+	delayedCall(onColorMusic, PERIOD);
+}
+
+V-ID/RGB1 {
+	if ([V-ADDR] && !opt(0)) {
+		filter=filter & ~1;
+		if (!filter) setStatus(V-ADDR, 0);
+	}
+}
+
+#ifdef RGB2
+V-ID/RGB2 {
+	if ([V-ADDR] && !opt(0)) {
+		filter=filter & ~2;
+		if (!filter) setStatus(V-ADDR, 0);
+	}
+}
+#endif
+#ifdef RGB3
+V-ID/RGB3 {
+	if ([V-ADDR] && !opt(0)) {
+		filter=filter & ~4;
+		if (!filter) setStatus(V-ADDR, 0);
+	}
+}
+#endif
+
+V-ID/V-ADDR
+{
+	cancelDelayedCall(onColorMusic);
+	if([V-ADDR]) {
+		filter = 0x01;
+#ifdef RGB2
+		filter+= 0x02;
+#endif
+#ifdef RGB3
+		filter+= 0x04;
+#endif
+		onColorMusic();
+	} else {
+	setStatus(RGB1, 0);
+#ifdef RGB2
+	setStatus(RGB2, 0);
+#endif
+#ifdef RGB3	
+	setStatus(RGB3, 0);
+#endif	
+	}
+}

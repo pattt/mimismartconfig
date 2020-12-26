@@ -1,0 +1,14 @@
+
+V-ID/V-ADDR 
+{
+	if([V-ADDR]==1)
+	{
+		setStatus(770:2, 0);
+		//setStatus(776:5, 0);
+	}else {
+	
+		setStatus(770:2, 1);		
+		//setStatus(776:5, 1);
+		
+	}
+}

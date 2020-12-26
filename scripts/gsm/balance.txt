@@ -1,0 +1,28 @@
+/*
+{
+  desc:"Скрипт проверки баланса модуля GSM",
+  tag:"import-script",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"Баланс карточки GSM модуля", "sub-id":"%SUBID%", type:"virtual", "sub-type":"long-text", length:"0"}
+  ],
+  vars:[
+	{name:"NUMBER",type:"list",required:true,desc:"номер USSD для проверки баланса",data:{"*111#":"*111#","*101#":"*101#"},defaultValue:"*111#",descWidth:350},
+	{name:"PERIOD",type:"list",required:true,desc:"Интервал проверки",data:{"s:15":"15 секунд","s:30":"30 секунд","m:1":"1 минута","m:60":"1 час","m:720":"12 часов","m:1440":"24 часа"},defaultValue:"s:15",descWidth:350},
+    {name:"VIRT",type:"hidden",value:"%TARGET%:%SUBID%"},
+    {name:"DEST",type:"hidden",value:"1000:61"},
+    {name:"name",type:"hidden",value:"проверка баланса GSM"}
+  ]                       
+}
+*/
+
+void onInit() {
+    setStatus(VIRT, "Подождите, выполняется проверка баланса...");
+	setStatus(DEST, "number=NUMBER|dev=VIRT");
+}
+
+V-ID/PERIOD {
+    setStatus(VIRT, "Подождите, выполняется проверка баланса...");
+	setStatus(DEST, "number=NUMBER|dev=VIRT");
+}
+

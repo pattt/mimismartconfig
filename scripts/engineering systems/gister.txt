@@ -1,0 +1,176 @@
+/*
+{
+  desc:"Инженерные системы: Включение/Выключение элементов по гистерезису",
+  tag:"import-script",
+  name:"Gisteresis",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+	{type:"comment",text:"Укажите элементы, которые будут управлятся данным скриптом:"},
+	{type:"comment",text:"Если необходимо, что бы элемент ВКЛючался, при выходе за пределы гистерезиса, поставъте галочку CheckBox."},
+	{type:"comment",text:"(*) - обязательный параметр."},
+	[				
+		{name:"ITEM1",type:"devices-list",required:true,filter:["lamp","valve","valve-heating","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1 (*)",descWidth:350},
+		{name:"ITEMcb1",type:"checkbox",checked:false,checkValue:"1",uncheckValue:"0"}
+	],
+	[
+		{name:"ITEM2",type:"devices-list",filter:["lamp","valve","valve-heating","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2",descWidth:350},
+		{name:"ITEMcb2",type:"checkbox",checked:false,checkValue:"1",uncheckValue:"0"}
+	],
+	[
+		{name:"ITEM3",type:"devices-list",filter:["lamp","valve","valve-heating","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3",descWidth:350},
+		{name:"ITEMcb3",type:"checkbox",checked:false,checkValue:"1",uncheckValue:"0"}
+	],
+	{name:"PERIOD",type:"number",required:true,defaultValue:5,min:0,max:65535,desc:"Период проверки состояния датчиков, секунд",descWidth:350},
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{type:"comment",text:"Укажите датчики, по которым должны управляться выбранные элементы:"},
+	{type:"comment",text:"(*) - обязательный параметр."},
+		{name:"SENS1",type:"devices-list",required:true,filter:["motion-sensor","temperature-sensor","illumination-sensor","humidity-sensor"],desc:"Выберите датчик 1 (*)",descWidth:350},
+		{name:"SENS2",type:"devices-list",filter:["motion-sensor","temperature-sensor","illumination-sensor","humidity-sensor"],desc:"Выберите датчик 2",descWidth:350},
+		{name:"SENS3",type:"devices-list",filter:["motion-sensor","temperature-sensor","illumination-sensor","humidity-sensor"],desc:"Выберите датчик 3",descWidth:350},		
+		[
+			{name:"VALUEI",type:"number",required:true,defaultValue:20,min:-100,max:100,desc:"Для выбранных датчиков задайте Целую и Дробную части среднего значения для управления элементами",descWidth:450,width:80},
+			{name:"VALUEF",type:"number",required:true,defaultValue:50,min:0,max:99,width:80},
+		],
+		[
+			{name:"GISTERI",type:"number",required:true,defaultValue:0,min:0,max:100,desc:"Задайте Целую и Дробную части среднего значения гистерезиса для выбранных датчиков",descWidth:450,width:80},
+			{name:"GISTERF",type:"number",required:true,defaultValue:10,min:0,max:99,width:80},
+		],
+		
+	]
+}
+*/
+
+
+// преобразование чисел из i16 в i32, для правильного сравнения отрицательных чисел
+i32 modif_i16_2_i32(i32 ip)
+{	
+	return ((ip & 0x8000) ? (0xFFFF0000 | ip) : ip);       
+}
+// если введеные значения отрицательные - преобразуем
+
+i16 modif_i8_2_i16(i16 igi, i16 igf)
+{ 	
+	return ((igi & 0x80) ? (( (igi - 1) << 8) | (256 - igf*255/100)) : (( igi << 8) | (igf*256/100)));	
+}
+
+
+V-ID/s:PERIOD
+{
+	i32 ip1 = [SENS1:avgs:PERIOD];
+	ip1 = modif_i16_2_i32(ip1);
+#ifdef SENS2
+	i32 ip2 = [SENS2:avgs:PERIOD];
+	ip2 = modif_i16_2_i32(ip2);
+#endif
+#ifdef SENS3
+	i32 ip3 = [SENS3:avgs:PERIOD];
+	ip3 = modif_i16_2_i32(ip3);
+#endif
+
+// формируем 2-у байтное число из целой и дробной частей, заданных пользователем
+	i32 Value  = modif_i16_2_i32( modif_i8_2_i16(VALUEI, VALUEF));
+	i32 Gister = modif_i16_2_i32( modif_i8_2_i16(GISTERI, GISTERF));
+
+    if ((ip1 > (Value + Gister))
+#ifdef SENS2 
+	|| ( ip2 > (Value + Gister))
+#endif
+#ifdef SENS3 
+	|| ( ip3 > (Value + Gister))
+#endif
+	){
+		if (ITEMcb1 == 1) setStatus(ITEM1, 1); 
+		else setStatus(ITEM1, 0) ;
+#ifdef ITEM2 
+		if (ITEMcb2 == 1) setStatus(ITEM2, 1);
+		else setStatus(ITEM2, 0) ;
+#endif
+#ifdef ITEM3 
+		if (ITEMcb3 == 1) setStatus(ITEM3, 1);
+		else setStatus(ITEM3, 0) ;
+#endif
+	}
+	else
+    if (( ip1 < (Value - Gister))
+#ifdef SENS2 
+	|| ( ip2 < (Value - Gister))
+#endif
+#ifdef SENS3 
+	|| ( ip3 < (Value - Gister))
+#endif 
+	){
+		if (ITEMcb1 == 1) setStatus(ITEM1, 1);
+		else setStatus(ITEM1, 0);
+#ifdef ITEM2 
+		if (ITEMcb2 == 1) setStatus(ITEM2, 1);
+		else setStatus(ITEM2, 0);
+#endif
+#ifdef ITEM3 
+		if (ITEMcb3 == 1) setStatus(ITEM3, 1);
+		else setStatus(ITEM3, 0);
+#endif
+	}
+	else
+	{
+		if (ITEMcb1 == 0) setStatus(ITEM1, 1); 
+		else setStatus(ITEM1, 0) ;
+#ifdef ITEM2 
+		if (ITEMcb2 == 0) setStatus(ITEM2, 1);
+		else setStatus(ITEM2, 0) ;
+#endif
+#ifdef ITEM3 
+		if (ITEMcb3 == 0) setStatus(ITEM3, 1);
+		else setStatus(ITEM3, 0) ;
+#endif
+	}
+}
+
+/*
+
+	u8 s[] = {"\01Datch=  00,000000"};                         // строка для сообщения
+//     байты {" 0 12345678901234567"} - для латинницы 2-а байта, 
+//     назначение 0-го байта - тип сообщения:\01-обычное,\02-домофон,\04-важное,\08-критическое 
+
+
+void msg(i32 ig) // функция для вывода сообщения на интерфейс в 16-ричной системе
+{
+		if (ig & 0x80000000)
+			 s[8] = 48 - 3;		      // если показания отриц - '-'
+		else s[8] = 48 - 5;           // , иначе положит - '+'
+		s[11] = 48 - 4;
+
+		i32 ig0 = ig & 0x000000FF; 
+		s[17] = 48 + (((ig0 % 16) > 9) ? ((ig0 % 16) + 7) : (ig0 % 16));	
+		s[16] = 48 + (((ig0 / 16) > 9) ? ((ig0 / 16) + 7) : (ig0 / 16));
+		ig0 = (ig >> 8) & 0x000000FF;
+		s[15] = 48 + (((ig0 % 16) > 9) ? ((ig0 % 16) + 7) : (ig0 % 16));		
+		s[14] = 48 + (((ig0 / 16) > 9) ? ((ig0 / 16) + 7) : (ig0 / 16));
+		ig0 = (ig >> 16) & 0x000000FF;
+		s[13] = 48 + (((ig0 % 16) > 9) ? ((ig0 % 16) + 7) : (ig0 % 16));	
+		s[12] = 48 + (((ig0 / 16) > 9) ? ((ig0 / 16) + 7) : (ig0 / 16));
+		ig0 = (ig >> 24) & 0x000000FF;
+		s[10] = 48 + (((ig0 % 16) > 9) ? ((ig0 % 16) + 7) : (ig0 % 16));	
+		s[9]  = 48 + (((ig0 / 16) > 9) ? ((ig0 / 16) + 7) : (ig0 / 16));
+		setStatus(2047:32, &s); // выдать сообщение s на интерфейс
+}
+
+
+
+s[5] = 0x20;
+msg(ip1);
+
+s[5] = 0x3E; // ">"
+msg(Value + Gister);
+
+s[5] = 0x3C; // "<"
+msg(Value - Gister);
+
+s[5] = 0x3D; // "="
+msg(Value - Gister);
+
+	s[5] = 0x76;
+//	msg(VALUEI);
+	msg(Value);
+	
+*/

@@ -1,0 +1,107 @@
+/*
+{
+  desc:"Cкрипт который в зависимости от времени выполняет разные действия",
+  tag:"item",
+  target:"ITEM1",
+  selectArea:true,
+  vars:[
+    {type:"comment",text:"Временной интервал 1",width:150},
+	{name:"DAYS1",type:"weekday",required:false,desc:"Дни недели"},
+    [	
+     {name:["TIME_FROM1"],type:"time",required:true,desc:"Время с",width:70},	
+	 {type:"comment",text:"до",width:20},
+	 {name:["TIME_TO1"],type:"time",required:true,width:70},	
+	], 
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT1",type:"list",required:true,data:{"1":"Включить","0":"Выключить","0xFF":"Изменение состояния"},desc:"Действие"},	
+	
+	{type:"comment",text:"Временной интервал 2",width:150},
+	{name:"DAYS2",type:"weekday",required:false,desc:"Дни недели"},
+    [	
+     {name:["TIME_FROM2"],type:"time",required:false,desc:"Время с",width:70},	
+	 {type:"comment",text:"до",width:20},
+	 {name:["TIME_TO2"],type:"time",required:false,width:70},	
+	], 
+   	{name:"ITEM2",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT2",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменение состояния"},desc:"Действие"},		
+	
+	{type:"comment",text:"Временной интервал 3",width:150},
+	{name:"DAYS3",type:"weekday",required:false,desc:"Дни недели"},
+    [	
+     {name:["TIME_FROM3"],type:"time",required:false,desc:"Время с",width:70},	
+	 {type:"comment",text:"до",width:20},
+	 {name:["TIME_TO3"],type:"time",required:false,width:70},	
+	], 
+   	{name:"ITEM3",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT3",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменение состояния"},desc:"Действие"},	
+	
+	{type:"comment",text:"Временной интервал 4",width:150},
+	{name:"DAYS4",type:"weekday",required:false,desc:"Дни недели"},
+    [	
+     {name:["TIME_FROM4"],type:"time",required:false,desc:"Время с",width:70},	
+	 {type:"comment",text:"до",width:20},
+	 {name:["TIME_TO4"],type:"time",required:false,width:70},	
+	], 
+   	{name:"ITEM4",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT4",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменение состояния"},desc:"Действие"},	
+	
+	{type:"comment",text:"Временной интервал 5",width:150},
+	{name:"DAYS5",type:"weekday",required:false,desc:"Дни недели"},
+    [	
+     {name:["TIME_FROM5"],type:"time",required:false,desc:"Время с",width:70},	
+	 {type:"comment",text:"до",width:20},
+	 {name:["TIME_TO5"],type:"time",required:false,width:70},	
+	], 
+   	{name:"ITEM5",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT5",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменение состояния"},desc:"Действие"},	
+  ]
+}
+*/
+void sbros()
+{
+  setStatus(V-ADDR,0);
+}
+V-ID/V-ADDR
+{
+ if (opt(0)){ 
+  cancelDelayedCall(sbros);
+  delayedCall(sbros,10);
+  if (timeInRange(TIME_FROM1-TIME_TO1|DAYS1))    setStatus(ITEM1, ACT1);	
+  #ifdef DAYS2
+  #ifdef TIME_TO2
+  #ifdef ITEM2
+  #ifdef ACT2
+	if (timeInRange(TIME_FROM2-TIME_TO2|DAYS2))    setStatus(ITEM2, ACT2);	
+  #endif
+  #endif
+  #endif
+  #endif
+  #ifdef DAYS3
+  #ifdef TIME_TO3
+  #ifdef ITEM3
+  #ifdef ACT3
+	if (timeInRange(TIME_FROM3-TIME_TO3|DAYS3))    setStatus(ITEM3, ACT3);	
+  #endif
+  #endif
+  #endif
+  #endif
+  #ifdef DAYS4
+  #ifdef TIME_TO4
+  #ifdef ITEM4
+  #ifdef ACT4
+	if (timeInRange(TIME_FROM4-TIME_TO4|DAYS4))    setStatus(ITEM4, ACT4);	
+  #endif
+  #endif
+  #endif
+  #endif
+  #ifdef DAYS5
+  #ifdef TIME_TO5
+  #ifdef ITEM5
+  #ifdef ACT5
+	if (timeInRange(TIME_FROM5-TIME_TO5|DAYS5))    setStatus(ITEM5, ACT5);	
+  #endif
+  #endif
+  #endif
+  #endif
+ } 	
+}

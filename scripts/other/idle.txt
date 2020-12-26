@@ -1,0 +1,103 @@
+/*
+{
+  desc:"Детекция бездействия исполнителей",
+  tag:"import-script",
+  target:"ITEM0",
+  selectArea:false,
+  vars:[
+	{name:"PERIOD",type:"number",required:true,defaultValue:60,min:1,max:3600,desc:"Время детекции"},
+	[
+		{name:"ONOFF1",type:"list",required:false,defaultValue:"0x01",data:{"0x00":"Выключить","0x01":"Включить"},desc:"При бездействии"},
+		{name:"ITEMON",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"]}
+	],
+	[
+		{name:"ONOFF2",type:"list",required:false,defaultValue:"0x00",data:{"0x00":"Выключить","0x01":"Включить"},desc:"При завершении бездействия"},
+		{name:"ITEMOFF",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"]}
+	],
+   	{name:"ITEM0",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1"},
+   	{name:"ITEM1",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2"},
+   	{name:"ITEM2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3"},
+   	{name:"ITEM3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 4"},
+   	{name:"ITEM4",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 5"},
+   	{name:"ITEM5",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 6"},
+   	{name:"ITEM6",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 7"},
+   	{name:"ITEM7",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 8"},
+   	{name:"ITEM8",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 9"},
+   	{name:"ITEM9",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 10"}
+  ]
+}
+*/
+//descAlign:"top"
+u16 t = 0;
+
+V-ID/s:1 {
+	if (t==PERIOD) {
+		setStatus(ITEMON, ONOFF1);
+		++t;
+	} else ++t;	
+}
+
+void reset() {
+	t = 0;
+	setStatus(ITEMOFF, ONOFF2);
+}
+
+#ifdef ITEM0
+V-ID/ITEM0 {
+	reset();
+}
+#endif
+
+#ifdef ITEM1
+V-ID/ITEM1 {
+	reset();
+}
+#endif
+
+#ifdef ITEM2
+V-ID/ITEM2 {
+	reset();
+}
+#endif
+
+#ifdef ITEM3
+V-ID/ITEM3 {
+	reset();
+}
+#endif
+
+#ifdef ITEM4
+V-ID/ITEM4 {
+	reset();
+}
+#endif
+
+#ifdef ITEM5
+V-ID/ITEM5 {
+	reset();
+}
+#endif
+
+#ifdef ITEM6
+V-ID/ITEM6 {
+	reset();
+}
+#endif
+
+#ifdef ITEM7
+V-ID/ITEM7 {
+	reset();
+}
+#endif
+
+#ifdef ITEM8
+V-ID/ITEM8 {
+	reset();
+}
+#endif
+
+#ifdef ITEM9
+V-ID/ITEM9 {
+	reset();
+}
+#endif

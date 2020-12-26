@@ -1,0 +1,36 @@
+void off_wait()
+{
+	setStatus([V-ADDR], 0);
+}
+
+V-ID/V-ADDR 
+{
+	if([V-ADDR]==1)
+	{
+		setStatus(770:1, 0);
+		setStatus(770:2, 0);
+		setStatus(770:3, 0);
+		setStatus(770:4, 0);
+		setStatus(770:5, 0);
+		setStatus(770:6, 0);
+		setStatus(770:7, 0);
+		setStatus(770:8, 0);
+		
+		setStatus(776:1, 0);
+		setStatus(776:2, 0);
+		setStatus(776:3, 0);
+		setStatus(776:4, 0);
+		setStatus(776:5, 0);
+		setStatus(776:6, 0);
+		setStatus(776:7, 0);
+		setStatus(776:8, 0);
+		
+		setStatus(502:32, {0, 250, 20});
+		setStatus(502:33, {0, 250, 20});
+		setStatus(502:34, {0, 250, 20});
+		setStatus(502:35, {0, 250, 20});
+		
+		delayedCallMs(off_wait, 1000);
+		
+	}
+}

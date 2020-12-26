@@ -1,0 +1,331 @@
+/*
+{
+	desc:"Управление электронным замком по считывателю ",
+	tag:"import-script",
+	target:"CARD",
+	selectArea:false,
+	vars:[
+		{type:"comment",text:"Выберите считыватель:",width:600},
+		{name:"CARD",type:"devices-list",required:true,filter:["security-card-reader"]},
+		{type:"comment",text:"Выберите электронный замок:",width:600},
+		{name:"LOCK",type:"devices-list",required:true,filter:["lamp"]},
+		{type:"comment",text:"Укажите период закрытия замка",width:600},
+		{name:"PERIOD",type:"number",required:false,defaultValue:5,min:1,max:60},
+
+		{type:"comment",text:"",width:600},
+		{type:"comment",text:"Введите код(ы) в 16-ричном формате(пример: 0x11223344)",width:600},
+		[
+			{type:"comment",text:"1.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE01",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"2.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE02",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"3.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE03",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"4.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE04",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"5.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE04",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"6.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE05",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"7.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE07",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"8.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE08",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"9.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE09",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"10.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE10",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"11.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE11",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"12.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE12",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"13.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE13",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"14.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE14",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"15.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE15",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		],
+		[
+			{type:"comment",text:"16.",width:30},
+			{type:"comment",text:"0x",width:10},
+			{name:"CODE16",required:false, type:"string", min:8, max:8, width:100, filter:"0123456789AaBbCcDdFfEe"},
+		]
+	]
+}
+*/
+
+void closeLock() {
+	setStatus(LOCK, 1);
+}
+
+V-ID/CARD {
+
+	// считывание кода карточек
+	u8 testText[50];
+	#ifdef CODE01
+	u8 code01[] = {0xCODE01};
+	if(opt(0) == code01[0])
+		if(opt(1) == code01[1])
+			if(opt(2) == code01[2])
+				if(opt(3) == code01[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE02
+	u8 code02[] = {0xCODE02};
+	if(opt(0) == code02[0])
+		if(opt(1) == code02[1])
+			if(opt(2) == code02[2])
+				if(opt(3) == code02[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE03
+	u8 code03[] = {0xCODE03};
+	if(opt(0) == code03[0])
+		if(opt(1) == code03[1])
+			if(opt(2) == code03[2])
+				if(opt(3) == code03[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE04
+	u8 code04[] = {0xCODE04};
+	if(opt(0) == code04[0])
+		if(opt(1) == code04[1])
+			if(opt(2) == code04[2])
+				if(opt(3) == code04[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE05
+	u8 code05[] = {0xCODE05};
+	if(opt(0) == code05[0])
+		if(opt(1) == code05[1])
+			if(opt(2) == code05[2])
+				if(opt(3) == code05[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE06
+	u8 code06[] = {0xCODE06};
+	if(opt(0) == code06[0])
+		if(opt(1) == code06[1])
+			if(opt(2) == code06[2])
+				if(opt(3) == code06[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE07
+	u8 code07[] = {0xCODE07};
+	if(opt(0) == code07[0])
+		if(opt(1) == code07[1])
+			if(opt(2) == code07[2])
+				if(opt(3) == code07[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE08
+	u8 code08[] = {0xCODE08};
+	if(opt(0) == code08[0])
+		if(opt(1) == code08[1])
+			if(opt(2) == code08[2])
+				if(opt(3) == code08[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif	
+	#ifdef CODE09
+	u8 code09[] = {0xCODE09};
+	if(opt(0) == code09[0])
+		if(opt(1) == code09[1])
+			if(opt(2) == code09[2])
+				if(opt(3) == code09[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE10
+	u8 code10[] = {0xCODE10};
+	if(opt(0) == code10[0])
+		if(opt(1) == code10[1])
+			if(opt(2) == code10[2])
+				if(opt(3) == code10[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE11
+	u8 code11[] = {0xCODE11};
+	if(opt(0) == code11[0])
+		if(opt(1) == code11[1])
+			if(opt(2) == code11[2])
+				if(opt(3) == code11[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE12
+	u8 code12[] = {0xCODE12};
+	if(opt(0) == code12[0])
+		if(opt(1) == code12[1])
+			if(opt(2) == code12[2])
+				if(opt(3) == code12[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE13
+	u8 code13[] = {0xCODE13};
+	if(opt(0) == code13[0])
+		if(opt(1) == code13[1])
+			if(opt(2) == code13[2])
+				if(opt(3) == code13[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE14
+	u8 code14[] = {0xCODE14};
+	if(opt(0) == code14[0])
+		if(opt(1) == code14[1])
+			if(opt(2) == code14[2])
+				if(opt(3) == code14[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	#ifdef CODE15
+	u8 code15[] = {0xCODE15};
+	if(opt(0) == code15[0])
+		if(opt(1) == code15[1])
+			if(opt(2) == code15[2])
+				if(opt(3) == code15[3]) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+	#endif
+	
+	if(opt(0) == 146)
+		if(opt(1) == 39)
+			if(opt(2) == 250)
+				if(opt(3) == 0) {
+						
+						setStatus(183:30, {1, 100, 0, "http://192.168.1.124/enter.mp3"});
+						setStatus(LOCK, 0);
+						delayedCall(closeLock, PERIOD);
+						return;
+						
+					}
+}

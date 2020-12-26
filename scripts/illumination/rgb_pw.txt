@@ -1,0 +1,53 @@
+/*
+{
+  desc:"Управление питанием подсветки",
+  tag:"import-script",
+  target:"RGB1",
+  selectArea:true,
+  vars:[
+	{name:"PERIOD",type:"number",required:true,defaultValue:30,min:0,max:3600,desc:"Время через которое отключить питание (в секундах)"},
+	{name:"PW",type:"devices-list",required:true, filter:["lamp"],desc:"Блок питания"},
+	{name:"RGB1",type:"devices-list",required:true, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"RBG"},
+   	{name:"RGB2",type:"devices-list",required:false, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"RGB"},
+   	{name:"RGB3",type:"devices-list",required:false, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"RGB"}
+  ]
+}
+*/
+
+void off() {
+	setStatus(PW, 0);
+}
+
+void check(u8 st) {
+	cancelDelayedCall(off);
+	if (st) {
+		if (![PW]) setStatus(PW, 1);
+		return;
+	}
+	if ( (![RGB1.0])
+#ifdef RGB2
+			&& (![RGB2.0])
+#endif
+#ifdef RGB3
+			&& (![RGB3.0])
+#endif
+		) {
+			delayedCall(off, PERIOD);
+		}
+}
+
+V-ID/RGB1 {
+	check(opt(0));
+}
+
+#ifdef RGB2
+V-ID/RGB2 {
+	check(opt(0));
+}
+#endif
+
+#ifdef RGB3
+V-ID/RGB3 {
+	check(opt(0));
+}
+#endif

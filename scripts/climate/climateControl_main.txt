@@ -1,0 +1,251 @@
+/*
+{
+  "desc":"Скрипт для климат-контроля комнаты",
+  "tag":"item",
+  "name":"Климат\\10контроль",
+  "target":"VALVEHEATINGMAIN",
+  "selectArea":"true",
+  "vars":[
+	{"type":"comment","text":"ВАЖНО! Обратите внимание, что необходимо создать виртуальное устройство valve-heating, которое будет отвечать за климатконтроль, и привязать к нему датчики температуры. Теплый пол не участвует в климат контроле.","width":"500","style":"color:green;"},
+	{name:"VALVEHEATINGMAIN", type:"devices-list", required:true, filter:["valve-heating"], desc:"Устройство климат-контроля", descWidth:370},	
+	{name:"VALVEHEATING0", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 1", descWidth:370},
+	{name:"CL0", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 1", descWidth:370},
+	{name:"VALVEHEATING1", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 2", descWidth:370},
+	{name:"CL1", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 2", descWidth:370},
+	{name:"VALVEHEATING2", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 3", descWidth:370},
+	{name:"CL2", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 3", descWidth:370},
+	{name:"VALVEHEATING3", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 4", descWidth:370},
+	{name:"CL3", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 4", descWidth:370},
+	{name:"VALVEHEATING4", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 5", descWidth:370},
+	{name:"CL4", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 5", descWidth:370},
+	{name:"VALVEHEATING5", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 6", descWidth:370},
+	{name:"CL5", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 6", descWidth:370},
+	{name:"VALVEHEATING6", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 7", descWidth:370},
+	{name:"CL6", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 7", descWidth:370},
+	{name:"VALVEHEATING7", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 8", descWidth:370},
+	{name:"CL7", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 8", descWidth:370},
+	{name:"VALVEHEATING8", type:"devices-list", required:false, filter:["valve-heating"], desc:"Устройство климат контроля 9", descWidth:370},
+	{name:"CL8", type:"devices-list", required:false, filter:["script"], desc:"Скрипт включения климат контроля 9", descWidth:370},	
+		
+  ]
+}
+*/
+
+u8 temp = 0;
+u8 set_temp = 0;
+u8 set_temp_old = 0;
+u8 mode = 0;
+u8 mode_old = 100;
+
+V-ID/V-ADDR
+{
+	#ifdef CL0
+		setStatus(CL0,[V-ADDR.0]);
+	#endif
+	#ifdef CL1
+		setStatus(CL1,[V-ADDR.0]);
+	#endif
+	#ifdef CL2
+		setStatus(CL2,[V-ADDR.0]);
+	#endif
+	#ifdef CL3
+		setStatus(CL3,[V-ADDR.0]);
+	#endif
+	#ifdef CL4
+		setStatus(CL4,[V-ADDR.0]);
+	#endif
+	#ifdef CL5
+		setStatus(CL5,[V-ADDR.0]);
+	#endif
+	#ifdef CL6
+		setStatus(CL6,[V-ADDR.0]);
+	#endif
+	#ifdef CL7
+		setStatus(CL7,[V-ADDR.0]);
+	#endif
+	#ifdef CL8
+		setStatus(CL8,[V-ADDR.0]);
+	#endif
+}
+
+
+V-ID/s:1
+{
+	u8 temp_ar[2];
+	
+	temp = [VALVEHEATINGMAIN.4];
+	set_temp = [VALVEHEATINGMAIN.2];	
+	mode = [VALVEHEATINGMAIN.5];	
+	if ([V-ADDR.0]==1) {
+	if ((mode == 0) && (set_temp==temp) )
+		{
+			
+		}
+	if ((mode != mode_old) && (mode != 0)){	
+		mode_old = mode;
+		
+		if (mode == 0xff)
+		{
+			#ifdef VALVEHEATING0 
+				setStatus(1000:102,"VALVEHEATING0\00");
+				setStatus(VALVEHEATING0,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING1 
+				setStatus(1000:102, "VALVEHEATING1\00");
+				setStatus(VALVEHEATING1,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING2 
+				setStatus(1000:102, "VALVEHEATING2\00");
+				setStatus(VALVEHEATING2,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING3 
+				setStatus(1000:102, "VALVEHEATING3\00");
+				setStatus(VALVEHEATING3,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING4 
+				setStatus(1000:102, "VALVEHEATING4\00");
+				setStatus(VALVEHEATING4,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING5 
+				setStatus(1000:102, "VALVEHEATING5\00");
+				setStatus(VALVEHEATING5,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING6 
+				setStatus(1000:102, "VALVEHEATING6\00");
+				setStatus(VALVEHEATING6,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING7 
+				setStatus(1000:102, "VALVEHEATING7\00");
+				setStatus(VALVEHEATING7,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING8 
+				setStatus(1000:102, "VALVEHEATING8\00");
+				setStatus(VALVEHEATING8,[VALVEHEATINGMAIN.0]);
+			#endif
+		}
+		else if (mode == 0xfe)
+		{
+			#ifdef VALVEHEATING0 
+				setStatus(1000:102, "VALVEHEATING0\0always-off");
+			#endif
+			#ifdef VALVEHEATING1 
+				setStatus(1000:102,"VALVEHEATING1\0always-off");		
+			#endif
+			#ifdef VALVEHEATING2 
+				setStatus(1000:102, "VALVEHEATING2\0always-off");
+			#endif
+			#ifdef VALVEHEATING3 
+				setStatus(1000:102, "VALVEHEATING3\0always-off");
+			#endif
+			#ifdef VALVEHEATING4 
+				setStatus(1000:102, "VALVEHEATING4\0always-off");
+			#endif
+			#ifdef VALVEHEATING5 
+				setStatus(1000:102, "VALVEHEATING5\0always-off");
+			#endif
+			#ifdef VALVEHEATING6 
+				setStatus(1000:102, "VALVEHEATING6\0always-off");
+			#endif
+			#ifdef VALVEHEATING7 
+				setStatus(1000:102, "VALVEHEATING7\0always-off");
+			#endif
+			#ifdef VALVEHEATING8 
+				setStatus(1000:102, "VALVEHEATING8\0always-off");
+			#endif
+	}
+	} else
+	if ((mode == 0) && (set_temp < 50) && ((set_temp != set_temp_old) || (mode_old != mode)))
+	{
+		//if (mode == 0) setStatus(INTERFACE:32,{1,"mode==0"});
+		set_temp_old = set_temp;
+		
+		if (mode_old != mode) mode_old = mode;
+		temp_ar[0] = set_temp/10%10+48;
+		temp_ar[1] = set_temp%10+48;		
+		#ifdef VALVEHEATING0 
+			setStatus(1000:102, "VALVEHEATING0\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING0\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING1 
+			setStatus(1000:102, "VALVEHEATING1\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING1\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING2
+			setStatus(1000:102, "VALVEHEATING2\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING2\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING3 
+			setStatus(1000:102, "VALVEHEATING3\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING3\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef VALVEHEATING4
+			setStatus(1000:102, "VALVEHEATING4\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING4\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef VALVEHEATING5
+			setStatus(1000:102, "VALVEHEATING5\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING5\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef VALVEHEATING6 
+			setStatus(1000:102, "VALVEHEATING6\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING6\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef VALVEHEATING7 
+			setStatus(1000:102, "VALVEHEATING7\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING7\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef VALVEHEATING8 
+			setStatus(1000:102, "VALVEHEATING8\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING8\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+	}
+	}
+}
+
+
+
+V-ID/VALVEHEATINGMAIN
+{
+	if ([V-ADDR.0]==1) {
+	if ([VALVEHEATINGMAIN.5] == 0xff)
+		{
+			mode_old = 0xff;
+			#ifdef VALVEHEATING0 
+				setStatus(1000:102,"VALVEHEATING0\00");
+				setStatus(VALVEHEATING0,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING1 
+				setStatus(1000:102, "VALVEHEATING1\00");
+				setStatus(VALVEHEATING1,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING2 
+				setStatus(1000:102, "VALVEHEATING2\00");
+				setStatus(VALVEHEATING2,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING3 
+				setStatus(1000:102, "VALVEHEATING3\00");
+				setStatus(VALVEHEATING3,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING4 
+				setStatus(1000:102, "VALVEHEATING4\00");
+				setStatus(VALVEHEATING4,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING5 
+				setStatus(1000:102, "VALVEHEATING5\00");
+				setStatus(VALVEHEATING5,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING6 
+				setStatus(1000:102, "VALVEHEATING6\00");
+				setStatus(VALVEHEATING6,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING7 
+				setStatus(1000:102, "VALVEHEATING7\00");
+				setStatus(VALVEHEATING7,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef VALVEHEATING8 
+				setStatus(1000:102, "VALVEHEATING8\00");
+				setStatus(VALVEHEATING8,[VALVEHEATINGMAIN.0]);
+			#endif
+		}	
+	}	
+}

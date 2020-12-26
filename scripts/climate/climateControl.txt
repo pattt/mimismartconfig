@@ -1,0 +1,631 @@
+/*
+{
+  "desc":"Скрипт для климат-контроля комнаты",
+  "tag":"item",
+  "name":"Климат\\10контроль",
+  "target":"VALVEHEATINGMAIN",
+  "selectArea":"true",
+  "vars":[
+	{"type":"comment","text":"ВАЖНО! Обратите внимание, что необходимо создать виртуальное устройство valve-heating, которое будет отвечать за климатконтроль, и привязать к нему датчики температуры. Теплый пол не участвует в климат контроле.","width":"500","style":"color:green;"},
+	{name:"CLMAIN", type:"devices-list", required:false, filter:["script"], desc:"Главный скрипт климат-контроля", descWidth:370},	
+	{name:"VALVEHEATINGMAIN", type:"devices-list", required:true, filter:["valve-heating"], desc:"Устройство климат-контроля", descWidth:370},	
+	{name:"RESPONCETIMECHECK", type:"checkbox", checked:false, required:false, desc:"Отслеживать время реакции системы и выводить журнал", checkValue:"1", uncheckValue:"0", descWidth:370},
+	{name:"HEATINGLOG", type:"devices-list", required:false, filter:["virtual"], desc:"Устройство вывода журнала системы", descWidth:370},
+	{name:"VALVEHEATING0", type:"devices-list", required:false, filter:["valve-heating"], desc:"Отопление в помещении", descWidth:370},
+	{name:"VALVEHEATING1", type:"devices-list", required:false, filter:["valve-heating"], desc:"Отопление в помещении", descWidth:370},
+	{name:"VALVEHEATING2", type:"devices-list", required:false, filter:["valve-heating"], desc:"Отопление в помещении", descWidth:370},
+	{name:"VALVEHEATING3", type:"devices-list", required:false, filter:["valve-heating"], desc:"Отопление в помещении", descWidth:370},
+	{"type":"comment","text":"Задайте фанкойлы (устройство димер)", width:500,"style":"color:green;"},
+	{name:"FUNCOIL0", type:"devices-list", required:false, filter:["dimer-lamp"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL1", type:"devices-list", required:false, filter:["dimer-lamp"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL2", type:"devices-list", required:false, filter:["dimer-lamp"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL3", type:"devices-list", required:false, filter:["dimer-lamp"], desc:"Фанкойл", descWidth:370},
+	{"type":"comment","text":"Задайте фанкойлы (устройство вентиляция) (мощность обдува не управляется, только задается температура, дольше автоматизацие переходит под управление скрипта фанкойла)", width:500,"style":"color:green;"},
+	{name:"FUNCOIL_VENT0", type:"devices-list", required:false, filter:["virtual"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL_VENT1", type:"devices-list", required:false, filter:["virtual"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL_VENT2", type:"devices-list", required:false, filter:["virtual"], desc:"Фанкойл", descWidth:370},
+	{name:"FUNCOIL_VENT3", type:"devices-list", required:false, filter:["virtual"], desc:"Фанкойл", descWidth:370},
+	{"type":"comment","text":"Контроль влажности", width:500,"style":"color:green;"},
+	{name:"HUMIDITY_SENS", type:"devices-list", required:false, filter:["humidity-sensor"], desc:"Датчик влажности", descWidth:370},
+	{name:"HUMIDITIFIER", type:"devices-list", required:false, filter:["lamp"], desc:"Увлажнитель", descWidth:370},
+	{name:"HUMIDITY_LEVEL", type:"number", required:false, defaultValue:30, min:5, max:99, desc:"Уровень влажности", descWidth:370},
+	{name:"HUMIDITY_CHECK", type:"checkbox", checked:false, required:false, desc:"Не отслеживать в режиме Я ушел", checkValue:"1", uncheckValue:"0", descWidth:370},
+	{"type":"comment","text":"Контроль окон и дверей", width:500,"style":"color:green;"},
+	{name:"HERCON1", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 1", descWidth:370},
+	{name:"HERCON2", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 2", descWidth:370},
+	{name:"HERCON3", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 3", descWidth:370},
+	{name:"HERCON4", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 4", descWidth:370},
+	{name:"HERCON5", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 5", descWidth:370},
+	{name:"HERCON6", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 6", descWidth:370},
+	{name:"HERCON7", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 7", descWidth:370},
+	{name:"HERCON8", type:"devices-list", required:false, filter:["door-sensor"], desc:"Геркон 8", descWidth:370},
+	{name:"PERIODSYS", type:"number", required:true, defaultValue:30, min:1, max:120, desc:"Задайте частоту проверки температуры в помещении в минутах", descWidth:370},
+	{name:"ICOME", type:"devices-list", required:false, filter:["script"], desc:"Я пришел (не включать кондиционер в режиме Я ушел)", descWidth:370},
+	{name:"COND0", type:"devices-list", required:false, filter:["conditioner"], descWidth:370, desc:"Кондиционер"},
+	{name:"FUNMODE", type:"number", required:true, defaultValue:3, min:0, max:3, desc:"Мощность обдува, на которую включать кондиционер (0 - авто, 1,2,3)", descWidth:370},
+	{name:"TEMPCONDLOW0", type:"number", required:false, defaultValue:16, min:14, max:32, desc:"Самая низкая температура кондиционера"},
+	{name:"TEMPCONDHI0", type:"number", required:false, defaultValue:16, min:14, max:32, desc:"Самая высокая температура кондиционера"},
+	{"type":"comment","text":"Используйте эти настройки для проверки возможности включения кондиционера при низких температурах", width:500,"style":"color:green;"},
+	{name:"STREETTEMP", type:"devices-list", required:false, filter:["temperature-sensor"], desc:"Датчик температуры на улице (если не задано игнорировать)", descWidth:370},
+	{name:"TEMPLIMIT", type:"number", required:false, defaultValue:-10, min:-30, max:20, desc:"Порог температуры на улице для работы кондиционера (если не задано игнорировать)", descWidth:370},		
+  ]
+}
+*/
+
+u8 temp = 0;
+u8 set_temp = 0;
+u8 set_temp_old = 0;
+u8 mode = 0;
+u8 mode_old = 100;
+
+#ifdef CLMAIN
+void check()
+{
+	if ([CLMAIN.0]==1) setStatus(V-ADDR,1);
+}
+
+void onInit()
+{
+	delayedCall(check,5);
+}
+#endif
+
+#ifdef COND0
+		u8 state_old[5];
+		u8 i_on_cond;		
+#endif
+#ifdef INTERFACE 
+u8 interface[]="\01 Статус 000 000 000 000 000 000";
+
+void add_byte(u8 byte,u8 pos)
+{
+  interface[pos+2]=byte%10+48; 
+  byte/=10;
+  interface[pos+1]=byte%10+48; 
+  byte/=10;
+  interface[pos]=byte+48; 
+}
+#endif
+
+//street temp monitoring
+#ifdef TEMPLIMIT	#ifdef STREETTEMP
+i8 streett = 0;
+i8 templim = TEMPLIMIT;
+u8 templim_is_sendmess = 0;
+V-ID/STREETTEMP
+{
+	streett = [STREETTEMP.1];
+	
+	if ((templim_is_sendmess == 1) && (streett>templim)) {
+		templim_is_sendmess = 0;
+	}
+}						
+#endif #endif
+u16 cntr_heat = 0;
+#ifdef HEATINGLOG
+u8 cntr_text = 0;
+u8 text[180];
+
+//for message sending
+void send_mes(u8 *str)
+{
+	u8 mes[30] = "Climate-control: ";
+	u8 i;
+	u8 time[5];
+	
+	strcat(&mes, &str);
+	srvError(&mes);
+	for (i=0;i<30;++i) mes[i] = 0;
+	ltoa(time,hour());
+	strcat(mes,time);
+	strcat(mes,":");
+	ltoa(time,min());
+	strcat(mes,time);
+	strcat(mes,":");
+	ltoa(time,sec());
+	strcat(mes,time);
+	strcat(mes," ");
+	strcat(&mes, &str);	
+	mes[29] = 10;
+	if (cntr_text >= 180) {
+		for (i=0;i<150;++i) text[i] = text[i+30];
+		for (i=0;i<30;++i) text[150 + i] = mes[i];
+		srvError(&mes);
+	} else {		
+		for (i=0;i<30;++i) text[cntr_text + i] = mes[i];		
+		cntr_text = cntr_text + 30;
+		srvError(&mes);
+	}		
+	for (i=0;i<180;++i) {
+		if (text[i] == 0) text[i] = 32;
+	}
+	//setStatus(INTERFACE:32,{1,cntr_text/100+48,cntr_text/10%10+48,cntr_text%10+48,"<150"});
+	//srvError(&text);
+	setStatus(HEATINGLOG,&text);
+}
+#endif
+#ifdef RESPONCETIMECHECK
+u16 time_for_react[10] = {0,0,0,0,0,0,0,0,0,1};
+u8 cntr_react = 0;
+
+//for counting time for reaction
+void response_check(u8 calc)
+{
+	u8 i;
+	u8 cntr = 0;
+	u16 t_react = 0;
+	u8 t_react_str[7];	
+	
+	if (calc == 1) {
+		for (i=0;i<10;++i) {
+			if (time_for_react[i] != 0) {
+				t_react = time_for_react[i];
+				++cntr;
+			}
+		}
+		if (cntr != 0) {
+			t_react = t_react/cntr;
+			ltoa(t_react_str,t_react);
+			send_mes("time for reaction"A+t_react_str);
+		}
+	} else {//write 1 degree reached time
+		time_for_react[cntr_react] = cntr_heat;
+		++cntr_react;
+		if (cntr_react>9) cntr_react = 0;
+	}
+}
+
+i8 temp_dif_old = 0; 
+u16 cntr_1_degree = 0;
+V-ID/m:1{	
+	if (([V-ADDR]) && (mode == 0)) //control on, autom mode
+	{
+		if (set_temp != temp) {
+			if (cntr_1_degree < 65000) ++cntr_1_degree;
+		}
+
+	}
+}
+
+V-ID/s:1{
+	if (([V-ADDR]) && (mode == 0)) //control on, autom mode
+	{
+		if (set_temp == temp) {
+			if (cntr_1_degree != 0) { 
+				response_check(0);
+				cntr_1_degree = 0;
+				temp_dif_old = 0;
+			}
+		} else {
+			i8 temp_dif = 0;
+			temp_dif = set_temp-temp;
+			if (temp_dif != temp_dif_old) {//temp difference change
+				if (temp_dif < temp_dif_old) {
+					if (cntr_1_degree != 0) {
+						response_check(0);
+						cntr_1_degree = 0;
+					}
+				} else {					
+					cntr_1_degree = 0;
+				}				
+				temp_dif_old = temp_dif;			
+			}
+		}
+	}	
+}
+#endif 
+
+V-ID/V-ADDR
+{
+	if ([V-ADDR]){
+		mode_old = 100;
+		set_temp_old = 0;
+		#ifdef HERCON1
+			if (([~HERCON1]) #ifdef HERCON2 || ([~HERCON2]) #endif #ifdef HERCON3 || ([~HERCON3]) #endif #ifdef HERCON4 || ([~HERCON4]) #endif #ifdef HERCON5 || ([~HERCON5]) #endif #ifdef HERCON6 || ([~HERCON6]) #endif #ifdef HERCON7 || ([~HERCON7]) #endif #ifdef HERCON8 || ([~HERCON8]) #endif) {
+				setStatus(2047:32,{1,"Для эффективной работы системы климат-контроля закройте окна"});
+			}
+		#endif
+		#ifdef HEATINGLOG
+			send_mes("on");
+		#endif
+	} else {
+		#ifdef COND0
+		if (i_on_cond) {
+			i_on_cond = 0;
+			setStatus(COND0,&state_old);			
+		}
+		#endif
+		#ifdef HEATINGLOG
+			send_mes("off");
+		#endif
+		#ifdef FUNCOIL0  setStatus(FUNCOIL0,0); #endif
+		#ifdef FUNCOIL1  setStatus(FUNCOIL1,0); #endif
+		#ifdef FUNCOIL2  setStatus(FUNCOIL2,0); #endif
+		#ifdef FUNCOIL3  setStatus(FUNCOIL3,0); #endif
+	}
+}
+
+
+
+void manual_mode()
+{	
+	u8 state_main = 0;
+	
+	cntr_heat = 0;
+	#ifdef HEATINGLOG
+		send_mes("manual mode");
+	#endif
+		state_main = [VALVEHEATINGMAIN.0];
+			#ifdef VALVEHEATING0 
+				if ([VALVEHEATING0.5] !=0xff) {
+					setStatus(1000:102,"VALVEHEATING0\00");
+					cancelDelayedCall(manual_mode);
+					delayedCall(manual_mode,10);
+				}
+				setStatus(VALVEHEATING0,state_main);
+			#endif
+			#ifdef VALVEHEATING1 
+				if ([VALVEHEATING1.5] !=0xff) setStatus(1000:102, "VALVEHEATING1\00");
+				setStatus(VALVEHEATING1,state_main);
+			#endif
+			#ifdef VALVEHEATING2 
+				if ([VALVEHEATING2.5] !=0xff) setStatus(1000:102, "VALVEHEATING2\00");
+				setStatus(VALVEHEATING2,state_main);
+			#endif
+			#ifdef VALVEHEATING3 
+				if ([VALVEHEATING3.5] !=0xff) setStatus(1000:102, "VALVEHEATING3\00");
+				setStatus(VALVEHEATING3,state_main);
+			#endif
+			#ifdef FUNCOIL_VENT0
+				if (state_main == 0) setStatus(FUNCOIL_VENT0,{0,[FUNCOIL_VENT0.1],[FUNCOIL_VENT0.2],[FUNCOIL_VENT0.3],[FUNCOIL_VENT0.4]});
+				else setStatus(FUNCOIL_VENT0,{1,[FUNCOIL_VENT0.1],[FUNCOIL_VENT0.2],[FUNCOIL_VENT0.3],[FUNCOIL_VENT0.4]});
+			#endif
+			#ifdef FUNCOIL_VENT1
+				if (state_main == 0) setStatus(FUNCOIL_VENT1,{0,[FUNCOIL_VENT1.1],[FUNCOIL_VENT1.2],[FUNCOIL_VENT1.3],[FUNCOIL_VENT1.4]});
+				else setStatus(FUNCOIL_VENT1,{1,[FUNCOIL_VENT1.1],[FUNCOIL_VENT1.2],[FUNCOIL_VENT1.3],[FUNCOIL_VENT1.4]});
+			#endif
+			#ifdef FUNCOIL_VENT2
+				if (state_main == 0) setStatus(FUNCOIL_VENT2,{0,[FUNCOIL_VENT2.1],[FUNCOIL_VENT2.2],[FUNCOIL_VENT2.3],[FUNCOIL_VENT2.4]});
+				else setStatus(FUNCOIL_VENT2,{1,[FUNCOIL_VENT2.1],[FUNCOIL_VENT2.2],[FUNCOIL_VENT2.3],[FUNCOIL_VENT2.4]});
+			#endif
+			#ifdef FUNCOIL_VENT3
+				if (state_main == 0) setStatus(FUNCOIL_VENT3,{0,[FUNCOIL_VENT3.1],[FUNCOIL_VENT3.2],[FUNCOIL_VENT3.3],[FUNCOIL_VENT3.4]});
+				else setStatus(FUNCOIL_VENT3,{1,[FUNCOIL_VENT3.1],[FUNCOIL_VENT3.2],[FUNCOIL_VENT3.3],[FUNCOIL_VENT3.4]});
+			#endif
+			#ifdef FUNCOIL0
+				setStatus(FUNCOIL0,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef FUNCOIL1
+				setStatus(FUNCOIL1,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef FUNCOIL2
+				setStatus(FUNCOIL2,[VALVEHEATINGMAIN.0]);
+			#endif
+			#ifdef FUNCOIL3
+				setStatus(FUNCOIL3,[VALVEHEATINGMAIN.0]);
+			#endif
+}
+
+u8 is_reached = 0;
+u8 temp_ar[2];
+V-ID/s:1
+{	
+	u8 t_str[5];
+	u8 t_str1[12] = "set temp ";
+
+	if ([VALVEHEATINGMAIN.5]==0) {
+		temp = [VALVEHEATINGMAIN.4];
+		set_temp = [VALVEHEATINGMAIN.2];	
+		mode = [VALVEHEATINGMAIN.5];	
+	}	
+	if ([V-ADDR.0]==1) {
+	//temperature level is reached
+	if ((mode == 0)  && (set_temp==temp) && (is_reached == 0))
+		{
+			#ifdef COND0
+				#ifdef INTERFACE
+					setStatus(INTERFACE:32,{1,"cond stop"});
+				#endif
+				if (i_on_cond==1) {				
+					i_on_cond = 0;
+					setStatus(COND0,&state_old);
+					#ifdef HEATINGLOG
+						send_mes("conditioner off");
+					#endif
+				}
+			#endif	
+			cntr_heat = 0;					
+			#ifdef HEATINGLOG			
+				send_mes("temp level reached");
+			#endif			
+			is_reached = 1;
+		} else if ((mode == 0)  && (set_temp!=temp)) is_reached = 0;
+	if ((mode != mode_old) && (mode != 0)){	
+		mode_old = mode;
+		#ifdef COND0 
+			i_on_cond = 0; 
+			setStatus(COND0,&state_old);
+		#endif	
+		if (mode == 0xff)
+		{
+			#ifdef INTERFACE
+				setStatus(INTERFACE:32,{1,"mode 0xff, s:1"});
+			#endif	
+			manual_mode();			
+		}
+		else if (mode == 0xfe)
+		{
+			cntr_heat = 0;
+			#ifdef HEATINGLOG
+				send_mes("mode always off"); 
+			#endif
+			#ifdef VALVEHEATING0 
+				setStatus(1000:102, "VALVEHEATING0\0always-off");
+			#endif
+			#ifdef VALVEHEATING1 
+				setStatus(1000:102,"VALVEHEATING1\0always-off");		
+			#endif
+			#ifdef VALVEHEATING2 
+				setStatus(1000:102, "VALVEHEATING2\0always-off");
+			#endif
+			#ifdef VALVEHEATING3 
+				setStatus(1000:102, "VALVEHEATING3\0always-off");
+			#endif
+			#ifdef FUNCOIL_VENT0
+				setStatus(FUNCOIL_VENT0,{0,[FUNCOIL_VENT0.1],[FUNCOIL_VENT0.2],[FUNCOIL_VENT0.3],[FUNCOIL_VENT0.4]});				
+			#endif
+			#ifdef FUNCOIL_VENT1
+				setStatus(FUNCOIL_VENT1,{0,[FUNCOIL_VENT1.1],[FUNCOIL_VENT1.2],[FUNCOIL_VENT1.3],[FUNCOIL_VENT1.4]});
+			#endif
+			#ifdef FUNCOIL_VENT2
+				setStatus(FUNCOIL_VENT2,{0,[FUNCOIL_VENT2.1],[FUNCOIL_VENT2.2],[FUNCOIL_VENT2.3],[FUNCOIL_VENT2.4]});
+			#endif
+			#ifdef FUNCOIL_VENT3
+				setStatus(FUNCOIL_VENT3,{0,[FUNCOIL_VENT3.1],[FUNCOIL_VENT3.2],[FUNCOIL_VENT3.3],[FUNCOIL_VENT3.4]});
+			#endif
+			#ifdef FUNCOIL0
+				setStatus(FUNCOIL0,0);
+			#endif
+			#ifdef FUNCOIL1
+				setStatus(FUNCOIL1,0);
+			#endif
+			#ifdef FUNCOIL2
+				setStatus(FUNCOIL2,0);
+			#endif
+			#ifdef FUNCOIL3
+				setStatus(FUNCOIL3,0);
+			#endif
+		}
+	} else
+	if ((mode == 0) && (set_temp < 50) && ((set_temp != set_temp_old) || (mode_old != mode)))
+	{		
+		cntr_heat = 0;		
+		#ifdef RESPONCETIMECHECK  		
+			response_check(1);
+		#endif
+		#ifdef HEATINGLOG	
+			ltoa(t_str,set_temp);
+			strcat(t_str1,t_str);
+			send_mes(t_str1);			
+		#endif 
+
+		set_temp_old = set_temp;
+		#ifdef COND0 
+			i_on_cond = 0; 
+			setStatus(COND0,&state_old);
+		#endif
+		if (mode_old != mode) mode_old = mode;
+		temp_ar[0] = set_temp/10%10+48;
+		temp_ar[1] = set_temp%10+48;		
+		#ifdef VALVEHEATING0 
+			setStatus(1000:102, "VALVEHEATING0\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING0\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING1 
+			setStatus(1000:102, "VALVEHEATING1\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING1\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING2
+			setStatus(1000:102, "VALVEHEATING2\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING2\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING3 
+			setStatus(1000:102, "VALVEHEATING3\0Климат-контроль");
+			setStatus(1000:102, {"VALVEHEATING3\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif	
+		#ifdef FUNCOIL_VENT0
+			if (set_temp>15) setStatus(FUNCOIL_VENT0,{1,set_temp-16,[FUNCOIL_VENT0.2],[FUNCOIL_VENT0.3],[FUNCOIL_VENT0.4]});
+			else setStatus(FUNCOIL_VENT0,{1,16,[FUNCOIL_VENT0.2],[FUNCOIL_VENT0.3],[FUNCOIL_VENT0.4]});
+		#endif
+		#ifdef FUNCOIL_VENT1
+			if (set_temp>15) setStatus(FUNCOIL_VENT1,{1,set_temp-16,[FUNCOIL_VENT1.2],[FUNCOIL_VENT1.3],[FUNCOIL_VENT1.4]});
+			else setStatus(FUNCOIL_VENT1,{1,16,[FUNCOIL_VENT1.2],[FUNCOIL_VENT1.3],[FUNCOIL_VENT1.4]});
+		#endif
+		#ifdef FUNCOIL_VENT2
+			if (set_temp>15) setStatus(FUNCOIL_VENT2,{1,set_temp-16,[FUNCOIL_VENT2.2],[FUNCOIL_VENT2.3],[FUNCOIL_VENT2.4]});
+			else setStatus(FUNCOIL_VENT2,{1,16,[FUNCOIL_VENT2.2],[FUNCOIL_VENT2.3],[FUNCOIL_VENT2.4]});
+		#endif
+		#ifdef FUNCOIL_VENT3
+			if (set_temp>15) setStatus(FUNCOIL_VENT3,{1,set_temp-16,[FUNCOIL_VENT3.2],[FUNCOIL_VENT3.3],[FUNCOIL_VENT3.4]});
+			else setStatus(FUNCOIL_VENT3,{1,16,[FUNCOIL_VENT3.2],[FUNCOIL_VENT3.3],[FUNCOIL_VENT3.4]});
+		#endif
+	} 
+	}
+}
+
+V-ID/m:1
+{
+	#ifdef COND0
+		u8 state[5] = {[COND0.0],[COND0.1],[COND0.2],[COND0.3],[COND0.4]};
+		u8 i;
+	#endif		
+	if ((mode == 0) && [V-ADDR.0]==1)
+	{	
+		#ifdef VALVEHEATING0 
+			if ([VALVEHEATING0.2] != set_temp)
+			setStatus(1000:102, {"VALVEHEATING0\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING1 
+			if ([VALVEHEATING1.2] != set_temp)
+			setStatus(1000:102, {"VALVEHEATING1\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING2
+			if ([VALVEHEATING2.2] != set_temp)
+			setStatus(1000:102, {"VALVEHEATING2\0ts:"A,temp_ar[0],temp_ar[1]});
+		#endif
+		#ifdef VALVEHEATING3 
+			if ([VALVEHEATING3.2] != set_temp)
+			setStatus(1000:102, {"VALVEHEATING3\0ts:"A,temp_ar[0],temp_ar[1]});	
+		#endif		
+	//check 
+	if ((cntr_heat>=PERIODSYS)) {
+		#ifdef INTERFACE
+			//setStatus(INTERFACE:32,{1,"system reaction not in time"});
+		#endif
+		
+		//for conditioner
+		if (1 && ([VALVEHEATINGMAIN.5] == 0) #ifdef ICOME && ([ICOME.0]==1) #endif)
+		{		
+		if (set_temp > temp) {
+			#ifdef COND0						
+					#ifdef TEMPLIMIT #ifdef STREETTEMP
+					if (streett>templim) {
+					#endif #endif
+						if (i_on_cond==0) {
+							for (i=0;i<5;++i) state_old[i] = state[i];
+							
+							#ifdef HEATINGLOG
+								send_mes("conditioner heating");
+							#endif
+						}
+						state[0] = 0x31;
+						if (set_temp>=TEMPCONDHI0) state[1] = TEMPCONDHI0 - TEMPCONDLOW0;
+						if (set_temp>=TEMPCONDLOW0) state[1] = set_temp - TEMPCONDLOW0;						
+						else state[1] = 0;
+						state[4] = FUNMODE;						
+						i_on_cond = 1;
+						setStatus(COND0,&state);						
+						cntr_heat = 0;
+					#ifdef TEMPLIMIT	#ifdef STREETTEMP
+					}	else {
+							if (templim_is_sendmess==0) {
+								setStatus(2047:32,{1,"Климат контроль не может включить кондиционер, температура на улице ниже допустимой!"});	
+								templim_is_sendmess = 1;
+								#ifdef HEATINGLOG
+									send_mes("conditioner not on, street temp");
+								#endif
+							}
+						}
+					#endif #endif	
+			#endif			
+		}
+		else if (set_temp < temp) {
+		#ifdef COND0			
+			#ifdef TEMPLIMIT #ifdef STREETTEMP			
+			if (streett>templim) {
+			#endif #endif 
+				if (i_on_cond==0) {
+					for (i=0;i<5;++i) state_old[i] = state[i];					
+					#ifdef HEATINGLOG
+						send_mes("conditioner cool");
+					#endif	
+				}
+				state[0] = 0x11;
+				if (set_temp>=TEMPCONDHI0) state[1] = TEMPCONDHI0 - TEMPCONDLOW0;
+				else if (set_temp>=TEMPCONDLOW0) state[1]  = set_temp - TEMPCONDLOW0;
+				else state[1] = 0;
+				state[4] = FUNMODE;				
+				i_on_cond = 1;
+				setStatus(COND0,&state);
+				
+				cntr_heat = 0;
+			#ifdef TEMPLIMIT	#ifdef STREETTEMP
+			}	else {
+				if (templim_is_sendmess==0) {
+					setStatus(2047:32,{1,"Климат контроль не может включить кондиционер, температура на улице ниже допустимой!"});	
+					templim_is_sendmess = 1;
+					#ifdef HEATINGLOG
+						send_mes("conditioner not on, street temp");
+					#endif	
+				}
+			}
+			#endif #endif	
+		#endif	
+		} 
+		}
+	}
+	} //if (mode == 0)
+}
+
+
+V-ID/VALVEHEATINGMAIN
+{
+	#ifdef INTERFACE
+		//setStatus(INTERFACE:32,{1," event main"});
+	#endif	
+	if ([V-ADDR.0]==1) {
+	if ([VALVEHEATINGMAIN.5] == 0xff)
+		{
+			mode_old = 0xff;
+			#ifdef INTERFACE
+				setStatus(INTERFACE:32,{1,"mode 0xff, main"});
+			#endif	
+			manual_mode();			
+		}	
+	}
+}
+
+#ifdef FUNCOIL0
+//for funcoil
+V-ID/s:10
+{
+	if ((mode == 0) && [V-ADDR]) {
+	if (set_temp > temp) { 
+		if ((set_temp - temp)>=3) {
+			setStatus(FUNCOIL0,{1,250,0});
+			#ifdef FUNCOIL1  setStatus(FUNCOIL1,{1,250,0}); #endif
+			#ifdef FUNCOIL2  setStatus(FUNCOIL2,{1,250,0}); #endif
+			#ifdef FUNCOIL3  setStatus(FUNCOIL3,{1,250,0}); #endif
+		} else if ((set_temp - temp)>=2) {
+			setStatus(FUNCOIL0,{1,160,0});
+			#ifdef FUNCOIL1  setStatus(FUNCOIL1,{1,160,0}); #endif
+			#ifdef FUNCOIL2  setStatus(FUNCOIL2,{1,160,0}); #endif
+			#ifdef FUNCOIL3  setStatus(FUNCOIL3,{1,160,0}); #endif
+		} else if ((set_temp - temp)>=1) {
+			setStatus(FUNCOIL0,{1,80,0});
+			#ifdef FUNCOIL1  setStatus(FUNCOIL1,{1,80,0}); #endif
+			#ifdef FUNCOIL2  setStatus(FUNCOIL2,{1,80,0}); #endif
+			#ifdef FUNCOIL3  setStatus(FUNCOIL3,{1,80,0}); #endif
+		}		
+	}
+	else {
+		setStatus(FUNCOIL0,0);
+		#ifdef FUNCOIL1  setStatus(FUNCOIL1,0); #endif
+		#ifdef FUNCOIL2  setStatus(FUNCOIL2,0); #endif
+		#ifdef FUNCOIL3  setStatus(FUNCOIL3,0); #endif
+	}
+	}
+}
+#endif
+
+//humidity
+#ifdef HUMIDITIFIER
+#ifdef HUMIDITY_SENS
+#ifdef HUMIDITY_LEVEL
+V-ID/m:1
+{
+	if (([ICOME.0]==1) && ([HUMIDITY_SENS:avgs:60] < (HUMIDITY_LEVEL<<8))){
+		setStatus(HUMIDITIFIER,1);
+	} else if (([ICOME.0]==1) && ([HUMIDITY_SENS:avgs:60] > (HUMIDITY_LEVEL<<8))){
+		setStatus(HUMIDITIFIER,0);
+	}
+}
+#ifdef HUMIDITY_CHECK
+V-ID/ICOME
+{
+	if (opt(0)==0) setStatus(HUMIDITIFIER,0);
+}
+#endif
+#endif
+#endif
+#endif

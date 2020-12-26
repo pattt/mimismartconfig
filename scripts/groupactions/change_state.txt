@@ -1,0 +1,321 @@
+/*
+{
+  desc:"Действия по изменению состояния устройств",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+    {name:"ITEM1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 1"},
+    {name:"EVENT1",type:"list",required:true,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния"},descWidth:150,desc:"Событие элемента 1"},
+	{name:"ITEM_11",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 1"},	
+	{name:"ITEM_12",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 2"},
+	{name:"ACT1",type:"list",required:true,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния","2":"То же состояние","3":"Инверсное состояние"},descWidth:150,desc:"Действие для связанных элементов"},    	
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{name:"ITEM2",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 2"},
+    {name:"EVENT2",type:"list",required:false,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния"},descWidth:150,desc:"Событие элемента 2"},
+	{name:"ITEM_21",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 1"},	
+	{name:"ITEM_22",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 2"},
+	{name:"ACT2",type:"list",required:false,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния","2":"То же состояние","3":"Инверсное состояние"},descWidth:150,desc:"Действие для связанных элементов"}, 
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{name:"ITEM3",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 3"},
+    {name:"EVENT3",type:"list",required:false,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния"},descWidth:150,desc:"Событие элемента 3"},
+	{name:"ITEM_31",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 1"},	
+	{name:"ITEM_32",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Связанный элемент 2"},
+	{name:"ACT3",type:"list",required:false,data:{"1":"Включение","0":"Выключение","0xFF":"Изменение состояния","2":"То же состояние","3":"Инверсное состояние"},descWidth:150,desc:"Действие для связанных элементов"}, 
+  ]
+}
+*/
+
+
+V-ID/ITEM1
+{
+  #if EVENT1==0xFF
+    #if ACT1==0xFF
+	  if ([ITEM_11.0]==0) setStatus(ITEM_11,1);
+	  else setStatus(ITEM_11,0);
+	  #ifdef ITEM_12
+	   if ([ITEM_12.0]==0) setStatus(ITEM_12,1);
+	   else setStatus(ITEM_12,0);
+	  #endif      
+	#else
+      #if ACT1==2
+        setStatus(ITEM_11,opt(0));
+		#ifdef ITEM_12
+	       setStatus(ITEM_12,opt(0));
+	    #endif 
+      #else  
+       	#if ACT1==3
+          if (opt(0)) {
+		    setStatus(ITEM_11,0);
+			#ifdef ITEM_12
+	          setStatus(ITEM_12,0);
+	        #endif 
+		  }	
+	      else {
+		    setStatus(ITEM_11,1);
+			#ifdef ITEM_12
+	          setStatus(ITEM_12,1);
+	        #endif    
+		  }	          
+        #else 		
+          setStatus(ITEM_11,ACT1);
+	      #ifdef ITEM_12
+	       setStatus(ITEM_12,ACT1);
+	      #endif
+		#endif//if ACT==3
+	  #endif//if ACT1==2
+	#endif//if ACT1==0xFF
+	
+	
+  #else//if EVENT1==0xFF
+    if (opt(0) == EVENT1) {
+    #if ACT1==0xFF
+      if ([ITEM_11.0]==0) setStatus(ITEM_11,1);
+	  else setStatus(ITEM_11,0);
+	  #ifdef ITEM_12
+	   if ([ITEM_12.0]==0) setStatus(ITEM_12,1);
+	   else setStatus(ITEM_12,0);
+	  #endif
+	#else
+	  #if ACT1==2
+        setStatus(ITEM_11,opt(0));
+		#ifdef ITEM_12
+	       setStatus(ITEM_12,opt(0));
+	    #endif 
+      #else  
+       	#if ACT1==3
+          if (opt(0)) {
+		    setStatus(ITEM_11,0);
+			#ifdef ITEM_12
+	          setStatus(ITEM_12,0);
+	        #endif 
+		  }	
+	      else {
+		    setStatus(ITEM_11,1);
+			#ifdef ITEM_12
+	          setStatus(ITEM_12,1);
+	        #endif    
+		  }	        
+        #else 		
+          setStatus(ITEM_11,ACT1);
+	      #ifdef ITEM_12
+	       setStatus(ITEM_12,ACT1);
+	      #endif
+		#endif//if ACT1==3
+	  #endif//if ACT1==2
+	#endif//if ACT1==0xFF
+	}
+  #endif
+}
+
+
+#ifdef ITEM2
+#ifdef EVENT2
+#ifdef ACT2
+V-ID/ITEM2
+{
+  #if EVENT2==0xFF
+    #if ACT2==0xFF
+	  #ifdef ITEM_21
+	    if ([ITEM_21.0]==0) setStatus(ITEM_21,1);
+	    else setStatus(ITEM_21,0);
+	  #endif	
+	  #ifdef ITEM_22
+	   if ([ITEM_22.0]==0) setStatus(ITEM_22,1);
+	   else setStatus(ITEM_22,0);
+	  #endif      
+	#else
+	  #if ACT2==2
+	    #ifdef ITEM_21
+          setStatus(ITEM_21,opt(0));
+		#endif  
+		#ifdef ITEM_22
+	       setStatus(ITEM_22,opt(0));
+	    #endif 
+      #else  
+       	#if ACT2==3
+          if (opt(0)) {
+		    #ifdef ITEM_21
+		      setStatus(ITEM_21,0);
+			#endif  
+			#ifdef ITEM_22
+	          setStatus(ITEM_22,0);
+	        #endif 
+		  }	
+	      else {
+		    #ifdef ITEM_21
+		      setStatus(ITEM_21,1);
+			#endif   
+			#ifdef ITEM_22
+	          setStatus(ITEM_22,1);
+	        #endif    
+		  }	          
+        #else
+          #ifdef ITEM_21 		
+            setStatus(ITEM_21,ACT2);
+		  #endif	
+	      #ifdef ITEM_22
+	        setStatus(ITEM_22,ACT2);
+	      #endif
+		#endif//if ACT2==3
+	  #endif//if ACT2==2
+	#endif//if ACT2==0xFF	
+	
+  #else//if EVENT2==0xFF
+    if (opt(0) == EVENT2) {
+    #if ACT2==0xFF
+	  #ifdef ITEM_21
+        if ([ITEM_21.0]==0) setStatus(ITEM_21,1);
+	    else setStatus(ITEM_21,0);
+	  #endif
+	  #ifdef ITEM_22
+	   if ([ITEM_22.0]==0) setStatus(ITEM_22,1);
+	   else setStatus(ITEM_22,0);
+	  #endif
+	#else
+      #if ACT2==2
+	    #ifdef ITEM_21
+          setStatus(ITEM_21,opt(0));
+		#endif  
+		#ifdef ITEM_22
+	       setStatus(ITEM_22,opt(0));
+	    #endif 
+      #else  
+       	#if ACT2==3
+          if (opt(0)) {
+		    #ifdef ITEM_21
+		      setStatus(ITEM_21,0);
+			#endif  
+			#ifdef ITEM_22
+	          setStatus(ITEM_22,0);
+	        #endif 
+		  }	
+	      else {
+		    #ifdef ITEM_21
+		      setStatus(ITEM_21,1);
+			#endif   
+			#ifdef ITEM_22
+	          setStatus(ITEM_22,1);
+	        #endif    
+		  }	          
+        #else
+          #ifdef ITEM_21 		
+            setStatus(ITEM_21,ACT2);
+		  #endif	
+	      #ifdef ITEM_22
+	        setStatus(ITEM_22,ACT2);
+	      #endif
+		#endif//if ACT2==3
+	  #endif//if ACT2==2
+	 #endif//if ACT2==0xFF
+	}
+  #endif
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM3
+#ifdef EVENT3
+#ifdef ACT3
+V-ID/ITEM3
+{
+  #if EVENT3==0xFF
+    #if ACT3==0xFF
+	 #ifdef ITEM_31
+	    if ([ITEM_31.0]==0) setStatus(ITEM_31,1);
+	    else setStatus(ITEM_31,0);
+	  #endif	
+	  #ifdef ITEM_32
+	   if ([ITEM_32.0]==0) setStatus(ITEM_32,1);
+	   else setStatus(ITEM_32,0);
+	  #endif      
+	#else
+	  #if ACT3==2
+	    #ifdef ITEM_31
+          setStatus(ITEM_31,opt(0));
+		#endif  
+		#ifdef ITEM_32
+	       setStatus(ITEM_32,opt(0));
+	    #endif 
+      #else  
+       	#if ACT3==3
+          if (opt(0)) {
+		    #ifdef ITEM_31
+		      setStatus(ITEM_31,0);
+			#endif  
+			#ifdef ITEM_32
+	          setStatus(ITEM_32,0);
+	        #endif 
+		  }	
+	      else {
+		    #ifdef ITEM_31
+		      setStatus(ITEM_31,1);
+			#endif   
+			#ifdef ITEM_32
+	          setStatus(ITEM_32,1);
+	        #endif    
+		  }	          
+        #else
+          #ifdef ITEM_31 		
+            setStatus(ITEM_31,ACT3);
+		  #endif	
+	      #ifdef ITEM_32
+	        setStatus(ITEM_32,ACT3);
+	      #endif
+		#endif//if ACT3==3
+	  #endif//if ACT3==2
+	 #endif//if ACT3==0xFF
+  #else
+    if (opt(0) == EVENT3) {
+    #if ACT3==0xFF
+	  #ifdef ITEM_31
+        if ([ITEM_31.0]==0) setStatus(ITEM_31,1);
+	    else setStatus(ITEM_31,0);
+	  #endif
+	  #ifdef ITEM_32
+	   if ([ITEM_32.0]==0) setStatus(ITEM_32,1);
+	   else setStatus(ITEM_32,0);
+	  #endif
+	#else
+      #if ACT3==2
+	    #ifdef ITEM_31
+          setStatus(ITEM_31,opt(0));
+		#endif  
+		#ifdef ITEM_32
+	       setStatus(ITEM_32,opt(0));
+	    #endif 
+      #else  
+       	#if ACT3==3
+          if (opt(0)) {
+		    #ifdef ITEM_31
+		      setStatus(ITEM_31,0);
+			#endif  
+			#ifdef ITEM_32
+	          setStatus(ITEM_32,0);
+	        #endif 
+		  }	
+	      else {
+		    #ifdef ITEM_31
+		      setStatus(ITEM_31,1);
+			#endif   
+			#ifdef ITEM_32
+	          setStatus(ITEM_32,1);
+	        #endif    
+		  }	          
+        #else
+          #ifdef ITEM_31 		
+            setStatus(ITEM_31,ACT3);
+		  #endif	
+	      #ifdef ITEM_32
+	        setStatus(ITEM_32,ACT3);
+	      #endif
+		#endif//if ACT3==3
+	  #endif//if ACT3==2
+	 #endif//if ACT3==0xFF
+	}
+  #endif
+}
+#endif
+#endif
+#endif

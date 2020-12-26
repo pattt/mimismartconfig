@@ -1,0 +1,28 @@
+/*
+{
+  desc:"Сохранить состояние в EEPROM и восстановить по подаче питания",
+  tag:"import-script",
+  target:"ITEM",
+  selectArea:true,
+  vars:[
+	{name:"ADDR",type:"string",required:true, filter:"+1234567890",min:10,max:13,width:150,desc:"Адрес ячейки памяти",descWidth:160},
+   	{name:"ITEM",type:"devices-list",required:true, filter:["valve,lamp,dimer-lamp,rgb-lamp,script"],descWidth:160,desc:"Выберите устройство",width:280},	
+ ]
+}
+*/
+
+u32 eeadr = ADDR;
+u32 i = 0;
+
+void onInit()
+{
+	u32 eedata = 0;	
+	
+	i = eeEmulRead(eeadr, &eedata);
+	setStatus(ITEM,eedata);
+}
+
+V-ID/ITEM
+{
+	i = eeEmulWrite(eeadr, opt(0));	
+}

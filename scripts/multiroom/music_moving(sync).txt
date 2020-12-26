@@ -1,0 +1,362 @@
+/*
+{
+	desc:"Движение музыки по датчикам движения",
+	tag:"item",
+	vars:[		
+		{name:"MOT_LEV",type:"number",required:true,min:1,max:99,desc:"Включить музыку, если уровень движения выше:"},
+		{name:"MOT_PER",type:"number",required:true,min:1,max:99,desc:"Выключить музыку, если не было движения, период в минутах:"},
+		{type:"comment",text:"Введите ID медиаточек по приоритету для сценария",width:600}, 		
+		{name:"MID01",type:"number",required:true,min:200,max:299,descWidth:150,desc:"ID медиаточка 1"},
+		{name:"MOT01",type:"devices-list",required:true, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID02",type:"number",required:true,min:200,max:299,descWidth:150,desc:"ID медиаточка 2"},
+		{name:"MOT02",type:"devices-list",required:true, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID03",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 3"},		
+		{name:"MOT03",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID04",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 4"},		
+		{name:"MOT04",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID05",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 5"},		
+		{name:"MOT05",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID06",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 6"},		
+		{name:"MOT06",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID07",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 7"},		
+		{name:"MOT07",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID08",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 8"},		
+		{name:"MOT08",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID09",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 9"},		
+		{name:"MO09",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+		{name:"MID10",type:"number",required:false,min:200,max:299,descWidth:150,desc:"ID медиаточка 10"},		
+		{name:"MOT10",type:"devices-list",required:false, filter:["motion-sensor"],descWidth:150, desc:"Датчик движения"},
+	]
+}
+*/
+
+u16 main = 0;
+u8 state[10] = {0,0,0,0,0,0,0,0,0,0};
+u8 status[4] = {32,30,0,0};
+u8 volume = 0;
+u8 vol[2]={4,0};
+u16 last = 0;
+
+void set_main()
+{
+	if ([MID01:30.0]==1) main = MID01;
+	if ([MID02:30.0]==1) {if (main == 0) main = MID02; else state[1] = 1;}
+	#ifdef MID03 if ([MID03:30.0]==1) {if (main == 0) main = MID03; else state[2] = 1;} #endif
+	#ifdef MID04 if ([MID04:30.0]==1) {if (main == 0) main = MID04; else state[3] = 1;} #endif
+	#ifdef MID05 if ([MID05:30.0]==1) {if (main == 0) main = MID05; else state[4] = 1;} #endif
+	#ifdef MID06 if ([MID06:30.0]==1) {if (main == 0) main = MID06; else state[5] = 1;} #endif
+	#ifdef MID07 if ([MID07:30.0]==1) {if (main == 0) main = MID07; else state[6] = 1;} #endif
+	#ifdef MID08 if ([MID08:30.0]==1) {if (main == 0) main = MID08; else state[7] = 1;} #endif
+	#ifdef MID09 if ([MID09:30.0]==1) {if (main == 0) main = MID09; else state[8] = 1;} #endif
+	#ifdef MID10 if ([MID10:30.0]==1) {if (main == 0) main = MID10; else state[9] = 1;} #endif
+	if (main == 0) delayedCall(set_main,1);
+	else {
+		last = main;
+		if (main > 255) {status[2]=main-256; status[3]=1;}
+		else {status[2]=main; status[3]=0;}
+		/*if (main==219) setStatus(1984:32,{1,"main 219"});
+		else if (main==227) setStatus(1984:32,{1,"main 227"});
+		else if (status[2]==43) setStatus(1984:32,{1,"status[2]=43"});
+		else setStatus(1984:32,{1,"main unknown"});*/
+	}
+}
+
+V-ID/V-ADDR
+{
+	u8 i = 0;
+	//setStatus(1984:32,{1,"test"});
+	if (opt(0)) set_main();	 
+	else {		
+		/*if ((last != main) && ([@main:30.1]==0)){
+			setStatus(@main:30,2);
+			vol[2] = volume;
+			setStatus(@main:30,&vol);
+			setStatus(1984:32,{1,"set vol and pause"});
+		}*/
+		cancelDelayedCall(set_main);
+		main = 0;
+		last = 0;
+		for (i=0;i<10;++i) state[i]=0;
+	}	
+}
+
+V-ID/s:1
+{
+	if (([V-ADDR] == 1) && (main != 0))
+	{
+		//first
+		if ([MOT01.1] > MOT_LEV) {//motion
+			last = MID01;
+			if (main==MID01) {//main
+				if ([MID01:30.1]==0) {//if no volume =>set volume		
+					vol[1] = volume;
+					setStatus(MID01:30,&vol); 
+					//setStatus(1984:32,{1,"MID01:30,vol"});
+				}
+			}
+			else if (([MID01:30.0] == 0) || ([MID01:30.0] == 4)) {//if pause => sync
+					setStatus(MID01:30,&status); 
+					//setStatus(1984:32,{1,"MID01:30,&status"});					
+				}
+		}
+		else if (([MOT01:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[0] == 0) && (last != MID01)) {//no motion, not playing before, not last
+			if (main==MID01) {//main
+				if ([MID01:30.1]!=0) {//if volume => off volume
+					volume = [MID01:30.1]; 
+					vol[1] = 0;
+					setStatus(MID01:30,&vol); 
+					//setStatus(1984:32,{1,"vol off MID01:30"});
+				}
+			} 
+			else if ([MID01:30.0] == 1) {//if play => pause
+					setStatus(MID01:30,0); 
+					//setStatus(1984:32,{1,"MID01:30,2"});
+				}
+		}
+		//second
+		if ([MOT02.1] > MOT_LEV) {//motion	
+			last = MID02;
+			if (main==MID02) {//main
+				if ([MID02:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID02:30,&vol); 
+					//setStatus(1984:32,{1,"MID02:30,vol"});
+					}
+			}
+			else if (([MID02:30.0] == 0) || ([MID02:30.0] == 4)) {//if pause => sync
+					setStatus(MID02:30,&status); 
+					//setStatus(1984:32,{1,"MID02:30,&status"});
+				}
+		}
+		else if (([MOT02:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[1] == 0) && (last != MID02)) {//no motion, not playing before
+			if (main==MID02) {//main
+				if ([MID02:30.1]!=0) {//if volume => off volume
+					volume = [MID02:30.1]; 
+					vol[1] = 0;
+					setStatus(MID02:30,&vol); 
+					//setStatus(1984:32,{1,"vol off MID02:30"});
+				}
+			} 
+			else if ([MID02:30.0] == 1) {//if play => pause
+					setStatus(MID02:30,0); 
+					//setStatus(1984:32,{1,"MID02:30,2"});
+				}
+		}
+		//third
+		#ifdef MOT03 #ifdef MID03
+		if ([MOT03.1] > MOT_LEV) {//motion	
+			last = MID03;
+			if (main==MID03) {//main
+				if ([MID03:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID03:30,&vol); 
+				}
+			}
+			else if (([MID03:30.0] == 0) || ([MID03:30.0] == 4)) {//if pause => sync
+					setStatus(MID03:30,&status); 
+				}
+		}
+		else if (([MOT03:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[2] == 0) && (last != MID03)) {//no motion, not playing before
+			if (main==MID03) {//main
+				if ([MID03:30.1]!=0) {//if volume => off volume
+					volume = [MID03:30.1]; 
+					vol[1] = 0;
+					setStatus(MID03:30,&vol); 					
+				}
+			} 
+			else if ([MID03:30.0] == 1) {//if play => pause
+					setStatus(MID03:30,0); 					
+				}
+		}
+		#endif #endif
+		//fourth
+		#ifdef MOT04 #ifdef MID04
+		if ([MOT04.1] > MOT_LEV) {//motion	
+			last = MID04;
+			if (main==MID04) {//main
+				if ([MID04:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID04:30,&vol); 
+				}
+			}
+			else if (([MID04:30.0] == 0) || ([MID04:30.0] == 4)) {//if pause => sync
+					setStatus(MID04:30,&status); 
+				}
+		}
+		else if (([MOT04:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[3] == 0) && (last != MID04)) {//no motion, not playing before
+			if (main==MID04) {//main
+				if ([MID04:30.1]!=0) {//if volume => off volume
+					volume = [MID04:30.1]; 
+					vol[1] = 0;
+					setStatus(MID04:30,&vol); 					
+				}
+			} 
+			else if ([MID04:30.0] == 1) {//if play => pause
+					setStatus(MID04:30,0); 					
+				}
+		}
+		#endif #endif
+		//fifth
+		#ifdef MOT05 #ifdef MID05
+		if ([MOT05.1] > MOT_LEV) {//motion	
+			last = MID05;
+			if (main==MID05) {//main
+				if ([MID05:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID05:30,&vol); 
+				}
+			}
+			else if (([MID05:30.0] == 0) || ([MID05:30.0] == 4)) {//if pause => sync
+					setStatus(MID05:30,&status);
+				}
+		}
+		else if (([MOT05:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[4] == 0) && (last != MID05)) {//no motion, not playing before
+			if (main==MID05) {//main
+				if ([MID05:30.1]!=0) {//if volume => off volume
+					volume = [MID05:30.1]; 
+					vol[1] = 0;
+					setStatus(MID05:30,&vol); 					
+				}
+			} 
+			else if ([MID05:30.0] == 1) {//if play => pause
+					setStatus(MID05:30,0); 					
+				}
+		}
+		#endif #endif
+		//sixth
+		#ifdef MOT06 #ifdef MID06
+		if ([MOT06.1] > MOT_LEV) {//motion
+			last = MID06;
+			if (main==MID06) {//main
+				if ([MID06:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID06:30,&vol); 
+				}
+			}
+			else if (([MID06:30.0] == 0) || ([MID06:30.0] == 4)) {//if pause => sync
+					setStatus(MID06:30,&status); 
+				}
+		}
+		else if (([MOT06:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[5] == 0) && (last != MID06)) {//no motion, not playing before
+			if (main==MID06) {//main
+				if ([MID06:30.1]!=0) {//if volume => off volume
+					volume = [MID06:30.1]; 
+					vol[1] = 0;
+					setStatus(MID06:30,&vol); 					
+				}
+			} 
+			else if ([MID06:30.0] == 1) {//if play => pause
+					setStatus(MID06:30,0); 					
+				}
+		}
+		#endif #endif
+		//seventh
+		#ifdef MOT07 #ifdef MID07
+		if ([MOT07.1] > MOT_LEV) {//motion	
+			last = MID07;
+			if (main==MID07) {//main
+				if ([MID07:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID07:30,&vol); 
+				}
+			}
+			else if (([MID07:30.0] == 0) || ([MID07:30.0] == 4)) {//if pause => sync
+					setStatus(MID07:30,&status); 
+				}
+		}
+		else if (([MOT07:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[6] == 0) && (last != MID07)) {//no motion, not playing before
+			if (main==MID07) {//main
+				if ([MID07:30.1]!=0) {//if volume => off volume
+					volume = [MID07:30.1]; 
+					vol[1] = 0;
+					setStatus(MID07:30,&vol); 					
+				}
+			} 
+			else if ([MID07:30.0] == 1) {//if play => pause
+					setStatus(MID07:30,0); 					
+				}
+		}
+		#endif #endif
+		//eight
+		#ifdef MOT08 #ifdef MID08
+		if ([MOT08.1] > MOT_LEV) {//motion	
+			last = MID08;		
+			if (main==MID08) {//main
+				if ([MID08:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID08:30,&vol); 	
+				}
+			}
+			else if (([MID08:30.0] == 0) || ([MID08:30.0] == 4)) {//if pause => sync
+					setStatus(MID08:30,&status); 
+				}
+		}
+		else if (([MOT08:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[7] == 0) && (last != MID08)) {//no motion, not playing before
+			if (main==MID08) {//main
+				if ([MID08:30.1]!=0) {//if volume => off volume
+					volume = [MID08:30.1]; 
+					vol[1] = 0;
+					setStatus(MID08:30,&vol); 					
+				}
+			} 
+			else if ([MID08:30.0] == 1) {//if play => pause
+					setStatus(MID08:30,0); 					
+				}
+		}
+		#endif #endif
+		//nine
+		#ifdef MOT09 #ifdef MID09
+		if ([MOT09.1] > MOT_LEV) {//motion	
+			last = MID09;
+			if (main==MID09) {//main
+				if ([MID09:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID09:30,&vol); 
+				}
+			}
+			else if (([MID09:30.0] == 0) || ([MID09:30.0] == 4)) {//if pause => sync
+					setStatus(MID09:30,&status); 
+				}
+		}
+		else if (([MOT09:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[8] == 0) && (last != MID09)) {//no motion, not playing before
+			if (main==MID09) {//main
+				if ([MID09:30.1]!=0) {//if volume => off volume
+					volume = [MID09:30.1]; 
+					vol[1] = 0;
+					setStatus(MID09:30,&vol); 					
+				}
+			} 
+			else if ([MID09:30.0] == 1) {//if play => pause
+					setStatus(MID09:30,0); 					
+				}
+		}
+		#endif #endif
+		//ten
+		#ifdef MOT10 #ifdef MID10
+		if ([MOT10.1] > MOT_LEV) {//motion		
+			last = MID10;
+			if (main==MID10) {//main
+				if ([MID10:30.1]==0) {//if no volume =>set volume
+					vol[1] = volume;
+					setStatus(MID10:30,&vol); 
+				}
+			}
+			else if (([MID10:30.0] == 0) || ([MID10:30.0] == 4)) {//if pause => sync
+					setStatus(MID10:30,&status); 	
+				}
+		}
+		else if (([MOT10:maxm:MOT_PER] < (MOT_LEV<<8)) && (state[9] == 0) && (last != MID10)) {//no motion, not playing before
+			if (main==MID10) {//main
+				if ([MID10:30.1]!=0) {//if volume => off volume
+					volume = [MID10:30.1]; 
+					vol[1] = 0;
+					setStatus(MID10:30,&vol); 					
+				}
+			} 
+			else if ([MID10:30.0] == 1) {//if play => pause
+					setStatus(MID10:30,0); 					
+				}
+		}
+		#endif #endif
+	}//if (([V-ADDR] == 1) && (main != 0))
+}  

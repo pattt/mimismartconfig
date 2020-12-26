@@ -1,0 +1,115 @@
+/*
+{
+	desc:"Будильник",
+	tag:"item",
+    
+	selectArea:true,
+	vars:[
+	{type:"comment",text:"Время включения 1",width:200},
+	{name:"DAYS1",type:"weekday",required:true,desc:"Дни недели"},	
+    {name:["TIME1","OFS1"],type:"time",required:true,defaultValue:"07:00",desc:"Время"},
+	{type:"comment",text:"Время включения 2",width:200},
+	{name:"DAYS2",type:"weekday",required:false,desc:"Дни недели"},	
+    {name:["TIME2","OFS2"],type:"time",required:false,defaultValue:"07:00",desc:"Время"},
+	{name:"PERIOD",type:"number",required:true,defaultValue:0,min:0,max:6000,desc:"Шаг нарастания звука, сек (0 - без нарастания)",descWidth:180,width:100},
+	{name:"VOLUME_BEG",type:"number",required:true,width:130,min:1,max:250,defaultValue:50,"desc":"Начальная громкость","descWidth":230},
+	{name:"VOLUME_LAST",type:"number",required:false,width:130,min:1,max:250,defaultValue:250,"desc":"Конечная громкость","descWidth":230},   		
+	{name:"MIDFILE",type:"string","required":false,width:300,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_",min:1,desc:"Звук на мультирум",descWidth:200},
+	{name:"MIDFIL_LEN",type:"number",required:true,defaultValue:0,min:0,max:6000,desc:"Длительность песни (0 - не перезапускать воспроизведение)",descWidth:200,width:100},	
+	{name:"MID1",type:"devices-list",required:true,width:300,filter:["speaker"],desc:"Номер мультирума",descWidth:200},
+	{name:"MID2",type:"devices-list",required:false,width:300,filter:["speaker"],desc:"Номер мультирума",descWidth:200},
+	{name:"MID3",type:"devices-list",required:false,width:300,filter:["speaker"],desc:"Номер мультирума",descWidth:200},
+	{name:"OFF",desc:"Остановить при выключении",type:"checkbox",checked:true,width:50},
+	]
+}
+*/
+
+u8 is_act=0;
+u8 volume=VOLUME_BEG;
+
+void clear_is_act()
+{
+  is_act = 0;
+}
+#if MIDFIL_LEN == 0
+#else
+void play_again() {
+    setStatus(MID1, {1,volume,0,"MIDFILE"});
+	#ifdef MID2
+	  setStatus(MID2, {1,volume,0,"MIDFILE"});
+	#endif
+	#ifdef MID3
+	  setStatus(MID3, {1,volume,0,"MIDFILE"});
+	#endif
+	delayedCall(play_again, MIDFIL_LEN);
+}
+#endif
+
+#if PERIOD==0
+#else 
+void volume_up()
+{
+    ++volume;
+    setStatus(MID1, {4,volume});
+	#ifdef MID2
+	  setStatus(MID2, {4,volume});
+	#endif
+	#ifdef MID3
+	  setStatus(MID3, {4,volume});
+	#endif
+	if (volume<VOLUME_LAST)  delayedCall(volume_up, PERIOD);
+}
+#endif
+	
+V-ID/s:20
+{
+  if (((timeInRange(TIME1-OFS1|DAYS1)) #ifdef TIME2 #ifdef DAYS2 || (timeInRange(TIME2-OFS2|DAYS2)) #endif #endif) && (is_act==0) && ([V-ADDR]==1)){
+    is_act=1;  
+    setStatus(MID1, {1,volume,0,"MIDFILE"});
+	#ifdef MID2
+	  setStatus(MID2, {1,volume,0,"MIDFILE"});
+	#endif
+	#ifdef MID3
+	  setStatus(MID3, {1,volume,0,"MIDFILE"});
+	#endif
+	#if PERIOD==0
+	#else 
+	  delayedCall(volume_up, PERIOD);
+	#endif
+	#if MIDFIL_LEN == 0
+    #else
+	  delayedCall(play_again, MIDFIL_LEN);
+	#endif
+	#if PERIOD==0
+	#else 
+	  delayedCallM(clear_is_act, 2);
+	#endif
+  } 
+}
+
+V-ID/V-ADDR
+{
+ if (opt(0) == 0) 
+ {
+    #if PERIOD==0
+	#else 
+      cancelDelayedCall(volume_up);
+	#endif
+	#if MIDFIL_LEN == 0
+    #else
+	cancelDelayedCall(play_again);
+	#endif
+	#if OFF==true
+      setStatus(MID1, 2);
+	  #ifdef MID2
+	    setStatus(MID2, 2);
+	  #endif
+	  #ifdef MID3
+	    setStatus(MID3, 2);
+	  #endif
+	#endif  
+    
+	volume = VOLUME_BEG;
+  }
+}
+

@@ -1,0 +1,143 @@
+/*
+{
+	desc:"Управление вытяжкой по свету или геркону",
+	tag:"import-script",
+	selectArea:true,
+	target:"LIGHT1",
+	vars:[
+		{name:"CONTYPE",type:"list",width:800,required:true,data:{
+			"0":"Включение вытяжки по включению света, выключение вытяжки после выключения света с возможностью временной задержки",
+			"1":"Включение вытяжки после выключению света, выключение вытяжки после временной задержки или включения света"
+		},descAlign:"top",desc:"Тип управления",descWidth:100},
+		{name:"LIGHT1",type:"devices-list",required:true,width:600,filter:["lamp","rgb-lamp","dimer-lamp","door-sensor"],descAlign:"top",desc:"Источник 1",descWidth:100},
+		{name:"LIGHT2",type:"devices-list",required:false,width:600,filter:["lamp","rgb-lamp","dimer-lamp","door-sensor"],descAlign:"top",desc:"Источник 2",descWidth:100},
+		{name:"LIGHT3",type:"devices-list",required:false,width:600,filter:["lamp","rgb-lamp","dimer-lamp","door-sensor"],descAlign:"top",desc:"Источник 3",descWidth:100},
+		{name:"VENT1",type:"devices-list",required:true,width:600,filter:["lamp","air-fan"],descAlign:"top",desc:"Приемник 1",descWidth:50},
+		{name:"VENT2",type:"devices-list",required:false,width:600,filter:["lamp","air-fan"],descAlign:"top",desc:"Приемник 2",descWidth:50},
+		{name:"VENT3",type:"devices-list",required:false,width:600,filter:["lamp","air-fan"],descAlign:"top",desc:"Приемник 3",descWidth:50},
+		{name:"DELAYOFF",type:"number",required:true,defaultValue:"0",width:100,min:0,desc:"Время задержки выключения вытяжки",descWidth:150}
+	]
+}
+*/
+
+#ifdef VENT1
+void ventoff()
+{
+	setStatus(VENT1, 0);
+	#ifdef VENT2
+	setStatus(VENT2, 0);
+	#endif
+	#ifdef VENT3
+	setStatus(VENT3, 0);
+	#endif
+}
+#endif
+
+/*
+#ifdef LIGHT1
+V-ID/LIGHT1
+	#ifdef LIGHT2
+,LIGHT2
+	#endif
+	#ifdef LIGHT3
+,LIGHT3
+	#endif
+	*/
+V-ID/
+{
+	#if CONTYPE == 0
+	//if (opt(0))
+	if ([~LIGHT1.0]
+	#ifdef LIGHT2
+	&& [~LIGHT2.0]
+	#endif
+	#ifdef LIGHT3
+	&& [~LIGHT3.0]
+	#endif
+	)
+	{
+		#ifdef VENT1
+		setStatus(VENT1, 1);
+		#endif
+		#ifdef VENT2
+		setStatus(VENT2, 1);
+		#endif
+		#ifdef VENT3
+		setStatus(VENT3, 1);
+		#endif
+	}
+	else
+	#else
+		#if CONTYPE == 1
+	//if (opt(0))
+	if ([~LIGHT1.0]
+	#ifdef LIGHT2
+	&& [~LIGHT2.0]
+	#endif
+	#ifdef LIGHT3
+	&& [~LIGHT3.0]
+	#endif
+	)
+	{
+		#ifdef VENT1
+		setStatus(VENT1, 0);
+		#endif
+		#ifdef VENT2
+		setStatus(VENT2, 0);
+		#endif
+		#ifdef VENT3
+		setStatus(VENT3, 0);
+		#endif
+	}
+	else
+		#endif
+	#endif
+	if (![~LIGHT1.0]
+	#ifdef LIGHT2
+	&& ![~LIGHT2.0]
+	#endif
+	#ifdef LIGHT3
+	&& ![~LIGHT3.0]
+	#endif
+	)
+	{
+		#if CONTYPE == 0
+			#ifdef DELAYOFF
+				#ifdef VENT1
+		cancelDelayedCall(ventoff);
+		delayedCall(ventoff, DELAYOFF);
+				#endif
+			#else
+				#ifdef VENT1
+		setStatus(VENT1, 0);
+				#endif
+				#ifdef VENT2
+		setStatus(VENT2, 0);
+				#endif
+				#ifdef VENT3
+		setStatus(VENT3, 0);
+				#endif
+			#endif
+		#else
+			#if CONTYPE == 1
+				#ifdef VENT1
+		setStatus(VENT1, 1);
+				#endif
+				#ifdef VENT2
+		setStatus(VENT2, 1);
+				#endif
+				#ifdef VENT3
+		setStatus(VENT3, 1);
+				#endif
+				#ifdef DELAYOFF
+					#ifdef VENT1
+		cancelDelayedCall(ventoff);
+		delayedCall(ventoff, DELAYOFF);
+					#endif
+				#endif
+			#endif
+		#endif
+	}
+}
+#endif
+

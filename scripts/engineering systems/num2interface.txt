@@ -1,0 +1,28 @@
+/*
+{
+  desc:"Инженерные системы: Вывод числовых значений (от датчика) на интерфейс",
+  tag:"item",
+  target:"SENS1",
+  selectArea:true,
+  name:"num2interface",
+  vars:[
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	{type:"comment",text:"Укажите датчик, значение которого выводим на интерфейс:"},
+	{type:"comment",text:"(*) - обязательный параметр."},
+	{name:"SENS1",type:"devices-list",required:true,filter:["motion-sensor","temperature-sensor","illumination-sensor","humidity-sensor"],desc:"Выберите датчик 1 (*)",descWidth:350},
+	{name:"PERIOD",type:"number",required:true,defaultValue:5,min:1,max:100000,desc:"Период проверки состояния датчиков, секунд",descWidth:350},
+  ]
+}
+*/
+
+V-ID/s:PERIOD
+{
+	u8 tt0 = [SENS1.0];
+	i8 tt1 = [SENS1.1];
+
+	u8 stt[20];
+	
+	sprintf(stt, "\01Sens =  %d,%d", tt1, tt0 / 25);
+
+	setStatus(2047:32, &stt);
+}

@@ -1,0 +1,141 @@
+/*
+{
+	desc:"Скрипт мигания",
+	tag:"item",
+	selectArea:true,
+	target:"LAMP1",
+	vars:[
+		{name:"LAMP1",type:"devices-list",required:true,width:600,filter:["lamp","dimer-lamp","rgb-lamp","virtual"],desc:"Устройство 1",descWidth:100},
+		{name:"B2E0",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 2-го байта для элемента 1 (254 для неизменности)"},
+		{name:"B3E0",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 3-го байта для элемента 1 (254 для неизменности)"},
+		{name:"B4E0",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 4-го байта для элемента 1 (254 для неизменности)"},
+		{name:"B5E0",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 5-го байта для элемента 1 (254 для неизменности)"},
+		{name:"LAMP2",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","virtual"],desc:"Устройство 2",descWidth:100},
+		{name:"B2E1",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 2-го байта для элемента 2 (254 для неизменности)"},
+		{name:"B3E1",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 3-го байта для элемента 2 (254 для неизменности)"},
+		{name:"B4E1",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 4-го байта для элемента 2 (254 для неизменности)"},
+		{name:"B5E1",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 5-го байта для элемента 2 (254 для неизменности)"},
+		{name:"LAMP3",type:"devices-list",required:false,width:600,filter:["lamp","dimer-lamp","rgb-lamp","virtual"],desc:"Устройство 3",descWidth:100},
+		{name:"B2E2",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 2-го байта для элемента 3 (254 для неизменности)"},
+		{name:"B3E2",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 3-го байта для элемента 3 (254 для неизменности)"},
+		{name:"B4E2",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 4-го байта для элемента 3 (254 для неизменности)"},
+		{name:"B5E2",type:"number",required:false,width:100,min:0,max:255,descAlign:"right",descWidth:400,desc:"Значение 5-го байта для элемента 3 (254 для неизменности)"},
+		{name:"TMS",type:"number",required:false,width:70,min:0,max:65535,desc:"Время переключения, мсек",descWidth:250},
+		{name:"WORKTIME",type:"number",required:false,width:100,defaultValue:0,min:0,max:3600,desc:"Ограничение по времени работы, в минутах (0 - неограниченно)"}
+	]
+}
+*/
+
+#ifdef WORKTIME
+	#if WORKTIME == 0
+	#else
+void swoff()
+{
+	setStatus(V-ADDR, 0);
+}
+	#endif
+#endif
+
+void jf()
+{
+	#ifdef LAMP1
+	setStatus(LAMP1, 0xFF);
+	#endif
+	#ifdef LAMP2
+	setStatus(LAMP2, 0xFF);
+	#endif
+	#ifdef LAMP3
+	setStatus(LAMP3, 0xFF);
+	#endif
+	#ifdef TMS
+	delayedCallMs(jf, TMS);
+	#else
+	delayedCallMs(jf, 500);
+	#endif
+}
+
+V-ID/V-ADDR
+{
+	if ([V-ADDR] == 1)
+	{
+		#ifdef LAMP1
+		setStatus(LAMP1, {1
+			#ifdef B2E0
+		, B2E0
+				#ifdef B3E0
+		, B3E0	
+					#ifdef B4E0
+		, B4E0		
+						#ifdef B5E0
+		, B5E0		
+						#endif
+					#endif
+				#endif			
+			#endif
+		});
+		#endif
+		#ifdef LAMP2
+		setStatus(LAMP2, {1
+			#ifdef B2E1
+		, B2E1
+				#ifdef B3E1
+		, B3E1	
+					#ifdef B4E1
+		, B4E1		
+						#ifdef B5E1
+		, B5E1		
+						#endif
+					#endif
+				#endif			
+			#endif
+		});
+		#endif
+		#ifdef LAMP3
+		setStatus(LAMP3, {1
+			#ifdef B2E2
+		, B2E2
+				#ifdef B3E2
+		, B3E2	
+					#ifdef B4E2
+		, B4E2		
+						#ifdef B5E2
+		, B5E2		
+						#endif
+					#endif
+				#endif			
+			#endif
+		});
+		#endif
+		#ifdef TMS
+		delayedCallMs(jf, TMS);
+		#else
+		delayedCallMs(jf, 500);
+		#endif
+		#ifdef WORKTIME
+			#if WORKTIME == 0
+			#else
+		delayedCallM(swoff, WORKTIME);
+			#endif
+		#endif
+	}
+	else
+	{
+		#ifdef WORKTIME
+			#if WORKTIME == 0
+			#else
+		cancelDelayedCall(swoff);
+			#endif
+		#endif
+		cancelDelayedCall(jf);
+		#ifdef LAMP1
+		setStatus(LAMP1, 0);
+		#endif
+		#ifdef LAMP2
+		setStatus(LAMP2, 0);
+		#endif
+		#ifdef LAMP3
+		setStatus(LAMP3, 0);
+		#endif
+	}
+}						
+

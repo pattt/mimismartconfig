@@ -1,0 +1,47 @@
+/*
+{
+  desc:"Отправка ММS",
+  tag:"item",
+  vars:[
+ 	{name:"TO",type:"string",required:true,min:10,max:100,desc:"Получатели ММС через запятую",defaultValue:"+380962925686",descWidth:200},
+	{name:"SUBJECT",type:"string",required:true,desc:"Заголовок",descWidth:200,defaultValue:"MMS"},
+	{name:"TEXT",type:"string",required:false,defaultValue:"Текстовое сообщение",desc:"Текст сообщения",descWidth:200},
+	[
+		{name:"IMG1",type:"string",required:true,min:10,max:100,desc:"URL картинки",width:350,defaultValue:"http://admin:@192.168.1.151/snapshot.cgi",descWidth:200},
+		{name:"RESIZE1",type:"list",required:true,desc:"изменить размер изображения",data:{"none":"не изменять","160x120":"160x120","320x240":"320x240","640x480":"640x480","1024x768":"1024x768"},defaultValue:"320x240",descWidth:200},
+		{name:"QUALITY1",type:"number",min:0,max:100,required:true,desc:"качество изображения (0 - без изменений)",defaultValue:"70",descWidth:200}
+	],
+	[
+		{name:"IMG2",type:"string",required:false,min:10,max:100,desc:"URL картинки",width:350,defaultValue:"rtsp://admin:admin@192.168.1.108:554/cam/realmonitor?channel=1&subtype=0",descWidth:200},
+		{name:"RESIZE2",type:"list",required:false,desc:"изменить размер изображения",data:{"none":"не изменять","160x120":"160x120","320x240":"320x240","640x480":"640x480","1024x768":"1024x768"},defaultValue:"640x480",descWidth:200},
+		{name:"QUALITY2",type:"number",min:0,max:100,required:false,desc:"качество изображения (0 - без изменений)",defaultValue:"70",descWidth:200}
+	],
+	[
+		{name:"IMG3",type:"string",required:false,min:10,max:100,desc:"URL картинки",width:350,descWidth:200},
+		{name:"RESIZE3",type:"list",required:false,desc:"изменить размер изображения",data:{"none":"не изменять","160x120":"160x120","320x240":"320x240","640x480":"640x480","1024x768":"1024x768"},descWidth:200},
+		{name:"QUALITY3",type:"number",min:0,max:100,required:false,desc:"качество изображения (0 - без изменений)",descWidth:200}
+	],
+    {name:"DEST",type:"hidden",value:"1000:60"}
+  ]
+
+}
+*/
+
+void off() {
+	setStatus(V-ADDR, 0);
+}
+
+V-ID/V-ADDR {
+	if (opt(0)==1) {
+#ifdef IMG3	
+		setStatus(DEST, "s=SUBJECT|to=TO|t=TEXT|i1=IMG1|r1=RESIZE1|q1=QUALITY1|i2=IMG2|r2=RESIZE2|q2=QUALITY2|i3=IMG3|r3=RESIZE3");
+#else
+#ifdef IMG2
+		setStatus(DEST, "s=SUBJECT|to=TO|t=TEXT|i1=IMG1|r1=RESIZE1|q1=QUALITY1|i2=IMG2|r2=RESIZE2|q2=QUALITY2");
+#else
+		setStatus(DEST, "s=SUBJECT|to=TO|t=TEXT|i1=IMG1|r1=RESIZE1|q1=QUALITY1");
+#endif
+#endif
+		delayedCall(off, 3);
+	}
+}

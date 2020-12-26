@@ -1,0 +1,232 @@
+/*
+{
+  desc:"СМС при протечке",
+  tag:"import-script",
+  target:"LEAK1",
+  selectArea:true,
+  vars:[
+	{name:"PROTOCOL1_GSM",type:"checkbox",checked:true,width:50,desc:"Протокол GSM 1",descWidth:160},
+	
+	{name:"NUMBER1",type:"string",required:true, filter:"+1234567890",min:10,max:13,width:150,desc:"Номер телефона 1",descWidth:160},
+	{name:"NUMBER2",type:"string",required:false, filter:"+1234567890",min:10,max:13,width:150,desc:"Номер телефона 2",descWidth:160},
+	
+   	{name:"LEAK1",type:"devices-list",required:false, filter:["leak-sensor"],descWidth:160,desc:"Выберите датчик 1",width:280},
+	{name:"TEXT_SMS1",type:"string",required:false, max:70,width:600, descWidth:150, desc:"Текст сообщения"},
+	{name:"FILE_CALL1",type:"string",required:false,defaultValue: "MENU/leak_kl.wav", max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR1",type:"devices-list",required:false,filter:["speaker"],desc:"ID медиаточка"},
+	{name:"VOLUME1",type:"number",required:true,defaultValue:170,min:1,max:250,desc:"Уровень звука"},
+	{name:"FILE_MR1",type:"string",required:false,defaultValue: "http://192.168.1.125/leak_kl.wav",max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+	
+	{name:"LEAK2",type:"devices-list",required:false, filter:["leak-sensor"],descWidth:160,desc:"Выберите датчик 2",width:280},
+	{name:"TEXT_SMS2",type:"string",required:false, max:70,width:600, descWidth:150, desc:"Текст сообщения"},
+	{name:"FILE_CALL2",type:"string",required:false,defaultValue: "MENU/leak_kl.wav", max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR2",type:"devices-list",required:false,filter:["speaker"],desc:"ID медиаточка"},
+	{name:"VOLUME2",type:"number",required:true,defaultValue:170,min:1,max:250,desc:"Уровень звука"},
+	{name:"FILE_MR2",type:"string",required:false,defaultValue: "http://192.168.1.125/leak_kl.wav",max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+	
+	{name:"LEAK3",type:"devices-list",required:false, filter:["leak-sensor"],descWidth:160,desc:"Выберите датчик 3",width:280},
+	{name:"TEXT_SMS3",type:"string",required:false, max:70,width:600, descWidth:150, desc:"Текст сообщения"},
+	{name:"FILE_CALL3",type:"string",required:false,defaultValue: "MENU/leak_kl.wav", max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR3",type:"devices-list",required:false,filter:["speaker"],desc:"ID медиаточка"},
+	{name:"VOLUME3",type:"number",required:true,defaultValue:170,min:1,max:250,desc:"Уровень звука"},
+	{name:"FILE_MR3",type:"string",required:false,defaultValue: "http://192.168.1.125/leak_kl.wav",max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+	
+	{name:"LEAK4",type:"devices-list",required:false, filter:["leak-sensor"],descWidth:160,desc:"Выберите датчик 4",width:280},
+	{name:"TEXT_SMS4",type:"string",required:false, max:70,width:600, descWidth:150, desc:"Текст сообщения"},
+	{name:"FILE_CALL4",type:"string",required:false,defaultValue: "MENU/leak_kl.wav", max:70,descWidth:250, desc:"Путь к файлу для воспроизведения (должен быть на GSM модуле)"},
+	{name:"MR4",type:"devices-list",required:false,filter:["speaker"],desc:"ID медиаточка"},
+	{name:"VOLUME4",type:"number",required:true,defaultValue:170,min:1,max:250,desc:"Уровень звука"},
+	{name:"FILE_MR4",type:"string",required:false,defaultValue: "http://192.168.1.125/leak_kl.wav",max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+ ]
+}
+*/
+
+u8 f1 = 0;
+#ifdef LEAK2
+u8 f2 = 0;
+#endif
+#ifdef LEAK3
+u8 f3 = 0;
+#endif
+#ifdef LEAK4
+u8 f4 = 0;
+#endif
+
+
+V-ID/LEAK1
+{
+ if((opt(0)==1) && (f1<1))
+ {
+	#ifdef PROTOCOL1_GSM
+		#ifdef TEXT_SMS1
+			setStatus(1055:17, {1, 0, 0, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS1")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {1, 0, 0, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS1")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL1
+			setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#FILE_CALL1"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#FILE_CALL1"});
+			#endif
+		#endif
+	#else
+		#ifdef TEXT_SMS1
+			setStatus(1055:17, {0, 0, 100, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS1")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {0, 0, 100, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS1")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL1
+			setStatus(1055:16, {1, 100, "NUMBER1#FILE_CALL1"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {1, 100, "NUMBER2#FILE_CALL1"});
+			#endif
+		#endif
+	#endif
+	#ifdef MR1
+	#ifdef VOLUME1
+	#ifdef FILE_MR1
+		setStatus(MR1, {1, VOLUME2, 1, 'FILE_MR1'});
+	#endif
+	#endif
+	#endif
+  ++f1;
+ }
+ if(!opt(0)) f1 = 0;
+}
+
+#ifdef LEAK2
+V-ID/LEAK2
+{
+ if((opt(0)==1) && (f2<1))
+ {
+	#ifdef PROTOCOL1_GSM
+		#ifdef TEXT_SMS2
+			setStatus(1055:17, {1, 0, 0, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS2")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {1, 0, 0, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS2")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL2
+			setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#FILE_CALL2"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#FILE_CALL2"});
+			#endif
+		#endif
+	#else
+		#ifdef TEXT_SMS2
+			setStatus(1055:17, {0, 0, 100, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS2")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {0, 0, 100, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS2")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL2
+			setStatus(1055:16, {1, 100, "NUMBER1#FILE_CALL2"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {1, 100, "NUMBER2#FILE_CALL2"});
+			#endif
+		#endif
+	#endif
+	#ifdef MR2
+	#ifdef VOLUME2
+	#ifdef FILE_MR2
+		setStatus(MR2, {1, VOLUME2, 1, 'FILE_MR2'});
+	#endif
+	#endif
+	#endif
+  ++f2;
+ }
+ if(!opt(0)) f2 = 0;
+}
+#endif
+
+#ifdef LEAK3
+V-ID/LEAK3
+{
+ if((opt(0)==1) && (f3<1))
+ {
+	#ifdef PROTOCOL1_GSM
+		#ifdef TEXT_SMS3
+			setStatus(1055:17, {1, 0, 0, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS3")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {1, 0, 0, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS3")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL3
+			setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#FILE_CALL3"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#FILE_CALL3"});
+			#endif
+		#endif
+	#else
+		#ifdef TEXT_SMS3
+			setStatus(1055:17, {0, 0, 100, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS3")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {0, 0, 100, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS3")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL3
+			setStatus(1055:16, {1, 100, "NUMBER1#FILE_CALL3"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {1, 100, "NUMBER2#FILE_CALL3"});
+			#endif
+		#endif
+	#endif
+	#ifdef MR3
+	#ifdef VOLUME3
+	#ifdef FILE_MR3
+		setStatus(MR3, {1, VOLUME3, 1, 'FILE_MR3'});
+	#endif
+	#endif
+	#endif
+  ++f3;
+ }
+ if(!opt(0)) f3 = 0;
+}
+#endif
+
+#ifdef LEAK4
+V-ID/LEAK4
+{
+ if((opt(0)==1) && (f4<1))
+ {
+	#ifdef PROTOCOL1_GSM
+		#ifdef TEXT_SMS4
+			setStatus(1055:17, {1, 0, 0, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS4")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {1, 0, 0, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS4")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL4
+			setStatus(1055:16, {0, 0, 0, 0, "NUMBER1#FILE_CALL4"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {0, 0, 0, 0, "NUMBER2#FILE_CALL4"});
+			#endif
+		#endif
+	#else
+		#ifdef TEXT_SMS4
+			setStatus(1055:17, {0, 0, 100, "NUMBER1#"A, toUcs2(65001, "TEXT_SMS4")});
+			#ifdef NUMBER2
+				setStatus(1055:17, {0, 0, 100, "NUMBER2#"A, toUcs2(65001, "TEXT_SMS4")});
+			#endif
+		#endif	
+		#ifdef FILE_CALL4
+			setStatus(1055:16, {1, 100, "NUMBER1#FILE_CALL4"});
+			#ifdef NUMBER2
+				setStatus(1055:16, {1, 100, "NUMBER2#FILE_CALL4"});
+			#endif
+		#endif
+	#endif
+	#ifdef MR4
+	#ifdef VOLUME4
+	#ifdef FILE_MR4
+		setStatus(MR4, {1, VOLUME4, 1, 'FILE_MR4'});
+	#endif
+	#endif
+	#endif
+  ++f4;
+ }
+ if(!opt(0)) f4 = 0;
+}
+#endif

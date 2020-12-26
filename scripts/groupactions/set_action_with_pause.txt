@@ -1,0 +1,312 @@
+/*
+{
+  desc:"Hабор действий с паузами между ними",
+  tag:"item",
+  target:"ITEM1_1",
+  selectArea:true,
+  vars:[
+    {name:"ACT1",type:"list",required:true,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},desc:"Выберите действие 1",descWidth:170},
+	[
+	  {type:"comment",text:"",width:447},
+	  {type:"comment",text:"с",width:15},
+	  {type:"comment",text:"мс",width:50},
+	], 
+	[
+	  {name:"PERIOD1",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие",descWidth:340,width:100},
+	  {name:"SEK1",type:"checkbox",checked:true,width:50},
+	  {name:"MSK1",type:"checkbox",checked:false,width:50}, 
+	], 
+   	{name:"ITEM1_1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM1_2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},	
+	{name:"ITEM1_3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3 (опционально)",descWidth:170},
+    {name:["COMMAND1_1","IRT1_1"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 1",descWidth:170, width:370},	
+	{name:["COMMAND1_2","IRT1_2"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 2",descWidth:170, width:370},	
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+	{name:"ACT2",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},desc:"Выберите действие 2",descWidth:170},
+	[
+	  {type:"comment",text:"",width:447},
+	  {type:"comment",text:"с",width:15},
+	  {type:"comment",text:"мс",width:50},
+	], 
+	[
+	  {name:"PERIOD2",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие",descWidth:340,width:100},
+	  {name:"SEK2",type:"checkbox",checked:true,width:50},
+	  {name:"MSK2",type:"checkbox",checked:false,width:50}, 
+	], 
+   	{name:"ITEM2_1",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM2_2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},
+    {name:"ITEM2_3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3 (опционально)",descWidth:170},
+    {name:["COMMAND2_1","IRT2_1"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 1",descWidth:170, width:370},	
+	{name:["COMMAND2_2","IRT2_2"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 2",descWidth:170, width:370},	     	
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+	{name:"ACT3",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},desc:"Выберите действие 3",descWidth:170},
+	[
+	  {type:"comment",text:"",width:447},
+	  {type:"comment",text:"с",width:15},
+	  {type:"comment",text:"мс",width:50},
+	], 
+	[
+	  {name:"PERIOD3",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие",descWidth:340,width:100},
+	  {name:"SEK3",type:"checkbox",checked:true,width:50},
+	  {name:"MSK3",type:"checkbox",checked:false,width:50}, 
+	], 
+   	{name:"ITEM3_1",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM3_2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},
+    {name:"ITEM3_3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3 (опционально)",descWidth:170},
+    {name:["COMMAND3_1","IRT3_1"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 1",descWidth:170, width:370},	
+	{name:["COMMAND3_2","IRT3_2"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 2",descWidth:170, width:370},		
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+	{name:"ACT4",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},desc:"Выберите действие 4",descWidth:170},
+	[
+	  {type:"comment",text:"",width:447},
+	  {type:"comment",text:"с",width:15},
+	  {type:"comment",text:"мс",width:50},
+	], 
+	[
+	  {name:"PERIOD4",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие",descWidth:340,width:100},
+	  {name:"SEK4",type:"checkbox",checked:true,width:50},
+	  {name:"MSK4",type:"checkbox",checked:false,width:50}, 
+	], 
+   	{name:"ITEM4_1",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM4_2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},
+    {name:"ITEM4_3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3 (опционально)",descWidth:170},
+    {name:["COMMAND4_1","IRT4_1"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 1",descWidth:170, width:370},	
+	{name:["COMMAND4_2","IRT4_2"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 2",descWidth:170, width:370},		
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+	{name:"ACT5",type:"list",required:false,data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},desc:"Выберите действие 5",descWidth:170},
+	[
+	  {type:"comment",text:"",width:447},
+	  {type:"comment",text:"с",width:15},
+	  {type:"comment",text:"мс",width:50},
+	], 
+	[
+	  {name:"PERIOD5",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время через которое необходимо выполнить действие",descWidth:340,width:100},
+	  {name:"SEK5",type:"checkbox",checked:true,width:50},
+	  {name:"MSK5",type:"checkbox",checked:false,width:50}, 
+	], 
+   	{name:"ITEM5_1",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 1",descWidth:170},
+   	{name:"ITEM5_2",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 2 (опционально)",descWidth:170},
+    {name:"ITEM5_3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Элемент 3 (опционально)",descWidth:170},
+    {name:["COMMAND5_1","IRT5_1"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 1",descWidth:170, width:370},	
+	{name:["COMMAND5_2","IRT5_2"],type:"irt",required:false,itemType:"remote-control",desc:"Команда ИК пульта 2",descWidth:170, width:370},		
+	{type:"comment",text:"-----------------------------------------------------------------------------------------------------------------------------------------------------------------------",width:600}, 
+	
+  ]
+}
+*/
+#ifdef ACT5
+#ifdef PERIOD5
+#ifdef ITEM5_1
+void action5() {
+	setStatus(ITEM5_1, ACT5);
+	#ifdef ITEM5_2
+	  setStatus(ITEM5_2, ACT5);
+	#endif	
+    #ifdef ITEM5_3
+	  setStatus(ITEM5_3, ACT5);
+	#endif
+	#ifdef IRT5_1
+	  setStatus(IRT5_1, 0xCOMMAND5_1);
+	#endif
+	#ifdef IRT5_2
+	  setStatus(IRT5_2, 0xCOMMAND5_2);
+	#endif		
+	setStatus(V-ADDR,0);	
+}
+#endif
+#endif
+#endif
+
+#ifdef ACT4
+#ifdef PERIOD4
+#ifdef ITEM4_1
+void action4() {
+	setStatus(ITEM4_1, ACT4);
+	#ifdef ITEM4_2
+	  setStatus(ITEM4_2, ACT4);
+	#endif	
+	#ifdef ITEM4_3
+	  setStatus(ITEM4_3, ACT4);
+	#endif
+	#ifdef IRT4_1
+	  setStatus(IRT4_1, 0xCOMMAND4_1);
+	#endif
+	#ifdef IRT4_2
+	  setStatus(IRT4_2, 0xCOMMAND4_2);
+	#endif	
+	#ifndef ACT5
+	  setStatus(V-ADDR,0);
+	#else  
+     #ifndef PERIOD5
+       setStatus(V-ADDR,0);
+	 #else 
+	   #ifndef ITEM5_1
+	     setStatus(V-ADDR,0);
+	   #else 	 
+          #ifdef SEK5 
+	       delayedCall(action5, PERIOD5);
+	      #else
+           delayedCallMs(action5, PERIOD5);
+	      #endif	
+	   #endif
+	 #endif
+	#endif
+}
+#endif
+#endif
+#endif
+
+#ifdef ACT3
+#ifdef PERIOD3
+#ifdef ITEM3_1
+void action3() {
+	setStatus(ITEM3_1, ACT3);
+	#ifdef ITEM3_2
+	  setStatus(ITEM3_2, ACT3);
+	#endif	
+	#ifdef ITEM3_3
+	  setStatus(ITEM3_3, ACT3);
+	#endif
+	#ifdef IRT3_1
+	  setStatus(IRT3_1, 0xCOMMAND3_1);
+	#endif
+	#ifdef IRT3_2
+	  setStatus(IRT3_2, 0xCOMMAND3_2);
+	#endif	
+	#ifndef ACT4
+	  setStatus(V-ADDR,0);
+	#else 
+     #ifndef PERIOD4
+       setStatus(V-ADDR,0);
+	 #else 
+	   #ifndef ITEM4_1
+	     setStatus(V-ADDR,0);
+	   #else 	 
+          #ifdef SEK4 
+	       delayedCall(action4, PERIOD4);
+	      #else
+           delayedCallMs(action4, PERIOD4);
+	      #endif	
+	   #endif
+	 #endif
+	#endif
+}
+#endif
+#endif
+#endif
+
+#ifdef ACT2
+#ifdef PERIOD2
+#ifdef ITEM2_1
+void action2() {
+	setStatus(ITEM2_1, ACT2);
+	#ifdef ITEM2_2
+	  setStatus(ITEM2_2, ACT2);
+	#endif
+    #ifdef ITEM2_3
+	  setStatus(ITEM2_3, ACT2);
+	#endif
+	#ifdef IRT2_1
+	  setStatus(IRT2_1, 0xCOMMAND2_1);
+	#endif
+	#ifdef IRT2_2
+	  setStatus(IRT2_2, 0xCOMMAND2_2);
+	#endif	
+	#ifndef ACT3
+	  setStatus(V-ADDR,0);
+	#else  
+     #ifndef PERIOD3
+       setStatus(V-ADDR,0);
+	 #else  
+	   #ifndef ITEM3_1
+	     setStatus(V-ADDR,0);
+	   #else 	 
+          #ifdef SEK3 
+	       delayedCall(action3, PERIOD3);
+	      #else
+           delayedCallMs(action3, PERIOD3);
+	      #endif	
+	   #endif
+	 #endif
+	#endif
+}
+#endif
+#endif
+#endif
+
+void action1() {
+	setStatus(ITEM1_1, ACT1);
+	#ifdef ITEM1_2
+	  setStatus(ITEM1_2, ACT1);
+	#endif
+	#ifdef ITEM1_3
+	  setStatus(ITEM1_3, ACT1);
+	#endif
+	#ifdef IRT1_1
+	  setStatus(IRT1_1, 0xCOMMAND1_1);
+	#endif
+	#ifdef IRT1_2
+	  setStatus(IRT1_2, 0xCOMMAND1_2);
+	#endif
+    #ifndef ACT2
+	  setStatus(V-ADDR,0);
+	#else  
+		#ifndef PERIOD2
+          setStatus(V-ADDR,0);
+		#else  
+			#ifndef ITEM2_1
+	           setStatus(V-ADDR,0);
+			#else	 
+               #ifdef SEK2 
+	             delayedCall(action2, PERIOD2);
+	           #else
+                 delayedCallMs(action2, PERIOD2);
+	           #endif	
+			#endif
+		#endif
+	#endif
+}
+
+V-ID/V-ADDR {
+	if (opt(0)) 
+  	#ifdef SEK1 
+	 delayedCall(action1, PERIOD1);
+	#else
+     delayedCallMs(action1, PERIOD1);
+	#endif	
+	else {
+  	    cancelDelayedCall(action1);	
+		#ifdef ACT2
+		#ifdef PERIOD2
+		#ifdef ITEM2_1
+		    cancelDelayedCall(action2);
+		#endif
+		#endif
+		#endif
+		#ifdef ACT3
+		#ifdef PERIOD3
+		#ifdef ITEM3_1
+		    cancelDelayedCall(action3);
+		#endif
+		#endif
+		#endif
+		#ifdef ACT4
+		#ifdef PERIOD4
+		#ifdef ITEM4_1
+		    cancelDelayedCall(action4);
+		#endif
+		#endif
+		#endif
+		#ifdef ACT5
+		#ifdef PERIOD5
+		#ifdef ITEM5_1
+		    cancelDelayedCall(action5);
+		#endif
+		#endif
+		#endif	
+	}   	
+}

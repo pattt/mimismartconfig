@@ -1,0 +1,214 @@
+/*
+{
+  desc:"Скрипт для управления шторами(гардинами, жалюзями) как димером",
+  tag:"import-script",
+  target:"BLINDS01",
+  name:"jal_as_dimer",
+  selectArea:true,
+  vars:[
+	{name:"BLINDS01",type:"devices-list",required:true,filter:["jalousie"],desc:"Выберите шторы(гардины, жалюзи)",descWidth:300,width:300},
+	{name:"TIME",type:"number",required:true,defaultValue:1,min:1,max:64,desc:"Время хода шторы (максимальное), cекунд",descWidth:350},
+	{name:"DIMMER",type:"devices-list",required:true,filter:["dimer-lamp"],desc:"Выберите виртуальный димер",descWidth:300,width:300},
+  ]
+}
+*/
+
+u32 dim_state = 0;
+u32 dim_state_old = 0;
+u8 bl_state = 0;
+u32 step = 250*50/TIME;//step for every 50 msec
+u8 i_set_dim = 0;
+u8 i_set_bl = 0;
+void init()
+{
+	bl_state = [BLINDS01.0];
+	if (bl_state == 0) 
+	{
+		dim_state = 1000;
+		dim_state_old = 1000;
+	}
+	else if (bl_state == 1) {
+		dim_state = 250000;
+		dim_state_old = 250000;
+	}
+	else {
+		dim_state = 125000;
+		dim_state_old = 125000;
+	}
+	if ([DIMMER.1] != (dim_state/1000)) {					
+		i_set_dim = 1;
+		setStatus(DIMMER,{1,dim_state/1000,0});
+	}
+}
+
+void onInit()
+{
+	delayedCall(init,1);
+}
+#ifdef MESSAGE
+void send_srvmes()
+{
+	u8 strForMess[70]; 
+	sprintf(strForMess,"%d ",dim_state);
+	sprintf(strForMess+strlen(strForMess),"%d ",dim_state_old);
+	sprintf(strForMess+strlen(strForMess),"%d ",bl_state);
+	sprintf(strForMess+strlen(strForMess),"%d ",step);
+    srvError(&strForMess);
+}
+#endif
+void calc_state()
+{
+	if (dim_state_old < dim_state) {
+		dim_state_old = dim_state_old+step;
+		if (dim_state_old >= dim_state) {
+			dim_state_old = dim_state;
+		} else	delayedCallMs(calc_state,50);
+	} else if (dim_state_old > dim_state) {
+		if ((dim_state_old > (step)) && ((dim_state_old-step) > dim_state)) {
+			dim_state_old = dim_state_old-step;		
+			delayedCallMs(calc_state,50);
+		} else {
+			dim_state_old = dim_state;
+		}
+	}
+	if (dim_state_old == dim_state) {
+		if ((dim_state == 1000) || (dim_state == 250000)) {}//nothing if full close or open
+		else {
+			if ((bl_state == 2) || (bl_state == 3)) {
+				i_set_bl = 1;
+				setStatus(BLINDS01,0);	
+				cancelDelayedCall(calc_state);		
+				if ([DIMMER.1] != (dim_state_old/1000)) {					
+					i_set_dim = 1;
+					setStatus(DIMMER,{1,dim_state_old/1000,0});
+				}
+			}
+		}
+	}
+}
+
+void stop () {
+	if ((bl_state == 2) || (bl_state == 3)) {
+		i_set_bl = 1;
+		setStatus(BLINDS01,0);	
+		cancelDelayedCall(calc_state);		
+		i_set_dim = 1;
+		setStatus(DIMMER,{[DIMMER.0],dim_state_old/1000,0});
+	}
+}
+
+void close()
+{
+	i_set_bl = 1;
+	setStatus(BLINDS01,0);	
+	cancelDelayedCall(calc_state);
+	calc_state();
+}
+void open()
+{
+	i_set_bl = 1;
+	setStatus(BLINDS01,1);	
+	cancelDelayedCall(calc_state);
+	calc_state();	
+}
+
+void dim_level_moving()
+{	
+	if ((bl_state == 2) && (dim_state_old != 1)) {
+		if (dim_state_old > step) dim_state_old = dim_state_old - step;
+		else dim_state_old = 1000;
+	} else if ((bl_state == 3) && (dim_state_old != 250000)){		
+		dim_state_old = dim_state_old+step;
+		if (dim_state_old > 250000) dim_state_old = 250000;	
+	} 	
+	if ([DIMMER.1] != dim_state_old/1000) {
+		i_set_dim = 1;
+		setStatus(DIMMER,{1,dim_state_old/1000,0});
+	}
+	delayedCallMs(dim_level_moving,50);
+}
+
+void doIt()
+{
+	cancelDelayedCall(calc_state);
+	cancelDelayedCall(close);
+	cancelDelayedCall(open);
+	cancelDelayedCall(stop);
+	cancelDelayedCall(dim_level_moving);
+	if ((dim_state == 0) || (dim_state == dim_state_old)) { //stop
+		stop();
+	} else {//need open
+		if (dim_state_old < dim_state) {
+			//step = (dim_state-dim_state_old)/1step_50ms;
+			if ((bl_state == 2) || (bl_state == 3)) {
+				i_set_bl = 1;
+				setStatus(BLINDS01,1);
+				delayedCallMs(open,100);
+			}
+			else open();
+		} else if (dim_state_old > dim_state) {//need close 		
+			//step = (dim_state_old-dim_state)/1step_50ms;//step by every 50 msec			
+			if ((bl_state == 2) || (bl_state == 3)) {					
+				i_set_bl = 1;
+				setStatus(BLINDS01,0);
+				delayedCallMs(close,100);
+			}
+			else close();
+		}		
+	}
+	#ifdef MESSAGE  srvError("doIt"); send_srvmes(); #endif
+}
+
+V-ID/BLINDS01
+{
+	bl_state = [BLINDS01.0];
+	cancelDelayedCall(dim_level_moving);
+	#ifdef MESSAGE srvError("V-ID/BLINDS01"); send_srvmes(); #endif
+	if (i_set_bl == 1) {
+		#ifdef MESSAGE srvError("i_set_bl==1");  #endif
+		i_set_bl = 0;
+	} else {	
+		#ifdef MESSAGE srvError({bl_state+48,"  i_set_bl==0"});  #endif
+		if (bl_state == 0) {
+			dim_state = 1000;
+			dim_state_old = 1000;
+			cancelDelayedCall(calc_state);
+			if ([DIMMER.1] != (dim_state/1000)) {					
+				i_set_dim = 1;
+				setStatus(DIMMER,{1,dim_state/1000,0});
+			}
+		} else if (bl_state == 1) {
+			dim_state = 250000;
+			dim_state_old = 250000;
+			cancelDelayedCall(calc_state);			
+			if ([DIMMER.1] != (dim_state/1000)) {					
+				i_set_dim = 1;
+				setStatus(DIMMER,{1,dim_state/1000,0});
+			}
+		} else if ((bl_state == 2) || (bl_state == 3)) {//closing or opening
+			dim_state_old = [DIMMER.1]*1000;
+			dim_level_moving();
+			#ifdef MESSAGE srvError({bl_state+48," dim_level_moving"});  #endif
+		} else if (bl_state == 4) {//stop
+			if ([DIMMER.1] != dim_state_old/1000) {
+				i_set_dim = 1;
+				setStatus(DIMMER,{1,dim_state_old/1000,0});
+			}
+		}
+	}		
+}
+
+V-ID/DIMMER
+{
+	
+	if (i_set_dim == 1) {
+		i_set_dim = 0;
+		#ifdef MESSAGE srvError("i_set_dim==1");  #endif
+	} else {
+		if ([DIMMER.0] == 0) dim_state = 0;
+		else dim_state = [DIMMER.1]*1000;
+		cancelDelayedCall(doIt);
+		#ifdef MESSAGE srvError("V-ID/DIMMER"); send_srvmes(); #endif
+		delayedCall(doIt,1);
+	}
+}

@@ -1,0 +1,67 @@
+/*
+{
+  desc:"Скрипт проверки баланса модуля GSM",
+  tag:"import-script",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"Баланс карточки GSM модуля", "sub-id":"%SUBID%", type:"virtual", "sub-type":"long-text", length:"0"}
+  ],
+  vars:[
+	{name:"NUMBER",type:"list",required:true,desc:"номер USSD для проверки баланса",data:{"*111#":"*111#","*101#":"*101#"},defaultValue:"*111#",descWidth:350},
+	{name:"PERIOD",type:"list",required:true,desc:"Интервал проверки",data:{"m:60":"1 час","m:720":"12 часов","m:1440":"24 часа"},defaultValue:"m:60",descWidth:350},
+	{name:["TIME1","OFS1"],type:"time",required:false,desc:"Время проверки для отправки сообщения"},	
+	{name:"MON",type:"number",required:false,defaultValue:10,min:1,max:100,desc:"Остаток на счете (если на счете меньше, отправлять сообщение)",descWidth:340,width:100},
+    {name:"VIRT",type:"hidden",value:"%TARGET%:%SUBID%"},
+    {name:"DEST",type:"hidden",value:"1000:61"},
+    {name:"name",type:"hidden",value:"проверка баланса GSM"}
+  ]                       
+}
+*/
+
+u8 mes[] = {1,"На вашем счете осталось           !"};
+void onInit() {
+	setStatus(DEST, "number=NUMBER|dev=VIRT");
+}
+
+V-ID/PERIOD {
+	setStatus(DEST, "number=NUMBER|dev=VIRT");
+}
+#ifdef TIME1
+#ifdef MON
+V-ID/m:1
+{	
+	u8 state[100];
+	i8 i = 0;
+	u8 f = 0;
+	u8 cntr = 10;	
+	u8 size;
+	u16 money = 0xffff;
+	
+	if (timeInRange(TIME1-OFS1)) {
+		size = getStatus(VIRT,state,100);
+		for (i==0;i<size;++i) {
+			if (((state[i] >= 48) && (state[i] <= 57)) || (state[i] == 44) || (state[i] == 46)) {
+				if (cntr == 10) cntr = 0;
+				f=1;
+				mes[45+cntr] = state[i];
+					if ((state[i] == 44) || (state[i] == 46)) {
+						money = state[i-1]-48;
+						if (cntr>2) money = money+(state[i-2]-48)*10;
+						if (cntr>3) money = money+(state[i-3]-48)*100;
+						if (cntr>4) money = money+(state[i-4]-48)*1000;					
+					}
+					++cntr;						
+			}
+			else if (f == 1) {			
+				mes[45+cntr] = state[i];
+				mes[45+cntr+1] = state[i+1];
+				mes[45+cntr+2] = state[i+2];
+				mes[45+cntr+3] = state[i+3];
+				i = size;			
+			}
+		}	
+		if (money<MON) setStatus(2047:32,&mes);
+	}
+}
+#endif
+#endif

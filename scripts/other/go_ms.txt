@@ -1,0 +1,47 @@
+/*
+{
+  desc:"Переключение между пресетами камеры",
+  tag:"item",
+  selectArea:true,
+  vars:[
+		{name:"MS",type:"devices-list",required:true,filter:["motion-sensor"],desc:"Датчик движения"},
+		{name:"LEVL",type:"number",required:true,defaultValue:30,min:1,max:3600,desc:"уровень движения"},
+		{name:"WATCH",type:"number",required:true,defaultValue:5,min:1,max:3600,desc:"время удержания"},
+		{name:"POSMAIN",type:"number",required:true,defaultValue:1,min:1,max:100,desc:"позиция основная"},
+		{name:"POSWATCH",type:"number",required:true,defaultValue:4,min:1,max:100,desc:"позиция наблюдения"},
+		{name:"DEST",type:"hidden",value:"1000:70"},
+  ]
+}
+*/
+
+u8 data[] = "p=1|auth=admin:admin|ip=192.168.1.108";
+u8 pos = 0;
+
+void go() {
+	data[2] = 0x30 + POSMAIN;
+	setStatus(DEST, &data);
+	pos = 0;
+}
+
+V-ID/MS {
+	if ([V-ADDR] && (opt(1)>LEVL)) {
+		cancelDelayedCall(go);
+		delayedCall(go, WATCH);
+		if (!pos) {
+			data[2] = 0x30 + POSWATCH;
+			setStatus(DEST, &data);
+			pos = 1;
+		}
+	}
+}
+
+V-ID/V-ADDR {
+	pos = 0;
+	if (opt(0)) {
+	} else {
+		data[2] = 0x30 + POSMAIN;
+		setStatus(DEST, &data);
+		pos = 0;	
+	}
+}
+

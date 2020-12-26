@@ -1,0 +1,45 @@
+/*
+{
+  desc:"Мультифункциональный сетевой анализатор Q15B4W (основные параметры)",
+  tag:"import-script",
+  target:"RS485",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"Сетевой анализатор", "sub-id":"%SUBID01%", type:"virtual", "sub-type":"long-text", length:"0"},
+  ],
+  vars:[
+	{type:"comment",text:"Необходимо задать скорость 9600 для порта RS485",width:400},
+   	{name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
+    {name:"VIRTSID",type:"hidden",value:"%SUBID01%"},
+	{name:"name",type:"hidden",value:"Скрипт сетевого анализатора"}
+  ]                       
+}
+*/
+
+u8 cmnd[8]={0x010301000002cc16};//read 
+u8 addr[7]={0x00,0x02,0x04,0x44,0x46,0x48,0x12};
+u8 cntr = 0;
+u8 text[160];
+u32 res[7];
+
+V-ID/ms:500
+{ 
+ cmnd[3]=addr[cntr];
+ setStatus(RS485,cmnd);
+}
+
+V-ID/RS485 {
+   if ((opt(1) & 0x80) != 0x80) {
+	res[cntr]=((opt(3)<<24) & 0xff000000) | ((opt(4)<<16) & 0xff0000) | ((opt(5)<<8) & 0xff00) | opt(6);	
+   }      
+	++cntr;
+	if (cntr>=sizeof(addr)){
+		sprintf(text, "Фаза 1: %dB, %dВт\10", res[0]/1000,res[3]);
+		sprintf(text+strlen(text), "Фаза 2: %dB, %dВт\10", res[1]/1000,res[4]);
+		sprintf(text+strlen(text), "Фаза 3: %dB, %dВт\10", res[2]/1000,res[5]);
+		sprintf(text+strlen(text), "Частота: %d.%02dГц", res[6]/1000,(res[6]/10)%100);		
+		setStatus(:@VIRTSID, text);
+		cntr=0;
+	}
+}
+

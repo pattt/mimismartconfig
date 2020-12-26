@@ -1,0 +1,92 @@
+/*
+{
+  desc:"Выполнение действий по времени (с условиями)",
+  tag:"import-script",
+  target:"TARGET1",
+  selectArea:true,
+  vars:[
+    [
+      {name:["TIME1","OFS1"],type:"time",required:true,desc:"Время"},
+      {name:"WEEK1",type:"weekday",required:true,desc:"Дни недели"}
+    ],
+    [
+      {name:["TIME2","OFS2"],type:"time",required:false,desc:"Время"},
+      {name:"WEEK2",type:"weekday",required:false,desc:"Дни недели"}
+    ],
+	[
+		{name:"CHECK1",type:"devices-list",required:false, filter:["door-sensor","lamp"],desc:"Условие 1"},
+		{name:"CST1",type:"list",required:false,data:{"1":"Открыто","0":"Закрыто","0x01":"Включено","0x00":"Выключено"},defaultValue:"0x01"}
+	],
+	[
+		{name:"CHECK2",type:"devices-list",required:false, filter:["door-sensor","lamp"],desc:"Условие 2"},
+		{name:"CST2",type:"list",required:false,data:{"1":"Открыто","0":"Закрыто","0x01":"Включено","0x00":"Выключено"},defaultValue:"0x01"}
+	],
+	[
+		{name:"TARGET1",type:"devices-list",required:true, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"Исполнитель"},
+		{name:"STATE1",type:"list",required:true,data:{"0x00":"Выключить","0x01":"Включить"},defaultValue:"0x01"}
+	],
+	[
+		{name:"TARGET2",type:"devices-list",required:false, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"Исполнитель"},
+		{name:"STATE2",type:"list",required:false,data:{"0x00":"Выключить","0x01":"Включить"},defaultValue:"0x01"}
+	],
+	[
+		{name:"TARGET3",type:"devices-list",required:false, filter:["rgb-lamp","lamp","dimmer-lamp"],desc:"Исполнитель"},
+		{name:"STATE3",type:"list",required:false,data:{"0x00":"Выключить","0x01":"Включить"},defaultValue:"0x01"}
+	]
+  ]
+}
+*/
+u8 i1 = 0;
+u8 i2 = 0;
+
+V-ID/s:20 {
+#ifdef WEEK1
+    if (timeInRange(TIME1-OFS1|WEEK1)) {
+#else
+    if (timeInRange(TIME1-OFS1)) {
+#endif
+		if (!i1 
+#ifdef CHECK1
+			&& ([CHECK1]==CST1)
+#endif
+#ifdef CHECK2
+			&& ([CHECK2]==CST2)
+#endif
+		) {
+			i1 = 1;
+			setStatus(TARGET1, STATE1);
+#ifdef TARGET2
+			setStatus(TARGET2, STATE2);
+#endif
+#ifdef TARGET3
+			setStatus(TARGET3, STATE3);
+#endif
+		}
+    } else i1 = 0;
+
+#ifdef TIME2
+#ifdef WEEK2
+    if (timeInRange(TIME2-OFS2|WEEK2)) {
+#else
+    if (timeInRange(TIME2-OFS2)) {
+#endif
+		if (!i2 
+#ifdef CHECK1
+			&& ([CHECK1]==CST1)
+#endif
+#ifdef CHECK2
+			&& ([CHECK2]==CST2)
+#endif
+		) {
+			i2 = 1;
+			setStatus(TARGET1, STATE1);
+#ifdef TARGET2
+			setStatus(TARGET2, STATE2);
+#endif
+#ifdef TARGET3
+			setStatus(TARGET3, STATE3);
+#endif
+		}
+    } else i2 = 0;
+#endif
+}

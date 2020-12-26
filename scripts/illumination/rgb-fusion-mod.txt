@@ -1,0 +1,295 @@
+/*
+{
+	desc:"Умный перелив лент RGB (перелив вручную, не самой RGB)",
+	tag:"item",
+	selectArea:true,
+	target:"RGB0",
+	vars:[
+		{name:"RGB0",type:"devices-list",required:true,width:600,filter:["rgb-lamp"],desc:"RGB 1",descWidth:30},
+		{name:"RGB1",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 2",descWidth:30},
+		{name:"RGB2",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 3",descWidth:30},
+		{name:"RGB3",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 4",descWidth:30},
+		{name:"RGB4",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 5",descWidth:30},
+		{name:"RGB5",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 6",descWidth:30},
+		{name:"RGB6",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 7",descWidth:30},
+		{name:"RGB7",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 8",descWidth:30},
+		{name:"RGB8",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 9",descWidth:30},
+		{name:"RGB9",type:"devices-list",required:false,width:600,filter:["rgb-lamp"],desc:"RGB 10",descWidth:30},
+		{name:"BR",type:"number",required:true,defaultValue:"250",width:100,min:1,max:250,desc:"Стартовая яркость",descWidth:200}
+	]
+}
+*/
+
+#ifdef BR
+
+#ifdef RGB0
+u8 m[] = {1
+#ifdef RGB1
+,1
+#endif
+#ifdef RGB2
+,1
+#endif
+#ifdef RGB3
+,1
+#endif
+#ifdef RGB4
+,1
+#endif
+#ifdef RGB5
+,1
+#endif
+#ifdef RGB6
+,1
+#endif
+#ifdef RGB7
+,1
+#endif
+#ifdef RGB8
+,1
+#endif
+#ifdef RGB9
+,1
+#endif
+};
+
+u8 rs[] = {1, BR, 250, 0, 0};
+u8 sm[] = {0, 41, 83, 124, 166, 207};
+u8 c = 0;	// Индекс текущего цвета в массиве
+u8 rx = 0;	// Количество работающих RGB
+u8 last = 0;	// Последний цвет
+u8 new = 0;	// Новый цвет
+
+void doit()
+{
+	rs[3] = last;
+	if (m[0])
+	setStatus(RGB0, &rs);
+	#ifdef RGB1
+	if (m[1])
+	setStatus(RGB1, &rs);
+	#endif
+	#ifdef RGB2
+	if (m[2])
+	setStatus(RGB2, &rs);
+	#endif
+	#ifdef RGB3
+	if (m[3])
+	setStatus(RGB3, &rs);
+	#endif
+	#ifdef RGB4
+	if (m[4])
+	setStatus(RGB4, &rs);
+	#endif
+	#ifdef RGB5
+	if (m[5])
+	setStatus(RGB5, &rs);
+	#endif
+	#ifdef RGB6
+	if (m[6])
+	setStatus(RGB6, &rs);
+	#endif
+	#ifdef RGB7
+	if (m[7])
+	setStatus(RGB7, &rs);
+	#endif
+	#ifdef RGB8
+	if (m[8])
+	setStatus(RGB8, &rs);
+	#endif
+	#ifdef RGB9
+	if (m[9])
+	setStatus(RGB9, &rs);
+	#endif
+	if (last != new)
+	{
+		if (last < 249)
+		++last;
+		else
+		last = 0;
+		delayedCallMs(doit, 250);
+	}
+}
+
+void flow()
+{
+	if (!rx)
+	setStatus(V-ADDR, 0);
+	else
+	{
+		c = (c+1) % sizeof(sm);
+		last = rs[3];
+		new = sm[c];
+		cancelDelayedCall(doit);
+		doit();
+	}
+}
+
+V-ID/V-ADDR
+{
+	if (opt(0))
+	{
+		rx = sizeof(m);
+		for (u8 i = 0; i<rx; ++i)
+		m[i] = 1;
+		rs[1] = BR;
+		rs[3] = [RGB0.3];
+		flow();
+		rs[1] = 0xFE;
+		delayedCallR(flow, 10);
+	}
+	else
+	{
+		cancelDelayedCall(flow);
+		cancelDelayedCall(doit);
+		if (m[0])
+		setStatus(RGB0, 0);
+		#ifdef RGB1
+		if (m[1])
+		setStatus(RGB1, 0);
+		#endif
+		#ifdef RGB2
+		if (m[2])
+		setStatus(RGB2, 0);
+		#endif
+		#ifdef RGB3
+		if (m[3])
+		setStatus(RGB3, 0);
+		#endif
+		#ifdef RGB4
+		if (m[4])
+		setStatus(RGB4, 0);
+		#endif
+		#ifdef RGB5
+		if (m[5])
+		setStatus(RGB5, 0);
+		#endif
+		#ifdef RGB6
+		if (m[6])
+		setStatus(RGB6, 0);
+		#endif
+		#ifdef RGB7
+		if (m[7])
+		setStatus(RGB7, 0);
+		#endif
+		#ifdef RGB8
+		if (m[8])
+		setStatus(RGB8, 0);
+		#endif
+		#ifdef RGB9
+		if (m[9])
+		setStatus(RGB9, 0);
+		#endif
+	}
+}
+
+V-ID/RGB0
+{
+	if (!opt(0) && [V-ADDR] && m[0])
+	{
+		--rx;
+		m[0] = 0;
+	}
+}
+
+#ifdef RGB1
+V-ID/RGB1
+{
+	if (!opt(0) && [V-ADDR] && m[1])
+	{
+		--rx;
+		m[1] = 0;
+	}
+}
+#endif
+
+#ifdef RGB2
+V-ID/RGB2
+{
+	if (!opt(0) && [V-ADDR] && m[2])
+	{
+		--rx;
+		m[2] = 0;
+	}
+}
+#endif
+
+#ifdef RGB3
+V-ID/RGB3
+{
+	if (!opt(0) && [V-ADDR] && m[3])
+	{
+		--rx;
+		m[3] = 0;
+	}
+}
+#endif
+
+#ifdef RGB4
+V-ID/RGB4
+{
+	if (!opt(0) && [V-ADDR] && m[4])
+	{
+		--rx;
+		m[4] = 0;
+	}
+}
+#endif
+
+#ifdef RGB5
+V-ID/RGB5
+{
+	if (!opt(0) && [V-ADDR] && m[5])
+	{
+		--rx;
+		m[5] = 0;
+	}
+}
+#endif
+
+#ifdef RGB6
+V-ID/RGB6
+{
+	if (!opt(0) && [V-ADDR] && m[6])
+	{
+		--rx;
+		m[6] = 0;
+	}
+}
+#endif
+
+#ifdef RGB7
+V-ID/RGB7
+{
+	if (!opt(0) && [V-ADDR] && m[7])
+	{
+		--rx;
+		m[7] = 0;
+	}
+}
+#endif
+
+#ifdef RGB8
+V-ID/RGB8
+{
+	if (!opt(0) && [V-ADDR] && m[8])
+	{
+		--rx;
+		m[8] = 0;
+	}
+}
+#endif
+
+#ifdef RGB9
+V-ID/RGB9
+{
+	if (!opt(0) && [V-ADDR] && m[9])
+	{
+		--rx;
+		m[9] = 0;
+	}
+}
+#endif
+#endif
+#endif
+

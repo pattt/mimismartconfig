@@ -1,0 +1,40 @@
+/*
+{
+  desc:"Тестовое срабатывание ежемесячное",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve"],desc:"Элемент"},
+	{name:"ACT",type:"list",required:true,data:{"1":"Включить","0":"Выключить"},desc:"Действие"},
+	{type:"comment",text:"Время включения (выключения) элемента",width:200},
+	{name:"MONTH",type:"number",required:true,defaultValue:1,min:1,max:31,desc:"День месяца",descWidth:200,width:100},
+    {name:["TIME1","OFS1"],type:"time",required:true,desc:"Время"},	
+   	{name:"PERIOD",type:"number",required:true,defaultValue:1,min:1,max:3600,desc:"Время, на которое необходимо выключить (включить) элемент в секундах",descWidth:200,width:100},	
+  ]
+}
+*/
+u8 is_act=0;
+
+void clear_is_act()
+{
+  is_act = 0;
+}
+
+void action() {
+	#if ACT==1
+  	  setStatus(ITEM1, 0);
+	#else
+      setStatus(ITEM1, 1);	
+	#endif  
+}
+
+V-ID/s:20
+{
+  if ((MONTH==day()) && (timeInRange(TIME1-OFS1)) && (is_act==0)){
+    is_act=1;  
+    setStatus(ITEM1, ACT);
+	delayedCall(action, PERIOD);
+	delayedCallM(clear_is_act, 3);
+  }
+}

@@ -1,0 +1,676 @@
+/*
+{
+	desc:"Главный скрипт системы охраны",
+	tag:"import-script",
+	selectArea:true,
+	target:"ONOFFSCRIPT",
+	vars:[
+		{type:"comment",text:"Выберите скрипт для управления системой охраны (ON/OFF)",width:600, "style":"color:red; font-weight:bold"},
+		{name:"ONOFFSCRIPT", type:"devices-list",required:true,width:200,filter:["script"]},
+		{type:"comment", text:"",width:100},
+		{type:"comment",text:"Выберите ранее созданные виртуальные устройства зон, которые должны управлятся данным скриптом охраны и виртуальные устройства, которые содержат их статус:",width:600, "style":"color:red; font-weight:bold"},
+		[	
+			{type:"comment", text:"Название зоны 1",width:120,"style":"font-weight:bold"},
+			{name:"ZONANAME1",required:false, type:"string", min:0, max:15, width:100, defaultValue:"Зона 1"},
+			{type:"comment",text:"Виртуальное устройство для управления 1:", width:290,"style":"font-weight:bold"},
+			{name:"SECZONACMD1",type:"devices-list",required:false,width:200,filter:["virtual"]},
+			{type:"comment",text:"Виртуальное устройство статуса зоны 1:", width:270,"style":"font-weight:bold"},
+			{name:"SECZONASTT1",type:"devices-list",required:false,width:200,filter:["virtual"]},
+
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"ZONA1NEEDSPEAKER", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Назначить для зоны 1 медиаточку",width:240},
+			{name:"ZONA1SPEAKER",type:"devices-list",required:false,width:265,filter:["speaker"]}
+		],
+		[
+			{name:"SPEAKERALERT1", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 1 звуковой файл при сработке сигнализации.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERALERTPATH1",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERALERTVOL1",type:"number",required:false,width:100,min:0, max:250},
+		],
+		[
+			{name:"SPEAKERNES1", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 1 звуковой файл при сработке необязательных датчиков.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERNESPATH1",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},		
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERNESVOL1",type:"number",required:false,width:100,min:0, max:250},
+		],	
+		[
+			{name:"SPEAKERCANCEL1", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 1 звуковой файл, если нельзя установить сигнализацию.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERCANCELPATH1",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERCANCELVOL1",type:"number",required:false,width:100,min:0, max:250},
+		],
+		{type:"comment", text:"",width:100},
+		[	
+			{type:"comment", text:"Название зоны 2",width:120,"style":"font-weight:bold"},
+			{name:"ZONANAME2",required:false, type:"string", min:0, max:15, width:100},
+			{type:"comment",text:"Виртуальное устройство для управления 2:", width:290,"style":"font-weight:bold"},
+			{name:"SECZONACMD2",type:"devices-list",required:false,width:200,filter:["virtual"]},
+			{type:"comment",text:"Виртуальное устройство статуса зоны 2:", width:270,"style":"font-weight:bold"},
+			{name:"SECZONASTT2",type:"devices-list",required:false,width:200,filter:["virtual"]},
+
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"ZONA2NEEDSPEAKER", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Назначить для зоны 2 медиаточку",width:240},
+			{name:"ZONA2SPEAKER",type:"devices-list",required:false,width:265,filter:["speaker"]}
+		],
+		[
+			{name:"SPEAKERALERT2", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 2 звуковой файл при сработке сигнализации.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERALERTPATH2",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERALERTVOL2",type:"number",required:false,width:100,min:0, max:250},
+		],
+		[
+			{name:"SPEAKERNES2", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 2 звуковой файл при сработке необязательных датчиков.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERNESPATH2",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},		
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERNESVOL2",type:"number",required:false,width:100,min:0, max:250},
+		],	
+		[
+			{name:"SPEAKERCANCEL2", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 2 звуковой файл, если нельзя установить сигнализацию.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERCANCELPATH2",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERCANCELVOL2",type:"number",required:false,width:100,min:0, max:250},
+		],
+		{type:"comment", text:"",width:100},
+		[	
+			{type:"comment", text:"Название зоны 3",width:120,"style":"font-weight:bold"},
+			{name:"ZONANAME3",required:false, type:"string", min:0, max:15, width:100},
+			{type:"comment",text:"Виртуальное устройство для управления 3:", width:290,"style":"font-weight:bold"},
+			{name:"SECZONACMD3",type:"devices-list",required:false,width:200,filter:["virtual"]},
+			{type:"comment",text:"Виртуальное устройство статуса зоны 3:", width:270,"style":"font-weight:bold"},
+			{name:"SECZONASTT3",type:"devices-list",required:false,width:200,filter:["virtual"]},
+
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"ZONA3NEEDSPEAKER", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Назначить для зоны 3 медиаточку",width:240},
+			{name:"ZONA3SPEAKER",type:"devices-list",required:false,width:265,filter:["speaker"]}
+		],
+		[
+			{name:"SPEAKERALERT3", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 3 звуковой файл при сработке сигнализации.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERALERTPATH3",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERALERTVOL3",type:"number",required:false,width:100,min:0, max:250},
+		],
+		[
+			{name:"SPEAKERNES3", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 3 звуковой файл при сработке необязательных датчиков.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERNESPATH3",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},		
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERNESVOL3",type:"number",required:false,width:100,min:0, max:250},
+		],	
+		[
+			{name:"SPEAKERCANCEL3", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Проиграть в зоне 3 звуковой файл, если нельзя установить сигнализацию.",width:460},
+			{type:"comment",text:"Путь к файлу:",width:90},
+			{name:"SPEAKERCANCELPATH3",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3},
+			{type:"comment",text:"Громкость(1-250):",width:100},
+			{name:"SPEAKERCANCELVOL3",type:"number",required:false,width:100,min:0, max:250},
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"NEEDSMS", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Отправлять СМС при срабатывании сигнализации",width:600, "style":"color:red; font-weight:bold"},
+		],
+		[
+			{type:"comment", text:"Номер 1",width:50},
+			{name:"SMS1NUMBER",type:"string",required:false,width:200,filter:"0-9\\+",min:3,max:15},
+			{type:"comment", text:"Текст",width:40},
+			{name:"SMS1TEXT",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3}
+		],
+		[
+			{type:"comment", text:"Номер 2",width:50},
+			{name:"SMS2NUMBER",type:"string",required:false,width:200,filter:"0-9\\+",min:3,max:15},
+			{type:"comment", text:"Текст",width:40},
+			{name:"SMS2TEXT",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3}
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"NEEDCALL", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Позвонить по номеру телефона и проиграть звуковой файл",width:600, "style":"color:red; font-weight:bold"},
+		],
+		[
+			{type:"comment", text:"Номер 1",width:50},
+			{name:"CALL1NUMBER",type:"string",required:false,width:200,filter:"0-9\\+",min:3,max:15},
+			{type:"comment", text:"Путь к файлу",width:80},
+			{name:"CALL1PATH",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3}
+		],
+		[
+			{type:"comment", text:"Номер 2",width:50},
+			{name:"CALL2NUMBER",type:"string",required:false,width:200,filter:"0-9\\+",min:3,max:15},
+			{type:"comment", text:"Путь к файлу",width:80},
+			{name:"CALL2PATH",type:"string",required:false,width:400,filter:"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\/a-zA-Z0-9\\№\\;\\:\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_\\ ",min:3}
+		],
+		{type:"comment", text:"",width:100},
+		[
+			{name:"NEEDPERIOD", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Повторной отправлять СМС при срабатывании сигнализации",width:600, "style":"color:red; font-weight:bold"},
+		],
+		[
+			{type:"comment",text:"Время в минутах, для повторной отправлять СМС при срабатывании сигнализации",width:570},
+			{name:"PERIOD",type:"number",required:false,width:100},
+		],
+		{type:"comment", text:"",width:100},
+		{type:"comment",text:"Выполненить скрипты при тревоге:","style":"color:red; font-weight:bold"},
+		[
+			{name:"NEEDSCRIPT1", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Скрипт 1",width:60},
+			{name:"SCRIPT1",type:"devices-list",required:false,width:265,filter:["script"]}
+		],
+		[
+			{name:"NEEDSCRIPT2", type:"checkbox",checked:false,required:false,width:20},
+			{type:"comment",text:"Скрипт 2",width:60},
+			{name:"SCRIPT2",type:"devices-list",required:false,width:265,filter:["script"]}
+		],
+	]
+}
+*/
+
+u16 idOfInterface = 0;
+u8 ignore = 0;
+//при перезагрузке СМ по питанию
+void onInit() {
+	u32 val = 0;
+	eeEmulRead(1, &val);
+	
+	if(val == 1) {
+		ignore = 1;
+		setStatus(ONOFFSCRIPT, 1);
+		#ifdef SECZONASTT1
+		u32 valStt1 = 0;
+		eeEmulRead(2, &valStt1);
+		setStatus(SECZONACMD1, {0x02, valStt1});
+		#endif
+		
+		#ifdef SECZONASTT2
+		u32 valStt2 = 0;
+		eeEmulRead(3, &valStt2);
+		setStatus(SECZONACMD2, {0x02, valStt2});
+		#endif
+		
+		#ifdef SECZONASTT3
+		u32 valStt3 = 0;
+		eeEmulRead(4, &valStt3);
+		setStatus(SECZONACMD3, {0x02, valStt3});
+		#endif
+		
+		u32 interface1 = 0;
+		eeEmulRead(100, &interface1);
+		srvError("%d;", interface1);
+		u32 interface2 = 0;
+		eeEmulRead(105, &interface2);
+		srvError("%d;", interface2);
+		
+		idOfInterface = (interface1 << 8) | interface2;
+		srvError("idOfInterface %d;", idOfInterface);
+		
+	}
+}
+void writeSttToMem(u8 comand) {
+	if(comand == 0) {
+		u32 val = 0;
+		eeEmulWrite(1, val);
+	}
+	if(comand == 1) {
+		u32 val = 1;
+		eeEmulWrite(1, val);
+
+		#ifdef SECZONASTT1
+		u32 valStt1 = [SECZONASTT1.0];
+		eeEmulWrite(2, valStt1);
+		#endif
+		
+		#ifdef SECZONASTT2
+		u32 valStt2 = [SECZONASTT2.0];
+		eeEmulWrite(3, valStt2);
+		#endif
+		
+		#ifdef SECZONASTT3
+		u32 valStt3 = [SECZONASTT3.0];
+		eeEmulWrite(4, valStt3);
+		#endif		
+		
+		u32 interface1 = (idOfInterface >> 8) & 0xFF;
+		u32 interface2 = idOfInterface & 0xFF;
+		
+		eeEmulWrite(100, interface1);
+		srvError("%d; %d;", interface1, interface2);
+		eeEmulWrite(105, interface2);
+		
+	}
+}
+// проверка зон перед стартом
+void checkBeforStart() {
+	u8 textForStartMessage[150];			// строка которая выведется в интерфейс
+	sprintf(textForStartMessage, "%c", 8);	// важное сообщение	
+	strcat(textForStartMessage, "НЕ ВКЛЮЧЕНО, активны датчики:");
+	//состояние зоны 1
+	#ifdef SECZONASTT1
+	u8 sttOfzona[50];
+	if(([SECZONASTT1.0] & 0x80) != 0) {
+		strcat(textForStartMessage, "\10ZONANAME1 -");
+		getStatus(SECZONASTT1, &sttOfzona); // получаем список активных датчиков
+		sttOfzona[0] = 0x20;
+		strcat(textForStartMessage, sttOfzona);
+		#ifdef ZONA1NEEDSPEAKER
+		#ifdef ZONA1SPEAKER
+			#ifdef SPEAKERCANCEL1
+			#ifdef SPEAKERCANCELPATH1
+			#ifdef SPEAKERCANCELVOL1
+				setStatus(ZONA1SPEAKER, {1, SPEAKERCANCELVOL1, 0, "SPEAKERCANCELPATH1"});
+			#endif
+			#endif
+			#endif
+		#endif
+		#endif
+	}
+	#endif	
+	//состояние зоны 2
+	#ifdef SECZONASTT2
+	if(([SECZONASTT2.0] & 0x80) != 0) {	
+		strcat(textForStartMessage, "\10ZONANAME2 -");
+		getStatus(SECZONASTT2, &sttOfzona); // получаем список активных датчиков
+		sttOfzona[0] = 0x20;
+		strcat(textForStartMessage, sttOfzona);
+		#ifdef ZONA2NEEDSPEAKER
+		#ifdef ZONA2SPEAKER
+			#ifdef SPEAKERCANCEL2
+			#ifdef SPEAKERCANCELPATH2
+			#ifdef SPEAKERCANCELVOL2
+				setStatus(ZONA2SPEAKER, {1, SPEAKERCANCELVOL2, 0, "SPEAKERCANCELPATH2"});
+			#endif
+			#endif
+			#endif
+		#endif
+		#endif
+	}
+	#endif
+	//состояние зоны 3
+	#ifdef SECZONASTT3
+	if(([SECZONASTT3.0] & 0x80) != 0) {
+		strcat(textForStartMessage, "\10ZONANAME3 -");
+		getStatus(SECZONASTT3, &sttOfzona); // получаем список активных датчиков
+		sttOfzona[0] = 0x20;
+		strcat(textForStartMessage, sttOfzona);
+		#ifdef ZONA3NEEDSPEAKER
+		#ifdef ZONA3SPEAKER
+			#ifdef SPEAKERCANCEL3
+			#ifdef SPEAKERCANCELPATH3
+			#ifdef SPEAKERCANCELVOL3
+				setStatus(ZONA3SPEAKER, {1, SPEAKERCANCELVOL3, 0, "SPEAKERCANCELPATH3"});
+			#endif
+			#endif
+			#endif
+		#endif
+		#endif
+	}
+	#endif
+	// вывод сообщения и выклчение всех зон
+	if(idOfInterface > 999) {
+		textForStartMessage[149] = 0;
+		setStatus(@idOfInterface:32, &textForStartMessage);
+	}
+	setStatus(ONOFFSCRIPT, 0);
+}
+// ф-я запуска сигнализации
+u8 flagForSend = 0;
+u8 flagForAlert = 0;
+void securityAlert(u8 numberOfzona){
+	// включение скриптов
+	#ifdef NEEDSCRIPT1
+		setStatus(SCRIPT1, 1);
+	#endif
+	#ifdef NEEDSCRIPT2
+		setStatus(SCRIPT2, 1);
+	#endif
+	// отправка смс
+	if(flagForSend == 0) {
+	#ifdef NEEDSMS
+		// sms на первый номер
+		#ifdef SMS1NUMBER
+		#ifdef SMS1TEXT
+			setStatus(1055:17, {1, 0, 0, 'CALL1NUMBER#'A, toUcs2(65001, "SMS1TEXT")});	
+		#endif
+		#endif
+		// sms на второй номер
+		#ifdef SMS2NUMBER
+		#ifdef SMS2TEXT
+			setStatus(1055:17, {1, 0, 0, 'SMS2NUMBER#'A, toUcs2(65001, "SMS2TEXT")});	
+		#endif
+		#endif
+	#endif
+	// звонок на телефон
+	#ifdef NEEDCALL
+		// звонок на первый номер
+		#ifdef CALL1NUMBER
+		#ifdef CALL1PATH
+			setStatus(1055:16, {0, 0, 1, 10, "CALL1NUMBER#CALL1PATH"});	
+		#endif
+		#endif
+		// звонок на второй номер
+		#ifdef CALL1NUMBER
+		#ifdef CALL1PATH
+			setStatus(1055:16, {0, 0, 1, 10, "CALL1NUMBER#CALL1PATH"});	
+		#endif
+		#endif
+	#endif
+		flagForSend = 1;
+	}
+	// включение мультирума
+	#ifdef ZONA1NEEDSPEAKER
+	#ifdef ZONA1SPEAKER
+		#ifdef SPEAKERALERT1
+		#ifdef SPEAKERALERTPATH1
+		#ifdef SPEAKERALERTVOL1
+		if(numberOfzona == 1) {
+			setStatus(ZONA1SPEAKER, {1, SPEAKERALERTVOL1, 1, "SPEAKERALERTPATH1"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+	#ifdef ZONA2NEEDSPEAKER
+	#ifdef ZONA2SPEAKER
+		#ifdef SPEAKERALERT2
+		#ifdef SPEAKERALERTPATH2
+		#ifdef SPEAKERALERTVOL2
+		if(numberOfzona == 2) {
+			setStatus(ZONA2SPEAKER, {1, SPEAKERALERTVOL2, 1, "SPEAKERALERTPATH2"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+	#ifdef ZONA3NEEDSPEAKER
+	#ifdef ZONA3SPEAKER
+		#ifdef SPEAKERALERT3
+		#ifdef SPEAKERALERTPATH3
+		#ifdef SPEAKERALERTVOL3
+		if(numberOfzona == 3) {
+			setStatus(ZONA3SPEAKER, {1, SPEAKERALERTVOL3, 1, "SPEAKERALERTPATH3"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+}
+// тревога при сработке необязательных датчиков
+void necessarily(u8 numberOfzona){
+	#ifdef ZONA1NEEDSPEAKER
+	#ifdef ZONA1SPEAKER
+		#ifdef SPEAKERNES1
+		#ifdef SPEAKERNESPATH1
+		#ifdef SPEAKERNESVOL1
+		if(numberOfzona == 1) {
+			setStatus(ZONA1SPEAKER, {1, SPEAKERNESVOL1, 1, "SPEAKERNESPATH1"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+	#ifdef ZONA2NEEDSPEAKER
+	#ifdef ZONA2SPEAKER
+		#ifdef SPEAKERNES2
+		#ifdef SPEAKERNESPATH2
+		#ifdef SPEAKERNESVOL2
+		if(numberOfzona == 2) {
+			setStatus(ZONA2SPEAKER, {1, SPEAKERNESVOL2, 1, "SPEAKERNESPATH2"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+	#ifdef ZONA3NEEDSPEAKER
+	#ifdef ZONA3SPEAKER
+		#ifdef SPEAKERNES3
+		#ifdef SPEAKERNESPATH3
+		#ifdef SPEAKERNESVOL3
+		if(numberOfzona == 3) {
+			setStatus(ZONA3SPEAKER, {1, SPEAKERNESVOL3, 1, "SPEAKERNESPATH3"});
+		}
+		#endif
+		#endif
+		#endif
+	#endif
+	#endif
+}
+// ф-я вывода сообщения в интерфейс
+void securityOn(){
+	
+	writeSttToMem(1); // запись в постоянную память
+	
+	u8 textForStartMessage[150];			// строка которая выведется в интерфейс
+	u8 sttOfzona[50];						// строка для статуса зоны 
+	sprintf(textForStartMessage, "%c", 2);	// важность сообщения (0x01 - регулярное, 0x02 - нет сообщения, 0x04 - предупреждение, 0x08 - важное)
+	u8 flagForStr = 0;						// флаг для копирования списка активных датчиков
+	u8 j = 0;
+	u8 i = 0;
+	#ifdef SECZONASTT1
+	i = 1;
+	#ifdef SECZONASTT2
+	i = 2;
+	#endif
+	#ifdef SECZONASTT3
+	i = 3;
+	#endif
+	for(j = 1; j <= i; ++j) {
+		// получение статуса зоны
+		if(j == 1) {
+			#ifdef SECZONASTT1
+			getStatus(SECZONASTT1, &sttOfzona);
+			strcat(textForStartMessage, " ZONANAME1 "); 
+			#endif
+		}
+		if(j == 2) {
+			#ifdef SECZONASTT2
+			getStatus(SECZONASTT2, &sttOfzona);
+			strcat(textForStartMessage, "\10 ZONANAME2 "); 
+			#endif
+		}
+		if(j == 3) {
+			#ifdef SECZONASTT3
+			getStatus(SECZONASTT3, &sttOfzona);
+			strcat(textForStartMessage, "\10 ZONANAME3 ");
+			#endif
+		}
+		//если тревога
+		if((sttOfzona[0] & 0x01) != 0) {
+			textForStartMessage[0] = textForStartMessage[0] < 8 ? 8 : textForStartMessage[0];
+			strcat(textForStartMessage, "ПОСТОРОННИЙ! Sens:");
+			flagForStr = 1;
+		}
+		// если задержка
+		if(((sttOfzona[0] & 0x01) == 0) && ((sttOfzona[0] & 0x02) != 0)){	
+		// задержка перед включением
+			if((sttOfzona[0] & 0x04) == 0) {
+				textForStartMessage[0] = textForStartMessage[0] == 0x02 ? 1 : textForStartMessage[0];
+				strcat(textForStartMessage, "Вкл-тся!");
+			}	
+			// задержка перед сработкой
+			if((sttOfzona[0] & 0x04) != 0) {
+				textForStartMessage[0] = textForStartMessage[0] < 4 ? 4 : textForStartMessage[0];
+				strcat(textForStartMessage, "будет активирована!");
+			}
+		}
+		// если в покое
+		if(((sttOfzona[0] & 0x01) == 0) && ((sttOfzona[0] & 0x02) == 0) && ((sttOfzona[0] & 0x04) != 0)){	
+			// востановление после сработки необязательных датчиков 
+			if((sttOfzona[0] & 0x40) != 0) {
+				necessarily(3); // запус мультирума
+				textForStartMessage[0] = textForStartMessage[0] < 4 ? 4 : textForStartMessage[0];
+				strcat(textForStartMessage, "Активны:");
+				flagForStr = 1;
+			}  
+			// есть сработавшие необязательные датчики  
+			else if ((sttOfzona[0] & 0x08) != 0) {
+				textForStartMessage[0] = textForStartMessage[0] < 4 ? 4 : textForStartMessage[0];
+				strcat(textForStartMessage, "Были активны:");
+				flagForStr = 1;
+			}
+			// на охране
+			else {
+				textForStartMessage[0] = textForStartMessage[0] == 0x02 ? 1 : textForStartMessage[0];
+				strcat(textForStartMessage, "Включена!");
+			}
+		}
+		// если неободимо добавляем список датчиков
+			if(flagForStr == 1){
+			sttOfzona[0] = 0x20;
+			strcat(textForStartMessage, sttOfzona);
+			flagForStr = 0;
+		}	
+	
+	}
+	textForStartMessage[149] = 0;
+	// вывод сообщения в интерфейс
+	if(textForStartMessage[0] == 0x08) {
+		if(flagForAlert == 1) {
+			return;
+		} else {
+			flagForAlert = 1;
+		}
+	}
+	
+	if((textForStartMessage[0] != 0x02) && (idOfInterface > 999)){	
+		setStatus(@idOfInterface:32, &textForStartMessage);
+	}
+	#endif
+}
+// ON-OFF 
+V-ID/ONOFFSCRIPT {
+	if(ignore == 1) {
+		ignore = 0;
+		return;
+	}
+	// снимаем с охраны
+	if(opt(0) == 0) {
+		writeSttToMem(0);
+		#ifdef SECZONASTT1 
+			setStatus(SECZONACMD1, 0);
+		#endif
+		#ifdef SECZONASTT2 
+			setStatus(SECZONACMD2, 0);		
+		#endif
+		#ifdef SECZONASTT3 
+			setStatus(SECZONACMD3, 0); 
+		#endif
+	} 
+	// ставим на охрану
+	if(opt(0) == 1) {
+		flagForSend = 0;
+		flagForAlert = 0;
+		idOfInterface = exciterId();
+		#ifdef SECZONASTT1 setStatus(SECZONACMD1, 1); #endif
+		#ifdef SECZONASTT2 setStatus(SECZONACMD2, 1); #endif
+		#ifdef SECZONASTT3 setStatus(SECZONACMD3, 1); #endif	
+	}
+}
+//----------------
+// обработка сообщений от зон
+// зона 1
+#ifdef SECZONASTT1
+V-ID/SECZONASTT1 {
+	
+	
+	//проверка перед стартом
+	if(([SECZONASTT1.0] & 0x80) != 0) {
+		checkBeforStart();
+		return;
+	}
+	if([SECZONASTT1.0] & 0x01) {
+		securityAlert(1);
+		writeSttToMem(1);
+		securityOn();
+		return;
+	}
+	if(([SECZONASTT1.0] & 0x02) || ([SECZONASTT1.0] & 0x04) || ([SECZONASTT1.0] & 0x08) || ([SECZONASTT1.0] & 0x40)) {
+		cancelDelayedCall(securityOn);
+		delayedCallMs(securityOn, 400);
+		return;
+	}
+}
+#endif
+// зона 2
+#ifdef SECZONASTT2
+V-ID/SECZONASTT2 {
+	//проверка перед стартом
+	if(([SECZONASTT2.0] & 0x80) != 0) {
+		checkBeforStart();
+		return;
+	}
+	if([SECZONASTT2.0] & 0x01) {
+		securityAlert(2);
+		writeSttToMem(1);
+		securityOn();
+		return;
+	}
+	if(([SECZONASTT2.0] & 0x02) || ([SECZONASTT2.0] & 0x04) || ([SECZONASTT2.0] & 0x08) || ([SECZONASTT2.0] & 0x40)) {
+		cancelDelayedCall(securityOn);
+		delayedCallMs(securityOn, 300);
+		return;
+	}
+}
+#endif
+// зона 3
+#ifdef SECZONASTT3
+V-ID/SECZONASTT3 {
+	//проверка перед стартом
+	if(([SECZONASTT3.0] & 0x80) != 0) {
+		checkBeforStart();
+		return;
+	}
+	if([SECZONASTT3.0] & 0x01) {
+		securityAlert(3);
+		writeSttToMem(1);
+		securityOn();
+		return;
+	}
+	if(([SECZONASTT3.0] & 0x02) || ([SECZONASTT3.0] & 0x04) || ([SECZONASTT3.0] & 0x08) || ([SECZONASTT3.0] & 0x40)) {
+		cancelDelayedCall(securityOn);
+		delayedCallMs(securityOn, 200);
+		return;
+	}
+}
+#endif
+
+#ifdef NEEDPERIOD
+#if NEEDPERIOD = true
+#ifdef PERIOD
+V-ID/m:PERIOD {
+	if(flagForSend == 1) {
+		flagForSend = 0;
+	}
+	if(flagForAlert == 1) {
+		flagForAlert = 0;
+	}
+}
+
+#endif
+#endif
+#endif

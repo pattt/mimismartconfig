@@ -1,0 +1,307 @@
+/*
+{
+	"desc":"Информирование о протечке воды",
+	"tag":"import-script",
+	"selectArea":true,
+	"target":"SENS1",
+	"vars":[
+		{"name":"NUMBER","type":"string","required":false,"width":130,"filter":"0-9\\+","min":3,"max":15,"defaultValue":"+380962925686","desc":"Номер телефона для отправки СМС","descWidth":230},
+		[
+			{"name":"SENS1","type":"devices-list","required":true,"width":250,"filter":["leak-sensor","door-sensor"],"descAlign":"top","desc":"Датчик 1 + Название помещения в СМС","descWidth":800},
+			{"name":"SMSROOM1","type":"string","required":true,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё \\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":3,"defaultValue":"Стенд"}
+		],
+		{"name":"MIDFILELEAK1","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","defaultValue":"http://192.168.1.126/voice/leak.mp3","min":1,"desc":"Звук на мультирум для протечки","descWidth":200},
+		{"name":"MIDFILEDEF1","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","defaultValue":"http://192.168.1.126/voice/undef_leak.mp3","min":1,"desc":"Звук на мультирум для выхода из строя","descWidth":200},
+		[
+			{"name":"SENS2","type":"devices-list","required":false,"width":250,"filter":["leak-sensor","door-sensor"],"descAlign":"top","desc":"Датчик 2 + Название помещения в СМС","descWidth":800},
+			{"name":"SMSROOM2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё \\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":3}
+		],
+		{"name":"MIDFILELEAK2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук на мультирум для протечки","descWidth":200},
+		{"name":"MIDFILEDEF2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук на мультирум для выхода из строя","descWidth":200},
+		[
+			{"name":"SENS3","type":"devices-list","required":false,"width":250,"filter":["leak-sensor","door-sensor"],"descAlign":"top","desc":"Датчик 3 + Название помещения в СМС","descWidth":800},
+			{"name":"SMSROOM3","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё \\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":3}
+		],
+		{"name":"MIDFILELEAK3","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук на мультирум для протечки","descWidth":200},
+		{"name":"MIDFILEDEF3","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук на мультирум для выхода из строя","descWidth":200},
+		[
+			{"name":"VALVE1","type":"devices-list","required":false,"width":250,"filter":["valve","door-sensor"],"descAlign":"top","desc":"Клапан перекрытия 1 (поле 1) и его название (поле 2):","descWidth":400},
+			{"name":"VALVEROOM1","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё \\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","defaultValue":"Клапан подачи воды","min":1}
+		],
+		{"name":"VALVEBLOCKTIME1","type":"number","required":false,"width":150,"defaultValue":"30","min":1,"max":600,"desc":"Максимальное время перекрытия клапана 1"},
+		{"name":"VALVEBLOCK1","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","defaultValue":"http://192.168.1.126/voice/valve_block.mp3","min":1,"desc":"Звук перекрытого клапана 1","descWidth":200},
+		{"name":"VALVEUNBLOCK1","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","defaultValue":"http://192.168.1.126/voice/valve_unblock.mp3","min":1,"desc":"Звук НЕ перекрытого клапана 1","descWidth":200},
+		[
+			{"name":"VALVE2","type":"devices-list","required":false,"width":250,"filter":["valve","door-sensor"],"descAlign":"top","desc":"Клапан перекрытия 2 (поле 1) и его название (поле 2):","descWidth":400},
+			{"name":"VALVEROOM2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё \\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1}
+		],
+		{"name":"VALVEBLOCKTIME2","type":"number","required":false,"width":150,"defaultValue":"30","min":1,"max":600,"desc":"Максимальное время перекрытия клапана 2"},
+		{"name":"VALVEBLOCK2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук перекрытого клапана 2","descWidth":200},
+		{"name":"VALVEUNBLOCK2","type":"string","required":false,"width":300,"filter":"ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁйцукенгшщзхъфывапролджэячсмитьбюё\\:\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":1,"desc":"Звук НЕ перекрытого клапана 2","descWidth":200},
+		{"name":"ADDRSCRIPT1","type":"devices-list","required":false,"width":300,"filter":["script"],"desc":"Выполнение скрипта при протечке","descWidth":350},
+		{"name":"ADDRSCRIPTVALVE1","type":"devices-list","required":false,"width":300,"filter":["script"],"desc":"Выполнение скрипта при перекрытии клапана","descWidth":350},
+		{"name":"GSMFILE1","type":"string","required":false,"width":600,"filter":"\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":3,"descAlign":"top","desc":"Путь к файлу звука на GSM при протечке","descWidth":200},
+		{"name":"GSMFILEVALVE1","type":"string","required":false,"width":600,"filter":"\\/a-zA-Z0-9\\№\\;\\`\\!\\@\\#\\$\\%\\^\\&\\(\\)\\+\\=\\,\\.\\-_","min":3,"descAlign":"top","desc":"Путь к файлу звука на GSM при перекрытии клапана","descWidth":300},
+		[
+			{"name":"MIDNUM","type":"devices-list","required":false,"width":300,"filter":["speaker"],"descAlign":"top","defaultValue":"227:30","desc":"Номер мультирума (1) и громкость вывода (2)","descWidth":400},
+			{"name":"MIDVOL","type":"number","required":false,"width":70,"defaultValue":"150","min":0,"max":250}
+		]
+	]
+}
+*/
+
+#ifdef SENS1
+#ifdef SMSROOM1
+
+u16 defs = 0;
+u16 leaks = 0;
+const u8 undeftext[] = toUcs2(65001, ": датчик протечки вышел из строя!");
+const u8 leakstext[] = toUcs2(65001, ": произошла утечка воды!");
+
+#ifdef NUMBER
+const u8 blocked[] = toUcs2(65001, ": клапан подачи воды перекрыт!");
+const u8 unblocked[] = toUcs2(65001, ": клапан подачи воды НЕ перекрыт!!!");
+u8 sms[70]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+u8 combine_sms(u8* number, u8* text1, u8* text2)
+{
+	if (!(number == 0 || text1 == 0 || text2 == 0))
+	{
+		sms[0] = 1; 											// Количество попыток
+		sms[1] = 0;												// 2 байта интервала
+		sms[2] = 0;												// между попытками
+		memcpy(&sms+3, number, strlen(number));					// Номер с решеткой (#) в конце
+		memcpy(&sms+3+strlen(number), text1, strlen2(text1));	// Комбинирование текста
+		memcpy(&sms+3+strlen(number)+strlen2(text1), text2, strlen2(text2));
+		sms[3+strlen2(text1)+strlen2(text2)+strlen(number)+1] = 0;
+		return 1;
+	}
+	else
+	return 0;
+}
+#endif
+
+#ifdef MIDNUM
+	#ifdef MIDVOL
+u8 play_sound(u8 vol, u8 priority, u8* sound)
+{
+	if (sound)
+	{
+		u8 ls[100]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+				
+		ls[0] = 1;
+		ls[1] = vol;
+		ls[2] = priority;
+		memcpy(&ls+3, sound, strlen(sound));
+		ls[4+strlen(sound)] = 0;
+		setStatus(MIDNUM, &ls);
+		return 1;
+	}
+	else
+	return 0;
+}
+	#endif
+#endif
+
+#ifdef VALVE1
+	#ifdef VALVEROOM1
+u8 y1 = 0;
+
+void check1()
+{
+	if ([VALVE1])
+	{
+		#ifdef NUMBER
+		if (combine_sms('NUMBER#', 'VALVEROOM1', &blocked))
+		setStatus(1055:17, &sms);
+		#endif
+		#ifdef VALVEBLOCK1
+		if (play_sound(MIDVOL, 1, "VALVEBLOCK1")) {}
+		#endif
+	} else
+	{
+		#ifdef NUMBER
+		if (combine_sms('NUMBER#', 'VALVEROOM1', &unblocked))
+		setStatus(1055:17, &sms);
+		#endif
+		#ifdef VALVEUNBLOCK1
+		if (play_sound(MIDVOL, 1, "VALVEUNBLOCK1")) {}
+		#endif
+	}
+	y1 = 0;
+}
+	#endif
+#endif
+
+#ifdef VALVE2
+	#ifdef VALVEROOM2
+u8 y2 = 0;
+
+void check2()
+{
+	if ([VALVE2])
+	{
+		#ifdef NUMBER
+		if (combine_sms('NUMBER#','VALVEROOM2', &blocked))
+		setStatus(1055:17, &sms);
+		#endif
+		#ifdef VALVEBLOCK2
+		if (play_sound(MIDVOL, 1, "VALVEBLOCK2")) {}
+		#endif
+	} else
+	{
+		#ifdef NUMBER
+		if (combine_sms('NUMBER#','VALVEROOM2', &unblocked))
+		setStatus(1055:17, &sms);
+		#endif
+		#ifdef VALVEUNBLOCK2
+		if (play_sound(MIDVOL, 1, "VALVEUNBLOCK2")) {}
+		#endif
+	}
+	y2 = 0;
+}
+	#endif
+#endif
+
+// leak: 0 - отклик, 1 - протечка
+void checkSensor(u8 leak, u8 num, u8 newstate, u8* text1, u8* text2, u8* leakSound)
+{
+	if (newstate)
+	{
+		u16 lk = leaks;
+		u16 df = defs;
+		if (!leak)
+		defs |= 0x0001<<num;
+		else
+		if (leak == 1)
+		leaks |= 0x0001<<num;
+		if (((!leak) && !((df>>num)&0x0001)) || (leak == 1 && !((lk>>num)&0x0001)))
+		{
+			#ifdef NUMBER
+			if (combine_sms('NUMBER#', text1, text2))
+			setStatus(1055:17, &sms);
+			#endif
+			if (leak == 0)
+			{
+				#ifdef MIDNUM
+					#ifdef MIDVOL
+				if (leakSound)
+				if (play_sound(MIDVOL, 1, leakSound)) {}
+					#endif
+				#endif
+			}
+			else
+			if (leak == 1)
+			{
+				#ifdef ADDRSCRIPT1
+				setStatus(ADDRSCRIPT1, 1);
+				#endif
+				#ifdef NUMBER
+					#ifdef GSMFILE1
+				setStatus(1055:16, {0, 0, 1, 10, "NUMBER#GSMFILE1"});
+					#endif
+				#endif
+				#ifdef MIDNUM
+					#ifdef MIDVOL
+				if (leakSound)
+				if (play_sound(MIDVOL, 1, leakSound)) {}
+					#endif
+				#endif
+				//setStatus(2047:32, {1, "Pass thru"});
+				#ifdef VALVE1
+				#ifdef VALVEROOM1
+				#ifdef VALVEBLOCKTIME1
+				if (!y1)
+				{
+					y1 = 1;
+					delayedCall(check1, VALVEBLOCKTIME1);
+				}
+				#endif
+				#endif
+				#endif
+				#ifdef VALVE2
+				#ifdef VALVEROOM2
+				#ifdef VALVEBLOCKTIME2
+				if (!y2)
+				{
+					y2 = 1;
+					delayedCall(check2, VALVEBLOCKTIME2);
+				}
+				#endif
+				#endif
+				#endif
+			}
+		}
+	}
+	else
+	{
+		if (!leak)
+		defs &= ~(0x0001<<num);
+		else
+		if (leak == 1)
+		leaks &= ~(0x0001<<num);
+	}
+}
+
+V-ID/SENS1 { 
+#ifdef MIDFILELEAK1
+checkSensor(1, 0, opt(0), toUcs2(65001, "SMSROOM1"), &leakstext, "MIDFILELEAK1");
+#else
+checkSensor(1, 0, opt(0), toUcs2(65001, "SMSROOM1"), &leakstext, 0);
+#endif
+}
+
+#ifdef SENS2
+#ifdef SMSROOM2
+V-ID/SENS2 { 
+#ifdef MIDFILELEAK2
+checkSensor(1, 1, opt(0), toUcs2(65001, "SMSROOM2"), &leakstext, "MIDFILELEAK2");
+#else
+checkSensor(1, 1, opt(0), toUcs2(65001, "SMSROOM2"), &leakstext, 0);
+#endif
+}
+#endif
+#endif
+
+#ifdef SENS3
+#ifdef SMSROOM3
+V-ID/SENS3 { 
+#ifdef MIDFILELEAK3
+checkSensor(1, 2, opt(0), toUcs2(65001, "SMSROOM3"), &leakstext, "MIDFILELEAK3");
+#else
+checkSensor(1, 2, opt(0), toUcs2(65001, "SMSROOM3"), &leakstext, 0);
+#endif
+}
+#endif
+#endif
+
+V-ID/s:15
+{
+	#ifdef MIDFILEDEF1
+	checkSensor(0, 0, isDefined(SENS1) == 0, toUcs2(65001, "SMSROOM1"), &undeftext, "MIDFILEDEF1");
+	#else
+	checkSensor(0, 0, isDefined(SENS1) == 0, toUcs2(65001, "SMSROOM1"), &undeftext, 0);
+	#endif
+	#ifdef SENS2
+	#ifdef SMSROOM2
+	#ifdef MIDFILEDEF2
+	checkSensor(0, 1, isDefined(SENS2) == 0, toUcs2(65001, "SMSROOM2"), &undeftext, "MIDFILEDEF2");
+	#else
+	checkSensor(0, 1, isDefined(SENS2) == 0, toUcs2(65001, "SMSROOM2"), &undeftext, 0);
+	#endif
+	#endif
+	#endif
+	#ifdef SENS3
+	#ifdef SMSROOM3
+	#ifdef MIDFILEDEF3
+	checkSensor(0, 2, isDefined(SENS3) == 0, toUcs2(65001, "SMSROOM3"), &undeftext, "MIDFILEDEF3");
+	#else
+	checkSensor(0, 2, isDefined(SENS3) == 0, toUcs2(65001, "SMSROOM3"), &undeftext, 0);
+	#endif
+	#endif
+	#endif
+}
+
+#endif
+#endif
+

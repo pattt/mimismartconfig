@@ -1,0 +1,32 @@
+/*
+{
+  desc:"Скрипт для проверки возможности включения кондиционера при низкой температуре на улице",
+  tag:"item",
+  target:"STREETTEMPERATURESENSOR",
+  selectArea:true,
+  vars:[
+	{name:"STREETTEMPERATURESENSOR", type:"devices-list", required:true, filter:["temperature-sensor"], desc:"Датчик температуры на улице", descWidth:370},
+	{name:"CHOOSETEMP", type:"number", required:false, defaultValue:-10, min:-30, max:20, desc:"Порог температуры на улице для работы климат-контроля", descWidth:370}
+  ]
+}
+*/
+
+i32 choose = CHOOSETEMP;
+i32 tempStreet = 0;
+
+i32 i8datchik_to_i32(i8 chislo)
+{
+	return (chislo&0x80) ? 0xFFFFFF00 | (chislo+1) : chislo;
+}
+
+V-ID/V-ADDR
+{
+	if(opt(0))
+	{
+		tempStreet = i8datchik_to_i32([STREETTEMPERATURESENSOR.1]);
+		if(tempStreet>choose)
+			setStatus(2047:32, {1, "Кондиционер может работать!"});
+		else 
+			setStatus(2047:32, {1, "Низкая температура на улице! Невозможно включить кондиционер!"});
+	}
+}

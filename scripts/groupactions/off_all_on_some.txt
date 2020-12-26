@@ -1,0 +1,101 @@
+/*
+{
+  desc:"Выключить все, включить то, что было включено",
+  tag:"item",
+  target:"ITEM01",
+  selectArea:true,
+  vars:[
+		{name:"ITEM01",type:"devices-list",required:true, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM02",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM03",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM04",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM05",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM06",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM07",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM08",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM09",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+		{name:"ITEM10",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+  ]                       
+}
+*/
+
+u8 f1 = 0;
+#ifdef ITEM02 u8 f2 = 0; #endif
+#ifdef ITEM03 u8 f3= 0; #endif
+#ifdef ITEM04 u8 f4 = 0; #endif
+#ifdef ITEM05 u8 f5 = 0; #endif
+#ifdef ITEM06 u8 f6 = 0; #endif
+#ifdef ITEM07 u8 f7 = 0; #endif
+#ifdef ITEM08 u8 f8 = 0; #endif
+#ifdef ITEM09 u8 f9 = 0; #endif
+#ifdef ITEM10 u8 f10 = 0; #endif
+
+V-ID/V-ADDR
+{
+	//if (opt(0)){
+	if (([ITEM01.0] == 1) #ifdef ITEM02 || ([ITEM02.0] == 1) #endif #ifdef ITEM03 || ([ITEM03.0] == 1) #endif #ifdef ITEM04 || ([ITEM04.0] == 1) #endif #ifdef ITEM05 || ([ITEM05.0] == 1) #endif #ifdef ITEM06 || ([ITEM06.0] == 1) #endif #ifdef ITEM07 || ([ITEM07.0] == 1) #endif #ifdef ITEM08 || ([ITEM08.0] == 1) #endif #ifdef ITEM09 || ([ITEM09.0] == 1) #endif #ifdef ITEM10 || ([ITEM10.0] == 1) #endif) {
+		if ([ITEM01.0] == 1) f1 = 1; 
+		else f1 = 0;
+		setStatus(ITEM01,0);
+		#ifdef ITEM02 
+			if ([ITEM02.0] == 1) f2 = 1; 
+			else f2 = 0; 
+			setStatus(ITEM02,0);
+		#endif
+		#ifdef ITEM03 
+			if ([ITEM03.0] == 1) f3 = 1; 
+			else f3 = 0; 
+			setStatus(ITEM03,0);
+		#endif
+		#ifdef ITEM04 
+			if ([ITEM04.0] == 1) f4 = 1; 
+			else f4 = 0; 
+			setStatus(ITEM04,0);
+		#endif
+		#ifdef ITEM05
+			if ([ITEM05.0] == 1) f5 = 1; 
+			else f5 = 0; 
+			setStatus(ITEM05,0);
+		#endif
+		#ifdef ITEM06
+			if ([ITEM06.0] == 1) f6 = 1; 
+			else f6 = 0; 
+			setStatus(ITEM06,0);
+		#endif
+		#ifdef ITEM07 
+			if ([ITEM07.0] == 1) f7 = 1; 
+			else f7 = 0; 
+			setStatus(ITEM07,0);
+		#endif
+		#ifdef ITEM08 
+			if ([ITEM08.0] == 1) f8 = 1; 
+			else f8 = 0; 
+			setStatus(ITEM08,0);
+		#endif
+		#ifdef ITEM09 
+			if ([ITEM09.0] == 1) f9 = 1; 
+			else f9 = 0; 
+			setStatus(ITEM09,0);
+		#endif
+		#ifdef ITEM10 
+			if ([ITEM10.0] == 1) f10 = 1; 
+			else f10 = 0; 
+			setStatus(ITEM10,0);
+		#endif
+		setStatus(2021:32,{1,f1+48,f2+48,f3+48,f4+48,[720:24.0]+48," off"});
+	}
+	else {
+		if (f1 == 1) setStatus(ITEM01,1);
+		#ifdef ITEM02 if (f2 == 1) setStatus(ITEM02,1); #endif
+		#ifdef ITEM03 if (f3 == 1) setStatus(ITEM03,1); #endif
+		#ifdef ITEM04 if (f4 == 1) setStatus(ITEM04,1); #endif
+		#ifdef ITEM05 if (f5 == 1) setStatus(ITEM05,1); #endif
+		#ifdef ITEM06 if (f6 == 1) setStatus(ITEM06,1); #endif
+		#ifdef ITEM07 if (f7 == 1) setStatus(ITEM07,1); #endif
+		#ifdef ITEM08 if (f8 == 1) setStatus(ITEM08,1); #endif
+		#ifdef ITEM09 if (f9 == 1) setStatus(ITEM09,1); #endif
+		#ifdef ITEM10 if (f10 == 1) setStatus(ITEM10,1); #endif
+		setStatus(2021:32,{1,f1+48,f2+48,f3+48,f4+48,[720:24.0]+48," on"});
+		
+	}
+}

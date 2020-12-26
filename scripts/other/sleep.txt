@@ -1,0 +1,118 @@
+/*
+{
+  desc:"Скрипт для сценария Сон (не сохранять на см9, на которой есть управляемые им исполнители)",
+  tag:"item",
+  selectArea:true,
+  name:"Sleep",
+  vars:[
+    {type:"comment",text:"Устройства, котроые выключатся и которым будет выключена автоматизация",width:400},
+	{name:"ITEM01",type:"devices-list",required:true,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 1"},
+	{name:"ITEM02",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 2"},
+	{name:"ITEM03",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 3"},
+	{name:"ITEM04",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 4"},
+	{name:"ITEM05",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 5"},
+	{name:"ITEM06",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 6"},
+	{name:"ITEM07",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 7"},
+	{name:"ITEM08",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 8"},
+	{name:"ITEM09",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 9"},
+	{name:"ITEM10",type:"devices-list",required:false,filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Устройство 10"},
+	{type:"comment",text:"Шторы, которые нужно закрыть и отключить автоматизацию",width:400},
+	{name:"BLINDS01",type:"devices-list",required:false,filter:["jalousie","virtual"],desc:"Штора 1"},
+	{name:"BLINDS02",type:"devices-list",required:false,filter:["jalousie","virtual"],desc:"Штора 2"},
+	{name:"BLINDS03",type:"devices-list",required:false,filter:["jalousie","virtual"],desc:"Штора 3"},
+	{name:"BLINDS04",type:"devices-list",required:false,filter:["jalousie","virtual"],desc:"Штора 4"},
+	{type:"comment",text:"Отопление",width:400},
+	{name:"AREANAME",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Название помещения, в котором используется сценарий Сон"},
+	{name:"HEATOFF",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Название режима, в который нужно перевести отопление в режиме Сон"},
+	{name:"HEATON",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Название режима, в который нужно перевести отопление при снятии режима Сон"},
+	{type:"comment",text:"Воспроизвести файл на мультирум при постановке и выключить",width:400},
+	{name:"MR1",type:"devices-list",required:false,filter:["speaker"],desc:"Медиаточка"},
+	{name:"VOLUME1",type:"number",required:false,defaultValue:55,min:0,max:250,desc:"Громкость",descWidth:450,width:80},
+	{name:"FILE1",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+	{type:"comment",text:"Воспроизвести файл на мультирум при снятии",width:400},
+	{name:"MR2",type:"devices-list",required:false,filter:["speaker"],desc:"Медиаточка"},
+	{name:"VOLUME2",type:"number",required:false,defaultValue:55,min:0,max:250,desc:"Громкость",descWidth:450,width:80},
+	{name:"FILE2",type:"string",required:false, max:70, descWidth:250,width:500, desc:"Путь к файлу для воспроизведения"},
+	{name:"PERIOD",type:"number",required:false,defaultValue:1,min:1,max:24,desc:"Выключить режим Сон через период, часов",descWidth:350},
+  ]                       
+}
+*/
+
+#ifdef PERIOD
+u8 cntr = 0;
+void check_off(){
+	++cntr;
+	if (cntr == PERIOD) setStatus(V-ADDR,0);
+	else delayedCallM(check_off,60);
+}
+#endif
+
+V-ID/V-ADDR
+{
+	if (opt(0)){
+		#ifdef ITEM01 setAutoState(ITEM01,-2); #endif
+		#ifdef ITEM02 setAutoState(ITEM02,-2); #endif
+		#ifdef ITEM03 setAutoState(ITEM03,-2); #endif
+		#ifdef ITEM04 setAutoState(ITEM04,-2); #endif
+		#ifdef ITEM05 setAutoState(ITEM05,-2); #endif
+		#ifdef ITEM06 setAutoState(ITEM06,-2); #endif
+		#ifdef ITEM07 setAutoState(ITEM07,-2); #endif
+		#ifdef ITEM08 setAutoState(ITEM08,-2); #endif
+		#ifdef ITEM09 setAutoState(ITEM09,-2); #endif
+		#ifdef ITEM10 setAutoState(ITEM10,-2); #endif
+		#ifdef ITEM01 setStatus(ITEM01,0); #endif
+		#ifdef ITEM02 setStatus(ITEM02,0); #endif
+		#ifdef ITEM03 setStatus(ITEM03,0); #endif
+		#ifdef ITEM04 setStatus(ITEM04,0); #endif
+		#ifdef ITEM05 setStatus(ITEM05,0); #endif
+		#ifdef ITEM06 setStatus(ITEM06,0); #endif
+		#ifdef ITEM07 setStatus(ITEM07,0); #endif
+		#ifdef ITEM08 setStatus(ITEM08,0); #endif
+		#ifdef ITEM09 setStatus(ITEM09,0); #endif
+		#ifdef ITEM10 setStatus(ITEM10,0); #endif
+		#ifdef BLINDS01 setAutoState(BLINDS01,-2); #endif
+		#ifdef BLINDS02 setAutoState(BLINDS02,-2); #endif
+		#ifdef BLINDS03 setAutoState(BLINDS03,-2); #endif
+		#ifdef BLINDS04 setAutoState(BLINDS04,-2); #endif
+		#ifdef BLINDS01 setStatus(BLINDS01,0); #endif
+		#ifdef BLINDS02 setStatus(BLINDS02,0); #endif
+		#ifdef BLINDS03 setStatus(BLINDS03,0); #endif
+		#ifdef BLINDS04 setStatus(BLINDS04,0); #endif
+		#ifdef MR1 #ifdef VOLUME1 #ifdef FILE1 
+			setStatus(MR1, 2); 
+			setStatus(MR1, {1, VOLUME1, 1, 'FILE1'}); 
+		#endif #endif #endif
+		#ifdef HEATON
+			#ifdef AREANAME setStatus(1000:101, "AREANAME\0HEATOFF"); #endif
+		#endif
+		#ifdef PERIOD
+			cntr = 0;
+			delayedCallM(check_off,60);
+		#endif
+	} else{
+		#ifdef PERIOD
+			cancelDelayedCall(check_off);
+		#endif
+		#ifdef ITEM01 setAutoState(ITEM01,1); #endif
+		#ifdef ITEM02 setAutoState(ITEM02,1); #endif
+		#ifdef ITEM03 setAutoState(ITEM03,1); #endif
+		#ifdef ITEM04 setAutoState(ITEM04,1); #endif
+		#ifdef ITEM05 setAutoState(ITEM05,1); #endif
+		#ifdef ITEM06 setAutoState(ITEM06,1); #endif
+		#ifdef ITEM07 setAutoState(ITEM07,1); #endif
+		#ifdef ITEM08 setAutoState(ITEM08,1); #endif
+		#ifdef ITEM09 setAutoState(ITEM09,1); #endif
+		#ifdef ITEM10 setAutoState(ITEM10,1); #endif
+		#ifdef BLINDS01 setAutoState(BLINDS01,0); #endif
+		#ifdef BLINDS02 setAutoState(BLINDS02,0); #endif
+		#ifdef BLINDS03 setAutoState(BLINDS03,0); #endif
+		#ifdef BLINDS04 setAutoState(BLINDS04,0); #endif
+		#ifdef MR2 #ifdef VOLUME2 #ifdef FILE2 
+			//setStatus(MR2, 1); 
+			setStatus(MR2, {1, VOLUME2, 1, 'FILE2'}); 
+		#endif #endif #endif
+		#ifdef HEATOFF
+			#ifdef AREANAME setStatus(1000:101, "AREANAME\0HEATON"); #endif
+		#endif
+	}
+}

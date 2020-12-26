@@ -1,0 +1,127 @@
+/*
+{
+  desc:"Набор условий и действия по ним",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[    
+	 {name:"PERIOD",type:"number",required:true,defaultValue:1,min:1,max:600,desc:"Период проверки условия, секунд",descWidth:300,width:150},     
+     [
+	  {type:"comment",text:"Если       ( (",width:80},	
+	  {name:"ITEM1",type:"devices-list", filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor","lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],required:true},
+	  {name:"ZNAK1",type:"list",required:false,data:{"0":"<","1":">","2":"<=","3":">=","4":"=="},width:50},
+	  {name:"VALUE1",type:"number",required:true,min:0,max:65535,width:100},	  
+	  {type:"comment",text:")",width:10},
+	], 
+	[ 
+	  {name:"COND1",type:"list",required:false,data:{"1":"и","0":"или"},width:60},	 
+      {type:"comment",text:"(",width:10},	  
+      {name:"ITEM2",type:"devices-list", filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor","lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],required:false},
+	  {name:"ZNAK2",type:"list",required:false,data:{"0":"<","1":">","2":"<=","3":">=","4":"=="},width:50},
+	  {name:"VALUE2",type:"number",required:false,min:0,max:65535,width:100},
+	  {type:"comment",text:")",width:10},
+    ],
+	[
+	  {name:"COND2",type:"list",required:false,data:{"1":"и","0":"или"},width:60},
+	  {type:"comment",text:"(",width:10},
+      {name:"ITEM3",type:"devices-list", filter:["motion-sensor","illumination-sensor","temperature-sensor","humidity-sensor","lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],required:false},
+	  {name:"ZNAK3",type:"list",required:false,data:{"0":"<","1":">","2":"<=","3":">=","4":"=="},width:50},
+	  {name:"VALUE3",type:"number",required:false,min:0,max:65535,width:100},
+	  {type:"comment",text:") )",width:20}, 
+    ],
+	{type:"comment",text:"то",width:50},
+    {name:"ITEM_THEN1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 1"},
+    {name:"ACT1",type:"list",required:true,data:{"1":"Включение","0":"Выключение"},descWidth:150,desc:"Действие"},
+	{name:"ITEM_THEN2",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 2"},
+    {name:"ACT2",type:"list",required:false,data:{"1":"Включение","0":"Выключение"},descWidth:150,desc:"Действие"},
+	{type:"comment",text:"иначе (опционально)",width:150},
+    {name:"ITEM_ELSE1",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 1"},
+    {name:"ACT_ELSE1",type:"list",required:false,data:{"1":"Включение","0":"Выключение"},descWidth:150,desc:"Действие"},
+	{name:"ITEM_ELSE2",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan","valve","valve-heating"],descWidth:150,desc:"Элемент 2"},
+    {name:"ACT_ELSE2",type:"list",required:false,data:{"1":"Включение","0":"Выключение"},descWidth:150,desc:"Действие"},
+  ]
+}
+*/
+
+V-ID/s:PERIOD
+{
+  if (
+   ([ITEM1] 
+		#if ZNAK1==0 
+	      < 
+		#else 
+			#if ZNAK1==1 
+		      > 
+			#else 
+				#if ZNAK1==2 
+				  <= 
+				#else 
+					#if ZNAK1==3 
+					  >= 
+					#else 
+					  == 
+					#endif
+				#endif 
+			#endif
+		#endif 
+	        VALUE1) 
+	#ifdef COND1 #if COND1==1 && #else || #endif ([ITEM2]  
+	    #if ZNAK2==0 
+	      < 
+		#else 
+			#if ZNAK2==1 
+		      > 
+			#else 
+				#if ZNAK2==2 
+				  <= 
+				#else 
+					#if ZNAK2==3 
+					  >= 
+					#else 
+					  == 
+					#endif
+				#endif 
+			#endif
+		#endif   VALUE2) #endif	
+	#ifdef COND2  #if COND2==1 && #else || #endif ([ITEM3]  
+		#if ZNAK3==0 
+	      < 
+		#else 
+			#if ZNAK3==1 
+		      > 
+			#else 
+				#if ZNAK3==2 
+				  <= 
+				#else 
+					#if ZNAK3==3 
+					  >= 
+					#else 
+					  == 
+					#endif
+				#endif 
+			#endif
+		#endif  VALUE3) #endif	
+  )
+  {
+    setStatus(ITEM_THEN1,ACT1);
+	#ifdef ITEM_THEN2 
+	#ifdef ACT2 
+	  setStatus(ITEM_THEN2,ACT2);
+	#endif
+	#endif
+  }
+  #ifdef ITEM_ELSE1
+  #ifdef ACT_ELSE1
+    else {
+	  setStatus(ITEM_ELSE1,ACT_ELSE1);
+	  #ifdef ITEM_ELSE2
+      #ifdef ACT_ELSE2
+	    setStatus(ITEM_ELSE2,ACT_ELSE2);
+	  #endif
+      #endif
+	}
+  #endif
+  #endif
+  
+
+}

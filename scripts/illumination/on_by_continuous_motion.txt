@@ -1,0 +1,23 @@
+/*
+{
+  desc:"Включение освещения при длительном движении ",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","dimer-lamp","rgb-lamp","script"],desc:"Лампа"},
+	{name:"ITEM2",type:"devices-list",required:true, filter:["motion-sensor"],desc:"Датчик движения"},
+	{name:"ITEM3",type:"number",required:true, defaultValue:20, min:0, max:100, desc:"Интенсивность движения"},
+	{name:"ITEM4",type:"number",required:true, defaultValue:20, min:0, max:1000, desc:"Интервал времени в секундах"},
+  ]
+}
+*/
+
+u16 mid = ITEM3 << 8;
+
+V-ID/s:5
+{
+	if(isAutoOn(ITEM1) && [ITEM2:avgs:ITEM4] > mid) {
+		setStatus(ITEM1, 1);
+	}
+}

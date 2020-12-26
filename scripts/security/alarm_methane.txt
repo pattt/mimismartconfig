@@ -1,0 +1,49 @@
+/*
+{
+  desc:"Закрыть клапан по датчику метана",
+  tag:"import-script",
+  target:"SENSOR1",
+  selectArea:true,
+  vars:[
+    {name:"TODO1",type:"devices-list",required:true, filter:["lamp","script","valve"],descWidth:170, desc:"Элемент1"},
+	{name:"ACT1",type:"list",required:true,data:{"1":"Включить","0":"Выключить"},desc:"Выберите действие для элемента 1",descWidth:170},
+	{name:"TODO2",type:"devices-list",required:false, filter:["lamp","script","valve"],descWidth:170, desc:"Элемент2 (опционально)"},
+	{name:"ACT2",type:"list",required:false,data:{"1":"Включить","0":"Выключить"},desc:"Выберите действие для элемента 2",descWidth:170},
+	{name:"DELTA",type:"number",required:true,defaultValue:30,min:0,max:30,desc:"Задержка срабатывания",descWidth:170,width:150},
+	
+   	{name:"SENSOR1",type:"devices-list",required:true, filter:["humidity-sensor"],descWidth:200,desc:"Выберите датчик 1",width:280},
+	{name:"LEVEL1",type:"number",required:true,defaultValue:5,min:0,max:100,desc:"Уровень метана",descWidth:170,width:150},
+	{name:"SENSOR2",type:"devices-list",required:false, filter:["humidity-sensor"],descWidth:200,desc:"Выберите датчик 2",width:280},
+	{name:"LEVEL2",type:"number",required:false,defaultValue:5,min:0,max:100,desc:"Уровень метана",descWidth:170,width:150},
+	{name:"SENSOR3",type:"devices-list",required:false, filter:["humidity-sensor"],descWidth:200,desc:"Выберите датчик 3",width:280},
+	{name:"LEVEL3",type:"number",required:false,defaultValue:5,min:0,max:100,desc:"Уровень метана",descWidth:170,width:150},
+	{name:"SENSOR4",type:"devices-list",required:false, filter:["humidity-sensor"],descWidth:200,desc:"Выберите датчик 4",width:280},
+	{name:"LEVEL4",type:"number",required:false,defaultValue:5,min:0,max:100,desc:"Уровень метана",descWidth:170,width:150},
+ ]
+}
+*/
+u8 cntr = 0;
+V-ID/s:1
+{
+	if (([SENSOR1.1]>LEVEL1) 
+		#ifdef SENSOR2 #ifdef LEVEL2 || ([SENSOR2.1]>LEVEL2) #endif #endif
+		#ifdef SENSOR3 #ifdef LEVEL3 || ([SENSOR3.1]>LEVEL3) #endif #endif
+		#ifdef SENSOR4 #ifdef LEVEL4 || ([SENSOR4.1]>LEVEL4) #endif #endif) {
+		
+		if (([TODO1]!=ACT1) #ifdef TODO2 #ifdef ACT2 || ([TODO2]!=ACT2) #endif #endif){
+			if (cntr<DELTA) ++cntr;
+			if (cntr>=DELTA){
+				if ([TODO1]!=ACT1) setStatus(TODO1,ACT1);
+				#ifdef TODO2 #ifdef ACT2
+					if ([TODO2]!=ACT2) setStatus(TODO2,ACT2);
+				#endif #endif
+			}
+		}	
+	}
+	if (([SENSOR1.1]<LEVEL1) 
+		#ifdef SENSOR2 #ifdef LEVEL2 && ([SENSOR2.1]<LEVEL2) #endif #endif
+		#ifdef SENSOR3 #ifdef LEVEL3 && ([SENSOR3.1]<LEVEL3) #endif #endif
+		#ifdef SENSOR4 #ifdef LEVEL4 && ([SENSOR4.1]<LEVEL4) #endif #endif) {
+		cntr=0;
+	}	
+}

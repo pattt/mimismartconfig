@@ -1,0 +1,10 @@
+V-ID/V-ADDR
+{
+  if (opt(0)==1)
+	{
+	//setStatus(DEST, "number=NUMBER|dev=VIRT");
+	setStatus(502:250, "Подождите, выполняется проверка баланса...");
+	setStatus(1000:61, "number=*111#|dev=502:250");
+	  setStatus(V-ADDR,0);
+	}
+}

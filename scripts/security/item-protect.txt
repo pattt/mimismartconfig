@@ -1,0 +1,362 @@
+/*
+{
+	desc:"Блокировка состояния элемента",
+	tag:"item",
+	target:"ITEM",
+	selectArea:true,
+	vars:[
+		{name:"ITEM",type:"devices-list",required:true,width:350,filter:["lamp","dimer-lamp","rgb-lamp","jalousie","gate","virtual"],desc:"Устройство для блокировки",descWidth:100},
+		{name:"DAYS1",required:true,type:"weekday",desc:"Дни недели блокировки",descWidth:150},
+		{name:"STIME1",type:"time",required:true,desc:"Время начала блокировки",descWidth:150},
+		{name:"ETIME1",type:"time",required:true,desc:"Время окончания блокировки",descWidth:150},
+		{name:"DAYS2",required:false,type:"weekday",desc:"Дни недели блокировки",descWidth:150},
+		{name:"STIME2",type:"time",required:false,desc:"Время начала блокировки",descWidth:150},
+		{name:"ETIME2",type:"time",required:false,desc:"Время окончания блокировки",descWidth:150},
+		{name:"NOTON",type:"checkbox",required:false,checked:false,desc:"Отключить автоматическое включение по диапазонам времени",descWidth:300},
+		{name:"NOTOFF",type:"checkbox",required:false,checked:false,desc:"Отключить автоматическое выключение по диапазонам времени",descWidth:300},
+		{name:"B1",type:"number",required:false,width:100,min:0,max:255,desc:"Значение 1-го байта блокировки",descWidth:250},
+		{name:"B2",type:"number",required:false,width:100,min:0,max:255,desc:"Значение 2-го байта блокировки",descWidth:250},
+		{name:"B3",type:"number",required:false,width:100,min:0,max:255,desc:"Значение 3-го байта блокировки",descWidth:250},
+		{name:"B4",type:"number",required:false,width:100,min:0,max:255,desc:"Значение 4-го байта блокировки",descWidth:250},
+		{name:"BLST",type:"number",required:false,width:100,min:0,max:255,desc:"Возможный обязательный последний параметр",descWidth:250},
+		{name:"IFSHM",type:"checkbox",required:false,checked:false,desc:"Использовать систему \'если, то\'",descWidth:300},
+		{name:"UNBLOCK",type:"number",required:true,width:100,defaultValue:"0",min:0,max:1092,desc:"Время временного включения/отключения блокировки в минутах (0 - всегда блокировать)",descWidth:250},
+		{name:"STCHK",type:"checkbox",required:false,checked:false,desc:"Отключить проверку состояния устройства (для штор)",descWidth:300},
+		{name:"MEMCNT",type:"number",required:true,width:100,defaultValue:"1",min:1,max:5,desc:"Количество запоминаемых байт статуса в случае не указанных значений, учитывая последний системный, если он задан!",descWidth:300},
+		[
+			{name:"DIFF",type:"checkbox",required:false,checked:false,desc:"Включить зеркальный ответ с фильтром по маске (для штор)",descWidth:250},
+			{name:"MASK",type:"number",required:false,width:100,defaultValue:"1",min:1,max:255},
+			{name:"INVANS",type:"checkbox",required:false,checked:false,descAlign:"right",desc:"Инвертировать зеркальный ответ",descWidth:150}
+		],
+		{name:"EVTCNT",type:"number",required:true,width:100,defaultValue:"1",min:1,desc:"Количество пропускаемых событий",descWidth:200}
+	]
+}
+*/
+
+/*
+Changelog:
+
+(1.1) (30.01.2014)
+ - Добавлена возможность отключить проверку статуса устройства (необходимо для устройства штор);
+ - Добавлена возможностьк указать еще один необязательный промежуток времени в формате точныого промежутка времени в заданные дни недели;
+ - Добавлена возможность запоминать первые несколько байт статуса устройста в случае их точной НЕ установки + один системный последний байт (время изменения);
+ - Исправлен алгоритм для штор;
+ - Добавлен зеркальный ответ с фильтром по маске;
+ - Добавлена возможность задавать количество пропускаемых событий после установки нового статуса;
+ - Добавлена возможность отключать автоматическое включение/выключение скрипта по диапазонам времени (Alpha);
+ - Исправлен учет времени отключения при выключении скрипта;
+ - Добавлена система если то;
+
+(1.0) (28.01.2014)
+ - Первая тестовая версия (Возможность блокировать изменение в устройстве до 4х первых байт состояния + последний служебный в заданное время дней недели, возможность вручную включать или выключать блокировку на заданное время)
+
+*/
+
+//	target:"ITEM",
+#ifdef ITEM
+#ifdef DAYS1
+#ifdef STIME1
+#ifdef ETIME1
+#ifdef UNBLOCK
+#ifdef EVTCNT
+
+#if UNBLOCK == 0
+#else
+u8 x = 0; // Флаг контроля ручного управления в активное время
+u8 y = 0; // Флаг контроля ручного управления в неактивное время
+
+void unX()
+{
+	#if NOTON == true
+	v = 1; 
+	setStatus(V-ADDR, 1);
+	#else
+	x = 0;
+	#endif
+}
+
+void unY()
+{
+	#if NOTOFF == true
+	v = 1; 
+	setStatus(V-ADDR, 0);
+	#else
+	y = 0;
+	#endif
+}
+#endif
+
+u8 v = 0; // Флаг своего сетстатуса на скрипт
+u8 z = 0; // Флаг своего сетстатуса на устройство
+
+#ifndef B1
+#ifdef MEMCNT 
+u8 b1[MEMCNT];
+#endif
+#endif
+
+#if NOTON == true
+#if NOTOFF == true
+#else
+V-ID/s:1
+{
+#endif
+#else
+V-ID/s:1
+{
+#endif
+	#if NOTON == true
+	#else
+	if ((
+	#ifdef DAYS2
+	#ifdef STIME2
+	#ifdef ETIME2
+	timeInRange(STIME2-ETIME2|DAYS2) ||
+	#endif
+	#endif
+	#endif
+	timeInRange(STIME1-ETIME1|DAYS1)) && ![V-ADDR]
+	#if UNBLOCK == 0
+	#else
+	&& !x
+	#endif
+	)
+	{
+		v = 1; 
+		setStatus(V-ADDR, 1);
+	}
+	#endif
+	#if NOTOFF == true
+	#else
+	#if NOTON == true
+	#else
+	else
+	#endif
+	if ((
+	#ifdef DAYS2
+	#ifdef STIME2
+	#ifdef ETIME2
+	!timeInRange(STIME2-ETIME2|DAYS2) &&
+	#endif
+	#endif
+	#endif
+	!timeInRange(STIME1-ETIME1|DAYS1)) && [V-ADDR]
+	#if UNBLOCK == 0
+	#else
+	&& !y
+	#endif
+	)
+	{
+		v = 1;
+		setStatus(V-ADDR, 0);
+	}
+	#endif
+#if NOTON == true
+#if NOTOFF == true
+#else
+}
+#endif
+#else
+}
+#endif
+
+V-ID/V-ADDR
+{
+	if (opt(0))
+	{
+		#if UNBLOCK == 0
+		#else
+		if (!v)
+		{
+			#if NOTON == true
+			#else
+			if (!timeInRange(STIME1-ETIME1|DAYS1)
+				#ifdef DAYS2
+					#ifdef STIME2
+						#ifdef ETIME2
+				&& !timeInRange(STIME2-ETIME2|DAYS2)
+						#endif
+					#endif
+				#endif
+			)
+			#endif
+			{
+				#if UNBLOCK == 0
+				#else
+				y = 1;
+				#endif
+				delayedCallM(unY, UNBLOCK);
+			}
+			#if NOTON == true
+			#else
+			else
+			#endif
+			{
+				#if UNBLOCK == 0
+				#else
+				x = 0;
+				y = 0;
+				#endif
+				cancelDelayedCall(unX);
+			}
+		}
+		else
+		{
+			y = 0;
+			v = 0;
+		}
+		#endif
+		#if DIFF == true
+		#else
+		#ifndef B1
+			#ifdef MEMCNT
+				#ifdef BLST
+		b1[MEMCNT-1] = BLST;
+		for (u8 i=0;i<MEMCNT-1;++i)
+				#else
+		for (u8 i=0;i<MEMCNT;++i)
+				#endif
+		b1[i] = [ITEM.i];
+			#endif
+		#endif
+		#endif
+		z = 0;
+	}
+	#if UNBLOCK == 0
+	#else
+	else
+	{
+		if (!v)
+		#if UNBLOCK == 0
+		{
+			v = 1;
+			setStatus(V-ADDR, 1);
+		}
+		#else
+		{
+			#if NOTOFF == true
+			#else
+			if (timeInRange(STIME1-ETIME1|DAYS1)
+				#ifdef DAYS2
+					#ifdef STIME2
+						#ifdef ETIME2
+				|| timeInRange(STIME2-ETIME2|DAYS2)
+						#endif
+					#endif
+				#endif
+			)
+			#endif
+			{
+				#if UNBLOCK == 0
+				#else
+				x = 1;
+				#endif
+				delayedCallM(unX, UNBLOCK);
+			}
+			#if NOTOFF == true
+			#else
+			else
+			#endif
+			{
+				#if UNBLOCK == 0
+				#else
+				y = 0;
+				#endif
+				cancelDelayedCall(unY);
+			}
+		}
+		#endif
+		else
+		v = 0;
+	}
+	#endif
+}
+
+#if STCHK == true
+V-ID/ITEM
+#else
+V-ID/ITEM,s:1
+#endif
+{
+	//setStatus(2047:32, {1, 48+exciterId()/1000, 48+exciterId()%1000/100, 48+exciterId()%100/10, 48+exciterId()%10, 58, 48+exciterSubId()/100, 48+exciterSubId()%100/10, 48+exciterSubId()%10, 30, 30, 30, 48+senderId()/100, 48+senderId()%100/10, 48+senderId()%10, 58, 48+exciterSubId()/100, 48+senderSubId()%100/10, 48+senderSubId()%10, 0});
+	//setStatus(999:99, {exciterId(),senderId()});
+	if ([V-ADDR])
+	if (!z)
+	{
+		#if DIFF == true
+		z = EVTCNT;	
+		#if INVANS == true
+		setStatus(ITEM, !(opt(0)&MASK));
+		#else
+		setStatus(ITEM, (opt(0)&MASK));
+		#endif
+		#else
+			#if IFSHM == true
+				#ifdef B1
+					#ifdef B2
+				if (opt(0) == B1)
+				{
+					z = EVTCNT;
+					setStatus(ITEM, B2);
+				}
+					#endif
+				#endif
+				#ifdef B3
+					#ifdef B4
+				else
+				if (opt(0) == B3)
+				{
+					z = EVTCNT;
+					setStatus(ITEM, B4);
+				}
+					#endif
+				#endif
+			#else
+				#ifdef B1
+				if ([ITEM.0] != B1
+					#ifdef B2
+				|| [ITEM.1] != B2
+					#endif
+					#ifdef B3
+				|| [ITEM.2] != B3
+					#endif
+					#ifdef B4
+				|| [ITEM.3] != B4
+					#endif
+				)
+				{
+					z = EVTCNT;
+					setStatus(ITEM, {B1
+						#ifdef B2
+						,B2
+						#endif
+						#ifdef B3
+						,B3
+						#endif
+						#ifdef B4
+						,B4
+						#endif
+						#ifdef BLST
+						,BLST
+						#endif
+					});
+				}
+				#else
+					#ifdef MEMCNT
+				z = EVTCNT;	
+				setStatus(ITEM, &b1);
+					#endif
+				#endif
+			#endif
+		#endif
+	}
+	else
+	--z;
+}
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+

@@ -1,0 +1,27 @@
+/*
+{
+  desc:"Скрипт для включения проигрывания с микрофона",
+  tag:"item",
+  selectArea:true,
+  vars:[
+	[
+	  {type:"comment",text:"Элемент Multi-room",width:270},
+	  {type:"comment",text:"Уровень звука",width:600},
+	],
+	[
+	  {name:"MR_ID",type:"devices-list",required:false, filter:["speaker"],descWidth:170},
+	  {name:"VOLUME",type:"number",required:true,min:0,max:250,width:90},
+	],  
+	{name:"MIC_ID",type:"devices-list",required:false, filter:["mic"],desc:"Выберите микрофон",descWidth:170},
+  ]
+}
+*/
+
+
+V-ID/V-ADDR 
+{
+	if(opt(0)==1) 
+		setStatus(MR_ID, {1, VOLUME, 0, 'mr://MIC_ID'}); 
+	else setStatus(MR_ID, 0);
+}
+

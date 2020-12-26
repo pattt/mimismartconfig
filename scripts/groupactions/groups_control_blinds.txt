@@ -1,0 +1,118 @@
+/*
+{
+  desc:"Груповое управление шторами",
+  tag:"import-script",
+  target:"ITEM1",
+  selectArea:false,
+  vars:[
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["jalousie"],desc:"Штора1"},
+	{name:"ITEM2",type:"devices-list",required:true, filter:["jalousie"],desc:"Штора2"},
+	{name:"ITEM3",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора3"},
+	{name:"ITEM4",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора4"},
+	{name:"ITEM5",type:"devices-list",required:false, filter:["jalousie"],desc:"Штора5"},
+  ]
+}
+*/
+
+u8 m = -1;
+u8 m_prev = -1;
+
+V-ID/ITEM1
+{
+	m = opt(0) - 2;
+	if(m > 1)
+		m = (m_prev == 0) ? 1 : 0;
+	if(m != m_prev) {
+		m_prev = m;
+		setStatus(ITEM2, m);
+		#ifdef ITEM3
+		setStatus(ITEM3, m);
+		#endif
+		#ifdef ITEM4
+		setStatus(ITEM4, m);
+		#endif
+		#ifdef ITEM5
+		setStatus(ITEM5, m);
+		#endif
+	}
+}
+
+V-ID/ITEM2
+{
+	m = opt(0) - 2;
+	if(m > 1)
+		m = (m_prev == 0) ? 1 : 0;
+	if(m != m_prev) {
+		m_prev = m;
+		setStatus(ITEM1, m);
+		#ifdef ITEM3
+		setStatus(ITEM3, m);
+		#endif
+		#ifdef ITEM4
+		setStatus(ITEM4, m);
+		#endif
+		#ifdef ITEM5
+		setStatus(ITEM5, m);
+		#endif
+	}
+}
+
+#ifdef ITEM3
+V-ID/ITEM3
+{
+	m = opt(0) - 2;
+	if(m > 1)
+		m = (m_prev == 0) ? 1 : 0;
+	if(m != m_prev) {
+		m_prev = m;
+		setStatus(ITEM1, m);
+		setStatus(ITEM2, m);
+		#ifdef ITEM4
+		setStatus(ITEM4, m);
+		#endif
+		#ifdef ITEM5
+		setStatus(ITEM5, m);
+		#endif
+	}
+}
+#endif
+
+#ifdef ITEM4
+V-ID/ITEM4
+{
+	m = opt(0) - 2;
+	if(m > 1)
+		m = (m_prev == 0) ? 1 : 0;
+	if(m != m_prev) {
+		m_prev = m;
+		setStatus(ITEM1, m);
+		setStatus(ITEM2, m);
+		#ifdef ITEM3
+		setStatus(ITEM3, m);
+		#endif
+		#ifdef ITEM5
+		setStatus(ITEM5, m);
+	#endif
+	}
+}
+#endif
+
+#ifdef ITEM5
+V-ID/ITEM5
+{
+	m = opt(0) - 2;
+	if(m > 1)
+		m = (m_prev == 0) ? 1 : 0;
+	if(m != m_prev) {
+		m_prev = m;
+		setStatus(ITEM1, m);
+		setStatus(ITEM2, m);
+		#ifdef ITEM3
+		setStatus(ITEM3, m);
+		#endif
+		#ifdef ITEM4
+		setStatus(ITEM4, m);
+		#endif
+	}
+}
+#endif

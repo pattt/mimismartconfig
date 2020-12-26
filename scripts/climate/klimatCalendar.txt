@@ -1,0 +1,50 @@
+/*
+{
+  desc:"Скрипт для проверки возможности включения кондиционера в зависимости от даты",
+  tag:"item",
+  target:"id",
+  selectArea:true,
+  vars:[
+	{name:"id",type:"number",required:true,defaultValue:300,min:1,max:1000,desc:"Укажите ID устройства на котором будет располагаться скрипт",descWidth:380,width:90},
+	{name:"STARTDAY",type:"number",required:true,defaultValue:15,min:1,max:28,descAlign:"top",desc:"Выберите дату, начиная с которой нельзя включать кондиционер",descWidth:250,width:80},	{name:"STARTMONTH",type:"list",required:true,data:{"0":"Января","1":"Февраля","2":"Марта","3":"Апреля","4":"Мая","5":"Июня","6":"Июля","7":"Августа","8":"Сентября","9":"Октября","10":"Ноября","11":"Декабря"},desc:"",descWidth:60,width:60},
+	{name:"ENDDAY",type:"number",required:true,defaultValue:15,min:1,max:28,descAlign:"top",desc:"Выберите дату, после которой кондиционер может работать",descWidth:250,width:80},	{name:"ENDMONTH",type:"list",required:true,data:{"0":"Января","1":"Февраля","2":"Марта","3":"Апреля","4":"Мая","5":"Июня","6":"Июля","7":"Августа","8":"Сентября","9":"Октября","10":"Ноября","11":"Декабря"},desc:"",descWidth:60,width:60}
+  ]
+}
+*/
+
+i32 startMonth = STARTMONTH;
+i32 endMonth = ENDMONTH;
+
+V-ID/V-ADDR
+{
+	if(opt(0))
+	{
+		if((endMonth-startMonth)>0)
+		{
+			if(month()>startMonth && month()<endMonth)
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else if((month()==startMonth && day()>=STARTDAY) || (month()==endMonth && day()<=ENDDAY))
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else
+				setStatus(2047:32, {1, "Кондиционер можно включать!"});
+		}
+		else if((endMonth-startMonth)==0)
+		{
+			if(day()>=STARTDAY && day()<=ENDDAY)
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else
+				setStatus(2047:32, {1, "Кондиционер можно включать!"});
+		}
+		else if((endMonth-startMonth)<0)
+		{
+			if(month()==startMonth && day()>=STARTDAY)
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else if(month()==endMonth && day()<=ENDDAY)
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else if((month()>startMonth && month()<=11) || (month()>=0 && month()<endMonth))
+				setStatus(2047:32, {1, "Кондиционер включать нельзя!"});
+			else
+				setStatus(2047:32, {1, "Кондиционер можно включать!"});
+		}
+	}
+}

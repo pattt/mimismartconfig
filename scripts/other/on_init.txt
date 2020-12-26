@@ -1,0 +1,416 @@
+/*
+{
+  desc:"Действия по включению",
+  tag:"import-script",
+  selectArea:true,
+  vars:[
+    [
+	  {type:"comment",text:"Элемент 1",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT1_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT1",type:"list",required:true,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD1",type:"number",required:true,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT1",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 2",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT2_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM2",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT2",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD2",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT2",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 3",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT3_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM3",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT3",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD3",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT3",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 4",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT4_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM4",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT4",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD4",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT4",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 5",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT5_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM5",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT5",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD5",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT5",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 6",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT6_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM6",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT6",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD6",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT6",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],	
+	[
+	  {type:"comment",text:"Элемент 7",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT7_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM7",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT7",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD7",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT7",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],	
+	[
+	  {type:"comment",text:"Элемент 8",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT8_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM8",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT8",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD8",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT8",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],	
+	[
+	  {type:"comment",text:"Элемент 9",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT9_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM9",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT9",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD9",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT9",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	[
+	  {type:"comment",text:"Элемент 10",width:270},
+	  {type:"comment",text:"Действие",width:270},
+	  {type:"comment",text:"Задержка срабатывания",width:100},
+	  {name:"BRIGHT_10_ON",type:"checkbox",checked:true,width:50},
+	  {type:"comment",text:"Задать яркость (опционально)",width:130},	  
+	],
+	[
+		{name:"ITEM_10",type:"devices-list",required:false, filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],descWidth:170},
+		{name:"ACT_10",type:"list",required:false,defaultValue:"1",data:{"1":"Включить","0":"Выключить","0xFF":"Изменить состояние"},descWidth:170},
+		{name:"PERIOD_10",type:"number",required:false,defaultValue:0,min:0,max:3600,descWidth:170,width:100}, 
+		{name:"BRIGHT_10",type:"number",required:false,defaultValue:100,min:1,max:250,descWidth:170,width:100},   		
+	],
+	{name:"name",type:"hidden",value:"onInit"},
+  ]
+}
+*/
+
+#if PERIOD1==0
+#else
+void act1()
+{
+		#ifdef BRIGHT1_ON
+			setStatus(ITEM1,{ACT1,BRIGHT1,0});	
+		#else	
+			setStatus(ITEM1, ACT1);
+		#endif	
+}
+#endif
+
+#ifdef ITEM2
+#ifdef ACT2
+#if PERIOD2==0
+#else
+void act2()
+{
+		#ifdef BRIGHT2_ON
+			setStatus(ITEM2,{ACT2,BRIGHT2,0});	
+		#else	
+			setStatus(ITEM2, ACT2);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM3
+#ifdef ACT3
+#if PERIOD3==0
+#else
+void act3()
+{
+		#ifdef BRIGHT3_ON
+			setStatus(ITEM3,{ACT3,BRIGHT3,0});	
+		#else	
+			setStatus(ITEM3, ACT3);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM4
+#ifdef ACT4
+#if PERIOD4==0
+#else
+void act4()
+{
+		#ifdef BRIGHT4_ON
+			setStatus(ITEM4,{ACT4,BRIGHT4,0});	
+		#else	
+			setStatus(ITEM4, ACT4);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM5
+#ifdef ACT5
+#if PERIOD5==0
+#else
+void act5()
+{
+		#ifdef BRIGHT5_ON
+			setStatus(ITEM5,{ACT5,BRIGHT5,0});	
+		#else	
+			setStatus(ITEM5, ACT5);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM6
+#ifdef ACT6
+#if PERIOD6==0
+#else
+void act6()
+{
+		#ifdef BRIGHT6_ON
+			setStatus(ITEM6,{ACT6,BRIGHT6,0});	
+		#else	
+			setStatus(ITEM6, ACT6);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM7
+#ifdef ACT7
+#if PERIOD7==0
+#else
+void act7()
+{
+		#ifdef BRIGHT7_ON
+			setStatus(ITEM7,{ACT7,BRIGHT7,0});	
+		#else	
+			setStatus(ITEM7, ACT7);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM8
+#ifdef ACT8
+#if PERIOD8==0
+#else
+void act8()
+{
+		#ifdef BRIGHT8_ON
+			setStatus(ITEM8,{ACT8,BRIGHT8,0});	
+		#else	
+			setStatus(ITEM8, ACT8);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM9
+#ifdef ACT9
+#if PERIOD9==0
+#else
+void act9()
+{
+		#ifdef BRIGHT9_ON
+			setStatus(ITEM9,{ACT9,BRIGHT9,0});	
+		#else	
+			setStatus(ITEM9, ACT9);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+#ifdef ITEM_10
+#ifdef ACT_10
+#if PERIOD_10==0
+#else
+void act_10()
+{
+		#ifdef BRIGHT_10_ON
+			setStatus(ITEM_10,{ACT_10,BRIGHT_10,0});	
+		#else	
+			setStatus(ITEM_10, ACT_10);
+		#endif	
+}
+#endif
+#endif
+#endif
+
+void onInit() {
+    #if PERIOD1==0
+		#ifdef BRIGHT1_ON
+			setStatus(ITEM1,{ACT1,BRIGHT1,0});	
+		#else	
+			setStatus(ITEM1, ACT1);
+		#endif
+	#else
+		delayedCall(act1,PERIOD1);
+	#endif
+	
+	#ifdef ITEM2
+	   #if PERIOD2==0
+		#ifdef BRIGHT2_ON
+			setStatus(ITEM2,{ACT2,BRIGHT2,0});	
+		#else	
+			setStatus(ITEM2, ACT2);
+		#endif
+	#else
+		delayedCall(act2,PERIOD2);
+	#endif
+	#endif
+	
+	#ifdef ITEM3
+	#if PERIOD3==0
+		#ifdef BRIGHT3_ON
+			setStatus(ITEM3,{ACT3,BRIGHT3,0});	
+		#else	
+			setStatus(ITEM3, ACT3);
+		#endif
+	#else
+		delayedCall(act3,PERIOD3);
+	#endif
+	#endif
+	
+	#ifdef ITEM4
+	#if PERIOD4==0
+		#ifdef BRIGHT4_ON
+			setStatus(ITEM4,{ACT4,BRIGHT4,0});	
+		#else	
+			setStatus(ITEM4, ACT4);
+		#endif
+	#else
+		delayedCall(act4,PERIOD4);
+	#endif
+	#endif
+	
+	#ifdef ITEM5
+	#if PERIOD5==0
+		#ifdef BRIGHT5_ON
+			setStatus(ITEM5,{ACT5,BRIGHT5,0});	
+		#else	
+			setStatus(ITEM5, ACT5);
+		#endif
+	#else
+		delayedCall(act5,PERIOD5);
+	#endif
+	#endif
+	
+	#ifdef ITEM6
+	#if PERIOD6==0
+		#ifdef BRIGHT6_ON
+			setStatus(ITEM6,{ACT6,BRIGHT6,0});	
+		#else	
+			setStatus(ITEM6, ACT6);
+		#endif
+	#else
+		delayedCall(act6,PERIOD6);
+	#endif
+	#endif
+	
+	#ifdef ITEM7
+	#if PERIOD7==0
+		#ifdef BRIGHT7_ON
+			setStatus(ITEM7,{ACT7,BRIGHT7,0});	
+		#else	
+			setStatus(ITEM7, ACT7);
+		#endif
+	#else
+		delayedCall(act7,PERIOD7);
+	#endif
+	#endif
+	
+	#ifdef ITEM8
+	#if PERIOD8==0
+		#ifdef BRIGHT8_ON
+			setStatus(ITEM8,{ACT8,BRIGHT8,0});	
+		#else	
+			setStatus(ITEM8, ACT8);
+		#endif
+	#else
+		delayedCall(act8,PERIOD8);
+	#endif
+	#endif
+	
+	#ifdef ITEM9
+	#if PERIOD9==0
+		#ifdef BRIGHT9_ON
+			setStatus(ITEM9,{ACT9,BRIGHT9,0});	
+		#else	
+			setStatus(ITEM9, ACT9);
+		#endif
+	#else
+		delayedCall(act9,PERIOD9);
+	#endif
+	#endif
+	
+	#ifdef ITEM_10
+	#if PERIOD_10==0
+		#ifdef BRIGHT_10_ON
+			setStatus(ITEM_10,{ACT_10,BRIGHT_10,0});	
+		#else	
+			setStatus(ITEM_10, ACT_10);
+		#endif
+	#else
+		delayedCall(act_10,PERIOD_10);
+	#endif
+	#endif
+}

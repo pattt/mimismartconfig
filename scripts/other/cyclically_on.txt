@@ -1,0 +1,65 @@
+/*
+{
+  desc:"Циклическое включени 1го из от 2х до 5ти устройств ",
+  tag:"item",
+  target:"ITEM1",
+  selectArea:true,
+  vars:[
+   	{name:"ITEM1",type:"devices-list",required:true, filter:["lamp","dimer-lamp","rgb-lamp"],desc:"Устройство1"},
+	{name:"ITEM2",type:"devices-list",required:true, filter:["lamp","dimer-lamp","rgb-lamp"],desc:"Устройство2"},
+   	{name:"ITEM3",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp"],desc:"Устройство3"},
+	{name:"ITEM4",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp"],desc:"Устройство4"},
+	{name:"ITEM5",type:"devices-list",required:false, filter:["lamp","dimer-lamp","rgb-lamp"],desc:"Устройство5"},
+  ]
+}
+*/
+
+u8 count = 0;
+
+#ifdef ITEM5
+u8 mod = 6;
+#else
+#ifdef ITEM4
+u8 mod = 5;
+#else
+#ifdef ITEM3
+u8 mod = 4;
+#else
+u8 mod = 3;
+#endif
+#endif
+#endif
+
+
+V-ID/V-ADDR
+{	
+	setStatus(ITEM1, (count == 0) ? 1:0);
+	setStatus(ITEM2, (count == 1) ? 1:0);
+
+	#ifdef ITEM3
+	setStatus(ITEM3, (count == 2) ? 1:0);
+	#endif
+	#ifdef ITEM4
+	setStatus(ITEM4, (count == 3) ? 1:0);
+	#endif
+	#ifdef ITEM5
+	setStatus(ITEM5, (count == 4) ? 1:0);
+	#endif
+	
+	if(count == mod - 1) {
+		setStatus(ITEM1, 0);
+		setStatus(ITEM2, 0);
+		#ifdef ITEM3
+		setStatus(ITEM3, 0);
+		#endif
+		#ifdef ITEM4
+		setStatus(ITEM4, 0);
+		#endif
+		#ifdef ITEM5
+		setStatus(ITEM5, 0);
+		#endif
+	}
+
+	count = (count + 1) % mod;		
+}
+

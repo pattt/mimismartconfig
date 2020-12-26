@@ -1,0 +1,56 @@
+/*
+{
+  desc:"Cкрипт который реализует  управление несколькими исполнителями в зависимости от кол-ва нажатий на выключатель",
+  tag:"import-script",
+  target:"BUTTON",
+  selectArea:false,
+  vars:[
+   	{name:"BUTTON",type:"devices-list",required:true,filter:["switch"],desc:"Управляющий выключатель"},
+	{name:"PERIOD",type:"number",required:true,defaultValue:700,min:300,max:1500,desc:"Максимальное время между нажаниями в миллисекундах (1с = 1000)"},
+	{name:"DEV1",type:"devices-list",required:true,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Исполнитель управляемый одиночным нажатием"},
+	{name:"DEV2",type:"devices-list",required:true,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Исполнитель управляемый двойным нажатием"},
+	{name:"DEV3",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","air-fan"],desc:"Исполнитель управляемый тройным нажатием"},
+  ]
+}
+*/
+
+u8 s = 0;
+
+void run(u8 i) {
+		if (i==2) {
+			setStatus(DEV2, 0xFF);
+		} else
+#ifdef DEV3
+		 if (i==3) {
+			setStatus(DEV3, 0xFF);
+		} else
+#endif 
+		if (i==1)
+			setStatus(DEV1, 0xFF);
+		s  = 0;
+}
+
+void check() {
+	run(s);
+	cancelDelayedCall(check);
+}
+
+V-ID/BUTTON {
+	if (opt(0)==0xff) {
+		++s;
+#ifdef DEV3
+		if (s==3) {
+			check();
+		} else
+#else
+		if (s==2) {
+			check();
+		} else
+#endif
+		{
+			cancelDelayedCall(check);
+			delayedCallMs(check, PERIOD);
+		}
+	}
+}
+
