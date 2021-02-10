@@ -114,14 +114,14 @@
 		<item addr="867:102" name="Жаркий\10режим" path="scripts/climate/hot.txt" type="script"/>
 		<import-script id="867" path="scripts/climate/import_off.txt"/>
 		<import-script id="770" path="scripts/prot_1test.txt"/>
-		<item addr="867:1" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Сан узел" temperature-lag="0.2" temperature-sensors="867:14" type="valve-heating">
+		<item addr="867:1" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="ТП Сан узел" temperature-lag="0.2" temperature-sensors="867:14" type="valve-heating">
 			<automation name="Эконом" temperature-level="0"/>
 			<automation name="Комфорт" temperature-level="0"/>
 			<automation name="Жарко" temperature-level="13"/>
 		</item>
-		<item addr="867:2" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Кухня" temperature-lag="0.2" temperature-sensors="867:12" type="valve-heating">
-			<automation name="Эконом" temperature-level="28">
-				<time-interval end-time="11:00" start-time="06:00" temperature-level="21" week-days="mo;tu;we;th;fr;sa;su"/>
+		<item addr="867:2" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="ТП Кухня" temperature-lag="0.2" temperature-sensors="867:12" type="valve-heating">
+			<automation name="Эконом" temperature-level="10">
+				<time-interval end-time="11:00" start-time="06:00" temperature-level="12" week-days="mo;tu;we;th;fr;sa;su"/>
 			</automation>
 			<automation name="Комфорт" temperature-level="0">
 				<time-interval end-time="10:00" start-time="07:00" temperature-level="28" week-days="mo;tu;we;th;fr;sa;su"/>
@@ -131,36 +131,36 @@
 				<time-interval end-time="22:00" start-time="07:00" temperature-level="26" week-days="mo;tu;we;th;fr;sa;su"/>
 			</automation>
 		</item>
-		<item addr="867:3" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Кухня-Балкон" temperature-lag="0.2" temperature-sensors="867:13" type="valve-heating">
+		<item addr="867:3" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="ТП Кухня-Балкон" temperature-lag="0.2" temperature-sensors="867:13" type="valve-heating">
 			<automation name="Эконом" temperature-level="0"/>
 			<automation name="Комфорт" temperature-level="0"/>
 			<automation name="Жарко" temperature-level="10"/>
 		</item>
-		<item addr="867:4" automation="Эконом" automation-stored="Жарко" cfgid="17" name="ТП Ванная" temperature-lag="0.2" temperature-sensors="867:11" type="valve-heating">
-			<automation name="Эконом" temperature-level="28">
+		<item addr="867:4" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="ТП Ванная" temperature-lag="0.2" temperature-sensors="867:11" type="valve-heating">
+			<automation name="Эконом" temperature-level="0">
 				<time-interval end-time="10:00" start-time="07:00" temperature-level="0" week-days="mo;tu;we;th;fr;sa;su"/>
 			</automation>
-			<automation name="Комфорт" temperature-level="28"/>
+			<automation name="Комфорт" temperature-level="0"/>
 			<automation name="Жарко" temperature-level="28">
 				<time-interval end-time="10:00" start-time="06:00" temperature-level="18" week-days="mo;tu;we;th;fr;sa;su"/>
 			</automation>
 		</item>
-		<item addr="867:5" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Кухня" temperature-lag="0.2" temperature-sensors="867:15" type="valve-heating">
-			<automation name="Эконом" temperature-level="21"/>
-			<automation name="Комфорт" temperature-level="0"/>
+		<item addr="867:5" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="Р Кухня" temperature-lag="0.2" temperature-sensors="867:15" type="valve-heating">
+			<automation name="Эконом" temperature-level="19"/>
+			<automation name="Комфорт" temperature-level="21"/>
 			<automation name="Жарко" temperature-level="22"/>
 		</item>
-		<item addr="867:6" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Зал" temperature-lag="0.2" temperature-sensors="867:16" type="valve-heating">
-			<automation name="Эконом" temperature-level="21"/>
-			<automation name="Комфорт" temperature-level="0"/>
+		<item addr="867:6" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="Р Зал" temperature-lag="0.2" temperature-sensors="867:16" type="valve-heating">
+			<automation name="Эконом" temperature-level="19"/>
+			<automation name="Комфорт" temperature-level="21"/>
 			<automation name="Жарко" temperature-level="22"/>
 		</item>
-		<item addr="867:7" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Р Спальня" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
-			<automation name="Эконом" temperature-level="22"/>
-			<automation name="Комфорт" temperature-level="0"/>
+		<item addr="867:7" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="Р Спальня" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
+			<automation name="Эконом" temperature-level="19"/>
+			<automation name="Комфорт" temperature-level="21"/>
 			<automation name="Жарко" temperature-level="23"/>
 		</item>
-		<item addr="867:8" automation="Эконом" automation-stored="Жарко" cfgid="17" name="Radiator 8" system="yes" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
+		<item addr="867:8" automation="Эконом" automation-stored="Комфорт" cfgid="17" name="Radiator 8" system="yes" temperature-lag="0.2" temperature-sensors="867:18" type="valve-heating">
 			<automation name="Эконом" temperature-level="16"/>
 			<automation name="Комфорт" temperature-level="0"/>
 			<automation name="Жарко" temperature-level="25"/>
@@ -190,7 +190,7 @@
 		<import-script id="538" name="prot_gsm" path="scripts/prot_gsm_pr.txt"/>
 		<import-script id="538" name="prot_1" path="scripts/prot_1.txt"/>
 		<import-script id="538" name="prot_close" path="scripts/prot_close.txt"/>
-		<item addr="538:105" name="test" path="scripts/test.txt" type="script"/>
+		<item addr="538:105" name="testzz11" path="scripts/test.txt" type="script"/>
 		<item addr="538:247" name="Баланс" path="scripts/gsm/gsm_balance.txt" type="script"/>
 		<item addr="538:250" length="0" name="Баланс" sub-type="long-text" type="virtual"/>
 		<item addr="178:21" cfgid="15" name="IR receiver" type="ir-receiver"/>
