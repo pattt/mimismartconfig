@@ -2,8 +2,8 @@
 <smart-house srv-ver="2">
 	<area name="Прихожая">
 		<area name="Коридор">
-			<item addr="583:48" cfgid="6" name="Движение" type="motion-sensor"/>
-			<item addr="583:28" cfgid="5" name="Входная\10дверь" type="door-sensor"/>
+			<item-ref addr="583:48" cfgid="6" name="Движение" type="motion-sensor"/>
+			<item-ref addr="583:28" cfgid="5" name="Входная\10дверь" type="door-sensor"/>
 			<item addr="538:49" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
 				<linked addr="583:27"/>
 			</item>
@@ -14,12 +14,12 @@
 		<item addr="770:4" auto-period="600" cfgid="17" name="Точки" type="lamp">
 			<linked addr="583:36"/>
 		</item>
-		<item addr="584:56" cfgid="6" name="Движение" type="motion-sensor"/>
-		<item addr="583:34" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:56" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item-ref addr="583:34" cfgid="5" name="Дверь" type="door-sensor"/>
 	</area>
 	<area name="Ванная">
-		<item addr="584:35" cfgid="5" name="Дверь" type="door-sensor"/>
-		<item addr="584:40" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item-ref addr="584:35" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:40" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="776:7" auto-period="600" cfgid="17" name="Зеркало" type="lamp"/>
 		<item addr="770:3" auto-period="60" cfgid="17" name="Точки" type="lamp">
 			<automation door-sensors="584:35" enabled="yes" illumination-level="10" time-interval="3" type="on-by-door"/>
@@ -33,8 +33,8 @@
 		<item addr="538:9" cfgid="9" name="Ванная" type="leak-sensor"/>
 	</area>
 	<area name="Спальня">
-		<item addr="584:36" cfgid="5" name="Дверь" type="door-sensor"/>
-		<item addr="584:48" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item-ref addr="584:36" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:48" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="584:64" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
 		<item addr="770:5" auto-period="600" cfgid="17" name="Люстра" type="lamp">
 			<linked addr="584:32"/>
@@ -51,7 +51,7 @@
 		</item>
 	</area>
 	<area name="Зал">
-		<item addr="584:27" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:27" cfgid="5" name="Дверь" type="door-sensor"/>
 		<item addr="584:8" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
 		<item addr="776:2" auto-period="600" cfgid="17" name="БП" system="yes" type="lamp"/>
 		<item addr="538:50" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
@@ -68,13 +68,13 @@
 		</item>
 	</area>
 	<area name="Кухня">
-		<item addr="584:28" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:28" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="583:8" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="776:4" auto-period="600" cfgid="17" name="БП" system="yes" type="lamp"/>
 		<item addr="538:48" auto-period="600" cfgid="7" name="Подсветка&#10;потолок" type="dimer-lamp">
 			<linked addr="584:26"/>
 		</item>
 		<item addr="583:64" cfgid="12" name="IR tramsitter" type="ir-transmitter"/>
-		<item addr="583:8" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="538:17" cfgid="9" name="Кухня" type="leak-sensor"/>
 	</area>
 	<area name="Балкон">
@@ -84,14 +84,14 @@
 		<item addr="538:40" cfgid="6" name="Освещенность" type="illumination-sensor"/>
 	</area>
 	<area name="Кладовая">
-		<item addr="584:20" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="584:20" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="583:56" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="770:7" auto-period="0" cfgid="17" name="Точки" type="lamp">
 			<automation door-sensors="584:20" enabled="yes" illumination-level="10" time-interval="3" type="on-by-door"/>
 			<automation delay="3" door-sensors="584:20" enabled="yes" motion-level="15" motion-sensors="583:56" time-interval="7" type="off-by-door"/>
 			<automation enabled="yes" illumination-level="10" motion-level="45" motion-sensors="583:56" time-interval="3" type="on-by-moving"/>
 			<automation enabled="yes" motion-level="15" motion-sensors="583:56" time-interval="180" type="off-by-moving"/>
 		</item>
-		<item addr="583:56" cfgid="6" name="Движение" type="motion-sensor"/>
 		<item addr="538:16" cfgid="9" name="Постирочная" type="leak-sensor"/>
 	</area>
 	<area name="WC">
@@ -104,8 +104,8 @@
 			<automation enabled="yes" illumination-level="10" motion-level="45" motion-sensors="583:40" time-interval="3" type="on-by-moving"/>
 			<automation enabled="yes" motion-level="15" motion-sensors="583:40" time-interval="180" type="off-by-moving"/>
 		</item>
-		<item addr="583:40" cfgid="6" name="Движение" type="motion-sensor"/>
-		<item addr="583:19" cfgid="5" name="Дверь" type="door-sensor"/>
+		<item-ref addr="583:40" cfgid="6" name="Движение" type="motion-sensor"/>
+		<item-ref addr="583:19" cfgid="5" name="Дверь" type="door-sensor"/>
 		<item addr="538:25" cfgid="9" name="WC" type="leak-sensor"/>
 	</area>
 	<area name="Отопление">
@@ -259,12 +259,33 @@
 		<item addr="538:63" cfgid="10" name="Voltage" system="yes" type="voltage-sensor"/>
 		<item addr="538:98" logic-ver="15" name="Temperature" system="yes" type="temperature-sensor"/>
 	</area>
-	<area name="Протечка воды">
-		<item-ref addr="538:102"/>
-		<item-ref addr="538:56"/>
-		<item-ref addr="538:9"/>
-		<item-ref addr="538:16"/>
-		<item-ref addr="538:17"/>
-		<item-ref addr="538:25"/>
+	<area name="Датчики">
+		<area name="Движение">
+			<item addr="583:48" cfgid="6" name="Прихожая" type="motion-sensor"/>
+			<item addr="584:56" cfgid="6" name="Гардероб" type="motion-sensor"/>
+			<item addr="584:40" cfgid="6" name="Ванная" type="motion-sensor"/>
+			<item addr="584:48" cfgid="6" name="Спальня" type="motion-sensor"/>
+			<item addr="583:8" cfgid="6" name="Кухня" type="motion-sensor"/>
+			<item addr="583:56" cfgid="6" name="Кладовая" type="motion-sensor"/>
+			<item addr="583:40" cfgid="6" name="WC" type="motion-sensor"/>
+		</area>
+		<area name="Двери">
+			<item addr="583:28" cfgid="5" name="Входная\10дверь" type="door-sensor"/>
+			<item addr="583:34" cfgid="5" name="Гардероб" type="door-sensor"/>
+			<item addr="584:35" cfgid="5" name="Ванная" type="door-sensor"/>
+			<item addr="584:36" cfgid="5" name="Спальня" type="door-sensor"/>
+			<item addr="584:28" cfgid="5" name="Кухня" type="door-sensor"/>
+			<item addr="584:20" cfgid="5" name="Кладовая" type="door-sensor"/>
+			<item addr="583:19" cfgid="5" name="WC" type="door-sensor"/>
+			<item addr="584:27" cfgid="5" name="Зал" type="door-sensor"/>
+		</area>
+		<area name="Протечка воды">
+			<item-ref addr="538:102"/>
+			<item-ref addr="538:56"/>
+			<item-ref addr="538:9"/>
+			<item-ref addr="538:16"/>
+			<item-ref addr="538:17"/>
+			<item-ref addr="538:25"/>
+		</area>
 	</area>
 </smart-house>
