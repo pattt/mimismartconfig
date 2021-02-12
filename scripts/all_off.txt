@@ -34,10 +34,10 @@ V-ID/V-ADDR
 		setStatus(538:50, {0, 250, 20});
 		setStatus(538:51, {0, 250, 20});
 
-		setStatus(583:102, 1);
-		setStatus(583:101, 0);
+		setStatus(583:102, 1); // включаем кнопку(скрипт) [скрытая]
+		setStatus(583:101, 0); // выключаем кнопку(скрипт)
 		delayedCall(off_wait, 1);
-		delayedCall(off_wait2, 30);
+		delayedCall(off_wait2, 30); //вызов фии с задержкой
 
 	}
 }
