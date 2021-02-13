@@ -2,8 +2,12 @@ void off_wait()
 {
 	setStatus([V-ADDR], 0);
 }
+void off_wait2()
+{
+	setStatus(583:102, 0);
+}
 
-V-ID/V-ADDR 
+V-ID/V-ADDR
 {
 	if([V-ADDR]==1)
 	{
@@ -15,7 +19,7 @@ V-ID/V-ADDR
 		setStatus(770:6, 0);
 		setStatus(770:7, 0);
 		setStatus(770:8, 0);
-		
+
 		setStatus(776:1, 0);
 		setStatus(776:2, 0);
 		setStatus(776:3, 0);
@@ -24,13 +28,16 @@ V-ID/V-ADDR
 		setStatus(776:6, 0);
 		setStatus(776:7, 0);
 		setStatus(776:8, 0);
-		
-		setStatus(502:32, {0, 250, 20});
-		setStatus(502:33, {0, 250, 20});
-		setStatus(502:34, {0, 250, 20});
-		setStatus(502:35, {0, 250, 20});
-		
-		delayedCallMs(off_wait, 1000);
-		
+
+		setStatus(538:48, {0, 250, 20});
+		setStatus(538:49, {0, 250, 20});
+		setStatus(538:50, {0, 250, 20});
+		setStatus(538:51, {0, 250, 20});
+
+		setStatus(583:102, 1); // включаем кнопку(скрипт) [скрытая]
+		setStatus(583:101, 0); // выключаем кнопку(скрипт)
+		delayedCall(off_wait, 1);
+		delayedCall(off_wait2, 30); //вызов фии с задержкой
+
 	}
 }

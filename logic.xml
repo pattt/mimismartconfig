@@ -181,6 +181,9 @@
 			<linked addr="583:36" click="0" dbl-click="1"/>
 			<linked addr="583:26"/>
 		</item>
+		<item addr="583:101" name="Йа тута" path="scripts/lefthome.txt" type="script"/>
+		<item addr="583:102" name="flag\10lefthome" path="scripts/flag_lefthome.txt" system="yes" type="script"/>
+		<import-script id="538" name="import_lefthome" path="scripts/import_lefthome.txt"/>
 		<item addr="583:221" name="Пуш\10Охрана" path="scripts/flag_push.txt" type="script"/>
 		<import-script id="538" name="import_push" path="scripts/import_push.txt"/>
 		<import-script PERIOD="1" PW="776:2" RGB1="538:50" id="538" name="on_off_bp" path="scripts/illumination/rgb_pw.txt"/>
